@@ -2,6 +2,8 @@ package com.pigma.harusari.common.config;
 
 import com.pigma.harusari.common.jwt.JwtAuthenticationFilter;
 import com.pigma.harusari.common.jwt.JwtTokenProvider;
+import com.pigma.harusari.common.jwt.RestAccessDeniedHandler;
+import com.pigma.harusari.common.jwt.RestAuthenticationEntryPoint;
 import com.pigma.harusari.common.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -26,6 +28,8 @@ public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final CustomUserDetailsService userDetailsService;
+    private final RestAccessDeniedHandler restAccessDeniedHandler;
+    private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
