@@ -1,5 +1,7 @@
 package com.pigma.harusari.statistics.query.service;
 
+import com.pigma.harusari.statistics.common.StatisticsType;
+import com.pigma.harusari.statistics.query.dto.response.StatisticsDailyRateResponse;
 import com.pigma.harusari.statistics.query.dto.response.StatisticsDayResponse;
 import com.pigma.harusari.statistics.query.mapper.StatisticsMapper;
 import lombok.RequiredArgsConstructor;
@@ -19,15 +21,19 @@ public class StatisticsServiceImpl implements StatisticsService{
 
     @Override
     public StatisticsDayResponse getStatisticsDaily(Long memberId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
-        StatisticsDayResponse statisticsDaily = statisticsMapper.findStatisticsDaily(memberId, startDateTime, endDateTime);
+        StatisticsDailyRateResponse dayRateResponse = statisticsMapper.findStatisticsDailyRate(memberId, startDateTime, endDateTime);
 
-        if (statisticsDaily == null) {
+        if (dayRateResponse == null) {
             return StatisticsDayResponse.builder()
                     .achievementRate(DEFAULT_ACHIEVEMENT_RATE)
                     .build();
         }
 
-        return statisticsDaily;
+        return StatisticsDayResponse.builder()
+                .type(StatisticsType.DAILY.name())
+                .date(startDateTime.toLocalDate())
+                .achievementRate(dayRateResponse.achievementRate())
+                .build();
     }
 
 }

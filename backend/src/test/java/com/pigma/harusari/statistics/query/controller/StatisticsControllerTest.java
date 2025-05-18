@@ -1,5 +1,6 @@
 package com.pigma.harusari.statistics.query.controller;
 
+import com.pigma.harusari.statistics.common.StatisticsType;
 import com.pigma.harusari.statistics.query.dto.response.StatisticsDayResponse;
 import com.pigma.harusari.statistics.query.exception.StatisticsErrorCode;
 import com.pigma.harusari.statistics.query.service.StatisticsService;
@@ -43,6 +44,8 @@ class StatisticsControllerTest {
     @BeforeEach
     void setUp() {
         statisticsDayResponse = StatisticsDayResponse.builder()
+                .type(StatisticsType.DAILY.name())
+                .date(LocalDate.now())
                 .achievementRate(55.25)
                 .build();
     }
@@ -65,7 +68,10 @@ class StatisticsControllerTest {
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.data.achievementRate").exists())
+                .andExpect(jsonPath("$.data.type").exists())
+                .andExpect(jsonPath("$.data.type").value(StatisticsType.DAILY.name()))
+                .andExpect(jsonPath("$.data.date").exists())
+                .andExpect(jsonPath("$.data.date").value(date.toString()))
                 .andExpect(jsonPath("$.data.achievementRate").value(statisticsDayResponse.achievementRate()))
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andExpect(jsonPath("$.errorCode").doesNotExist())

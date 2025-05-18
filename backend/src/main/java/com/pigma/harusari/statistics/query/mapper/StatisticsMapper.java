@@ -1,6 +1,6 @@
 package com.pigma.harusari.statistics.query.mapper;
 
-import com.pigma.harusari.statistics.query.dto.response.StatisticsDayResponse;
+import com.pigma.harusari.statistics.query.dto.response.StatisticsDailyRateResponse;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.time.LocalDateTime;
@@ -8,6 +8,6 @@ import java.time.LocalDateTime;
 @Mapper
 public interface StatisticsMapper {
 
-    StatisticsDayResponse findStatisticsDaily(Long memberId, LocalDateTime startDateTime, LocalDateTime endDateTime);
+    StatisticsDailyRateResponse findStatisticsDailyRate(Long memberId, LocalDateTime startDateTime, LocalDateTime endDateTime);
 
 }

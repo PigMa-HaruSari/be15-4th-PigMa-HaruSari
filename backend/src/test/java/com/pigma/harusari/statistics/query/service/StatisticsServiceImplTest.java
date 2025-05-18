@@ -1,5 +1,7 @@
 package com.pigma.harusari.statistics.query.service;
 
+import com.pigma.harusari.statistics.common.StatisticsType;
+import com.pigma.harusari.statistics.query.dto.response.StatisticsDailyRateResponse;
 import com.pigma.harusari.statistics.query.dto.response.StatisticsDayResponse;
 import com.pigma.harusari.statistics.query.mapper.StatisticsMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -30,10 +32,18 @@ class StatisticsServiceImplTest {
 
     StatisticsDayResponse statisticsDayResponse;
 
+    StatisticsDailyRateResponse statisticsDailyRateResponse;
+
     @BeforeEach
     void setUp() {
-        statisticsDayResponse = StatisticsDayResponse.builder()
+        statisticsDailyRateResponse = StatisticsDailyRateResponse.builder()
                 .achievementRate(55.25)
+                .build();
+
+        statisticsDayResponse = StatisticsDayResponse.builder()
+                .type(StatisticsType.DAILY.name())
+                .date(LocalDate.now())
+                .achievementRate(statisticsDailyRateResponse.achievementRate())
                 .build();
     }
 
@@ -45,13 +55,15 @@ class StatisticsServiceImplTest {
         LocalDateTime startDateTime = date.atStartOfDay();
         LocalDateTime endDateTime = date.plusDays(1).atStartOfDay();
 
-        when(statisticsMapper.findStatisticsDaily(memberId, startDateTime, endDateTime)).thenReturn(statisticsDayResponse);
+        when(statisticsMapper.findStatisticsDailyRate(memberId, startDateTime, endDateTime)).thenReturn(statisticsDailyRateResponse);
 
         StatisticsDayResponse statisticsDaily = statisticsServiceImpl.getStatisticsDaily(memberId, startDateTime, endDateTime);
 
         log.info("statisticsDaily = {}", statisticsDaily);
 
         assertThat(statisticsDaily).isEqualTo(statisticsDayResponse);
+        assertThat(statisticsDaily.type()).isEqualTo(statisticsDayResponse.type());
+        assertThat(statisticsDaily.date()).isEqualTo(statisticsDayResponse.date());
         assertThat(statisticsDaily.achievementRate()).isEqualTo(statisticsDayResponse.achievementRate());
     }
 
@@ -63,7 +75,7 @@ class StatisticsServiceImplTest {
         LocalDateTime startDateTime = date.atStartOfDay();
         LocalDateTime endDateTime = date.plusDays(1).atStartOfDay();
 
-        when(statisticsMapper.findStatisticsDaily(memberId, startDateTime, endDateTime)).thenReturn(null);
+        when(statisticsMapper.findStatisticsDailyRate(memberId, startDateTime, endDateTime)).thenReturn(null);
 
         StatisticsDayResponse statisticsDaily = statisticsServiceImpl.getStatisticsDaily(memberId, startDateTime, endDateTime);
 
