@@ -1,16 +1,14 @@
 package com.pigma.harusari.statistics.query.service;
 
 import com.pigma.harusari.statistics.common.StatisticsType;
-import com.pigma.harusari.statistics.query.dto.response.StatisticsDailyRateResponse;
-import com.pigma.harusari.statistics.query.dto.response.StatisticsDayResponse;
-import com.pigma.harusari.statistics.query.dto.response.StatisticsMonthResponse;
-import com.pigma.harusari.statistics.query.dto.response.StatisticsMonthlyRateResponse;
+import com.pigma.harusari.statistics.query.dto.response.*;
 import com.pigma.harusari.statistics.query.mapper.StatisticsMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -52,6 +50,26 @@ public class StatisticsServiceImpl implements StatisticsService{
                 .type(StatisticsType.MONTHLY.name())
                 .date(startDateTime.toLocalDate())
                 .achievementRate(monthlyRateResponse.achievementRate())
+                .build();
+    }
+
+    @Override
+    public StatisticsCategoryResponse getStatisticsCategory(Long memberId) {
+        List<StatisticsCategoryRateResponse> statisticsCategoryRateList = statisticsMapper.findStatisticsCategoryRate(memberId);
+
+        if (statisticsCategoryRateList == null ) {
+            return StatisticsCategoryResponse.builder()
+                    .type(StatisticsType.CATEGORY.name())
+                    .categoryRates(List.of(StatisticsCategoryRateResponse.builder()
+                            .categoryName(null)
+                            .achievementRate(DEFAULT_ACHIEVEMENT_RATE)
+                            .build()))
+                    .build();
+        }
+
+        return StatisticsCategoryResponse.builder()
+                .type(StatisticsType.CATEGORY.name())
+                .categoryRates(statisticsCategoryRateList)
                 .build();
     }
 

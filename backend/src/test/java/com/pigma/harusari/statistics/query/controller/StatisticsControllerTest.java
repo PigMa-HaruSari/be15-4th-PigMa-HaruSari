@@ -1,6 +1,8 @@
 package com.pigma.harusari.statistics.query.controller;
 
 import com.pigma.harusari.statistics.common.StatisticsType;
+import com.pigma.harusari.statistics.query.dto.response.StatisticsCategoryRateResponse;
+import com.pigma.harusari.statistics.query.dto.response.StatisticsCategoryResponse;
 import com.pigma.harusari.statistics.query.dto.response.StatisticsDayResponse;
 import com.pigma.harusari.statistics.query.dto.response.StatisticsMonthResponse;
 import com.pigma.harusari.statistics.query.exception.StatisticsErrorCode;
@@ -24,6 +26,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -44,6 +47,7 @@ class StatisticsControllerTest {
 
     StatisticsDayResponse statisticsDayResponse;
     StatisticsMonthResponse statisticsMonthResponse;
+    StatisticsCategoryResponse statisticsCategory;
 
     @BeforeEach
     void setUp() {
@@ -57,6 +61,14 @@ class StatisticsControllerTest {
                 .type(StatisticsType.MONTHLY.name())
                 .date(LocalDate.now())
                 .achievementRate(75.00)
+                .build();
+
+        statisticsCategory = StatisticsCategoryResponse.builder()
+                .type(StatisticsType.CATEGORY.name())
+                .categoryRates(List.of(StatisticsCategoryRateResponse.builder()
+                        .categoryName("코딩")
+                        .achievementRate(80.55)
+                        .build()))
                 .build();
     }
 
@@ -198,6 +210,32 @@ class StatisticsControllerTest {
                 .andExpect(jsonPath("$.errorCode").value(StatisticsErrorCode.INVALID_DATE_FORMAT.getErrorCode()))
                 .andExpect(jsonPath("$.message").exists())
                 .andExpect(jsonPath("$.message").value(StatisticsErrorCode.INVALID_DATE_FORMAT.getErrorMessage()))
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE));
+    }
+
+    /* 카테고리별 달성률 */
+    @Test
+    @DisplayName("[카테고리 달성률] 통계 조회 테스트")
+    void testGetStatisticsCategory() throws Exception {
+        Long memberId = 1L;
+
+        when(statisticsService.getStatisticsCategory(memberId)).thenReturn(statisticsCategory);
+
+        mockMvc.perform(get("/api/v1/statistics/category")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.type").exists())
+                .andExpect(jsonPath("$.data.type").value(StatisticsType.CATEGORY.name()))
+                .andExpect(jsonPath("$.data.categoryRates[0].categoryName").exists())
+                .andExpect(jsonPath("$.data.categoryRates[0].categoryName").value(statisticsCategory.categoryRates().get(0).categoryName()))
+                .andExpect(jsonPath("$.data.categoryRates[0].categoryName").exists())
+                .andExpect(jsonPath("$.data.categoryRates[0].achievementRate").value(statisticsCategory.categoryRates().get(0).achievementRate()))
+                .andExpect(jsonPath("$.timestamp").exists())
+                .andExpect(jsonPath("$.errorCode").doesNotExist())
+                .andExpect(jsonPath("$.message").doesNotExist())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE));
     }
 

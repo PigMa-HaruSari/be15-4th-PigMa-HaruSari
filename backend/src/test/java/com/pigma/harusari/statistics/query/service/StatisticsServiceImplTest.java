@@ -1,10 +1,7 @@
 package com.pigma.harusari.statistics.query.service;
 
 import com.pigma.harusari.statistics.common.StatisticsType;
-import com.pigma.harusari.statistics.query.dto.response.StatisticsDailyRateResponse;
-import com.pigma.harusari.statistics.query.dto.response.StatisticsDayResponse;
-import com.pigma.harusari.statistics.query.dto.response.StatisticsMonthResponse;
-import com.pigma.harusari.statistics.query.dto.response.StatisticsMonthlyRateResponse;
+import com.pigma.harusari.statistics.query.dto.response.*;
 import com.pigma.harusari.statistics.query.mapper.StatisticsMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -34,9 +32,11 @@ class StatisticsServiceImplTest {
 
     StatisticsDayResponse statisticsDayResponse;
     StatisticsMonthResponse statisticsMonthResponse;
+    StatisticsCategoryResponse statisticsCategoryResponse;
 
     StatisticsDailyRateResponse statisticsDailyRateResponse;
     StatisticsMonthlyRateResponse statisticsMonthlyRateResponse;
+    List<StatisticsCategoryRateResponse> statisticsCategoryRateList;
 
     @BeforeEach
     void setUp() {
@@ -48,6 +48,17 @@ class StatisticsServiceImplTest {
                 .achievementRate(75.00)
                 .build();
 
+        statisticsCategoryRateList = List.of(
+                StatisticsCategoryRateResponse.builder()
+                        .categoryName("코딩")
+                        .achievementRate(80.55)
+                        .build(),
+                StatisticsCategoryRateResponse.builder()
+                        .categoryName("운동")
+                        .achievementRate(65.15)
+                        .build()
+        );
+
         statisticsDayResponse = StatisticsDayResponse.builder()
                 .type(StatisticsType.DAILY.name())
                 .date(LocalDate.now())
@@ -58,6 +69,11 @@ class StatisticsServiceImplTest {
                 .type(StatisticsType.MONTHLY.name())
                 .date(LocalDate.now())
                 .achievementRate(statisticsMonthlyRateResponse.achievementRate())
+                .build();
+
+        statisticsCategoryResponse = StatisticsCategoryResponse.builder()
+                .type(StatisticsType.CATEGORY.name())
+                .categoryRates(statisticsCategoryRateList)
                 .build();
     }
 
@@ -135,6 +151,41 @@ class StatisticsServiceImplTest {
 
         assertThat(statisticsMonthly).isNotNull();
         assertThat(statisticsMonthly.achievementRate()).isEqualTo(0.0);
+    }
+
+    @Test
+    @DisplayName("[카테고리 달성률] 완료한 개수와 미완료한 개수를 구하는 테스트")
+    void testGetStatisticsCategory() {
+        Long memberId = 1L;
+
+        when(statisticsMapper.findStatisticsCategoryRate(memberId)).thenReturn(statisticsCategoryRateList);
+
+        StatisticsCategoryResponse statisticsCategory = statisticsServiceImpl.getStatisticsCategory(memberId);
+
+        log.info("statisticsCategory = {}", statisticsCategory);
+
+        assertThat(statisticsCategory).isEqualTo(statisticsCategoryResponse);
+        assertThat(statisticsCategory.type()).isEqualTo(statisticsCategoryResponse.type());
+        assertThat(statisticsCategory.categoryRates().get(0).categoryName()).isEqualTo(statisticsCategoryRateList.get(0).categoryName());
+        assertThat(statisticsCategory.categoryRates().get(0).achievementRate()).isEqualTo(statisticsCategoryRateList.get(0).achievementRate());
+        assertThat(statisticsCategory.categoryRates().get(1).categoryName()).isEqualTo(statisticsCategoryRateList.get(1).categoryName());
+        assertThat(statisticsCategory.categoryRates().get(1).achievementRate()).isEqualTo(statisticsCategoryRateList.get(1).achievementRate());
+    }
+
+    @Test
+    @DisplayName("[카테고리 달성률] 할 일을 작성하지 않는 경우 완료한 개수와 미완료한 개수를 구하는 테스트")
+    void testCategoryStatisticsWithEmptyTaskList() {
+        Long memberId = 1L;
+
+        when(statisticsMapper.findStatisticsCategoryRate(memberId)).thenReturn(null);
+
+        StatisticsCategoryResponse statisticsCategory = statisticsServiceImpl.getStatisticsCategory(memberId);
+
+        log.info("statisticsCategory = {}", statisticsCategory);
+
+        assertThat(statisticsCategory).isNotNull();
+        assertThat(statisticsCategory.categoryRates().get(0).categoryName()).isEqualTo(null);
+        assertThat(statisticsCategory.categoryRates().get(0).achievementRate()).isEqualTo(0.0);
     }
 
 }
