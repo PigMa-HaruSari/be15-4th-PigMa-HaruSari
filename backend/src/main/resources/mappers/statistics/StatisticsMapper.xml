@@ -16,4 +16,19 @@
         AND s.schedule_deadline <![CDATA[ >= ]]> #{startDateTime}
         AND s.schedule_deadline <![CDATA[ < ]]> #{endDateTime}
     </select>
+
+    <select id="findStatisticsMonthlyRate" resultType="com.pigma.harusari.statistics.query.dto.response.StatisticsMonthlyRateResponse">
+        SELECT
+            ROUND(
+                CASE
+                    WHEN COUNT(*) = 0 THEN 0
+                    ELSE SUM(CASE WHEN s.completion_status = 1 THEN 1 ELSE 0 END) * 100.0 / COUNT(*)
+                END
+            , 2) AS achievementRate
+        FROM schedule s
+        JOIN category c ON s.category_id = c.category_id
+        WHERE c.member_uid = #{memberId}
+        AND s.schedule_deadline <![CDATA[ >= ]]> #{startDateTime}
+        AND s.schedule_deadline <![CDATA[ < ]]> #{endDateTime}
+    </select>
 </mapper>

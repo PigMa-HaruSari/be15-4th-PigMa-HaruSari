@@ -3,6 +3,8 @@ package com.pigma.harusari.statistics.query.service;
 import com.pigma.harusari.statistics.common.StatisticsType;
 import com.pigma.harusari.statistics.query.dto.response.StatisticsDailyRateResponse;
 import com.pigma.harusari.statistics.query.dto.response.StatisticsDayResponse;
+import com.pigma.harusari.statistics.query.dto.response.StatisticsMonthResponse;
+import com.pigma.harusari.statistics.query.dto.response.StatisticsMonthlyRateResponse;
 import com.pigma.harusari.statistics.query.mapper.StatisticsMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,6 +35,23 @@ public class StatisticsServiceImpl implements StatisticsService{
                 .type(StatisticsType.DAILY.name())
                 .date(startDateTime.toLocalDate())
                 .achievementRate(dayRateResponse.achievementRate())
+                .build();
+    }
+
+    @Override
+    public StatisticsMonthResponse getStatisticsMonthly(Long memberId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        StatisticsMonthlyRateResponse monthlyRateResponse = statisticsMapper.findStatisticsMonthlyRate(memberId, startDateTime, endDateTime);
+
+        if (monthlyRateResponse == null) {
+            return StatisticsMonthResponse.builder()
+                    .achievementRate(DEFAULT_ACHIEVEMENT_RATE)
+                    .build();
+        }
+
+        return StatisticsMonthResponse.builder()
+                .type(StatisticsType.MONTHLY.name())
+                .date(startDateTime.toLocalDate())
+                .achievementRate(monthlyRateResponse.achievementRate())
                 .build();
     }
 

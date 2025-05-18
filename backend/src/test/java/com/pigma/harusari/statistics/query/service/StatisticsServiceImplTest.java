@@ -3,6 +3,8 @@ package com.pigma.harusari.statistics.query.service;
 import com.pigma.harusari.statistics.common.StatisticsType;
 import com.pigma.harusari.statistics.query.dto.response.StatisticsDailyRateResponse;
 import com.pigma.harusari.statistics.query.dto.response.StatisticsDayResponse;
+import com.pigma.harusari.statistics.query.dto.response.StatisticsMonthResponse;
+import com.pigma.harusari.statistics.query.dto.response.StatisticsMonthlyRateResponse;
 import com.pigma.harusari.statistics.query.mapper.StatisticsMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,8 +33,10 @@ class StatisticsServiceImplTest {
     StatisticsMapper statisticsMapper;
 
     StatisticsDayResponse statisticsDayResponse;
+    StatisticsMonthResponse statisticsMonthResponse;
 
     StatisticsDailyRateResponse statisticsDailyRateResponse;
+    StatisticsMonthlyRateResponse statisticsMonthlyRateResponse;
 
     @BeforeEach
     void setUp() {
@@ -40,10 +44,20 @@ class StatisticsServiceImplTest {
                 .achievementRate(55.25)
                 .build();
 
+        statisticsMonthlyRateResponse = StatisticsMonthlyRateResponse.builder()
+                .achievementRate(75.00)
+                .build();
+
         statisticsDayResponse = StatisticsDayResponse.builder()
                 .type(StatisticsType.DAILY.name())
                 .date(LocalDate.now())
                 .achievementRate(statisticsDailyRateResponse.achievementRate())
+                .build();
+
+        statisticsMonthResponse = StatisticsMonthResponse.builder()
+                .type(StatisticsType.MONTHLY.name())
+                .date(LocalDate.now())
+                .achievementRate(statisticsMonthlyRateResponse.achievementRate())
                 .build();
     }
 
@@ -83,6 +97,44 @@ class StatisticsServiceImplTest {
 
         assertThat(statisticsDaily).isNotNull();
         assertThat(statisticsDaily.achievementRate()).isEqualTo(0.0);
+    }
+
+    @Test
+    @DisplayName("[월별 달성률] 완료한 개수와 미완료한 개수를 구하는 테스트")
+    void testGetStatisticsMonthly() {
+        Long memberId = 1L;
+        LocalDate date = LocalDate.now();
+        LocalDateTime startDateTime = date.atStartOfDay();
+        LocalDateTime endDateTime = date.plusMonths(1).atStartOfDay();
+
+        when(statisticsMapper.findStatisticsMonthlyRate(memberId, startDateTime, endDateTime)).thenReturn(statisticsMonthlyRateResponse);
+
+        StatisticsMonthResponse statisticsMonthly = statisticsServiceImpl.getStatisticsMonthly(memberId, startDateTime, endDateTime);
+
+        log.info("statisticsMonthly = {}", statisticsMonthly);
+
+        assertThat(statisticsMonthly).isEqualTo(statisticsMonthResponse);
+        assertThat(statisticsMonthly.type()).isEqualTo(statisticsMonthResponse.type());
+        assertThat(statisticsMonthly.date()).isEqualTo(statisticsMonthResponse.date());
+        assertThat(statisticsMonthly.achievementRate()).isEqualTo(statisticsMonthResponse.achievementRate());
+    }
+
+    @Test
+    @DisplayName("[월별 달성률] 할 일을 작성하지 않는 경우 완료한 개수와 미완료한 개수를 구하는 테스트")
+    void testMonthlyStatisticsWithEmptyTaskList() {
+        Long memberId = 1L;
+        LocalDate date = LocalDate.now();
+        LocalDateTime startDateTime = date.atStartOfDay();
+        LocalDateTime endDateTime = date.plusDays(1).atStartOfDay();
+
+        when(statisticsMapper.findStatisticsMonthlyRate(memberId, startDateTime, endDateTime)).thenReturn(null);
+
+        StatisticsMonthResponse statisticsMonthly = statisticsServiceImpl.getStatisticsMonthly(memberId, startDateTime, endDateTime);
+
+        log.info("statisticsMonthly = {}", statisticsMonthly);
+
+        assertThat(statisticsMonthly).isNotNull();
+        assertThat(statisticsMonthly.achievementRate()).isEqualTo(0.0);
     }
 
 }
