@@ -27,10 +27,13 @@ public class UserCommandService {
     @Transactional
     public void register(SignUpRequest request) {
 
-        // 1. 이메일 인증 여부 확인
+        // 1. 이메일 관련 검증
         String verified = redisTemplate.opsForValue().get("EMAIL_VERIFIED:" + request.getEmail());
         if (!"true".equals(verified)) {
             throw new IllegalStateException("이메일 인증이 완료되지 않았습니다.");
+        }
+        if (memberRepository.existsByEmail(request.getEmail())) {
+            throw new IllegalStateException("이미 사용 중인 이메일입니다.");
         }
 
         // 2. 성별 변환
