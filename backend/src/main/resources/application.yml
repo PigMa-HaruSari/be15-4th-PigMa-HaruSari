@@ -27,12 +27,27 @@ spring:
           min-idle: 1  # 최소 유휴 연결 수
           max-wait: 2000ms  # 최대 대기 시간
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+
+
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   mapper-locations: mappers/**/*.xml
   type-aliases-package: com.pigma.harusari
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION} # 30분
+  refresh-expiration : ${JWT_REFRESH_EXPIRATION} # 7일
 
 server:
   port: ${SERVER_PORT}
