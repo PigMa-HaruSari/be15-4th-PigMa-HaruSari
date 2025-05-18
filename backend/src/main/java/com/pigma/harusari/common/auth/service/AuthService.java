@@ -2,6 +2,7 @@ package com.pigma.harusari.common.auth.service;
 
 import com.pigma.harusari.common.auth.dto.LoginRequest;
 import com.pigma.harusari.common.auth.dto.LoginResponse;
+import com.pigma.harusari.common.auth.dto.TokenResponse;
 import com.pigma.harusari.common.auth.entity.RefreshToken;
 import com.pigma.harusari.common.jwt.JwtTokenProvider;
 import com.pigma.harusari.user.command.entity.Member;
@@ -34,10 +35,12 @@ public class AuthService {
 
         // 2. accessToken, refreshToken 발급
         String accessToken = jwtTokenProvider.createToken(
-                String.valueOf(member.getMemberId()), member.getGender().name());
+                String.valueOf(member.getMemberId()), member.getGender().name()
+        );
 
         String refreshToken = jwtTokenProvider.createRefreshToken(
-                String.valueOf(member.getMemberId()), member.getGender().name());
+                String.valueOf(member.getMemberId()), member.getGender().name()
+        );
 
         // 3. refreshToken을 Redis에 저장 (key: memberId, value: refreshToken)
         RefreshToken refreshTokenObj = RefreshToken.builder()
@@ -58,5 +61,38 @@ public class AuthService {
                 .userId(member.getMemberId())
                 .build();
     }
+
+
+    public TokenResponse refreshToken(String providedRefreshToken) {
+        // 1. refreshToken 유효성 검증
+        jwtTokenProvider.validateToken(providedRefreshToken);
+
+        // 2. Redis에 저장된 refreshToken 조회
+        String userId = jwtTokenProvider.getUsernameFromJWT(providedRefreshToken);
+        RefreshToken stored = redisTemplate.opsForValue().get(userId);
+        if (stored == null || !stored.getToken().equals(providedRefreshToken)) {
+            throw new BadCredentialsException("리프레시 토큰이 일치하지 않거나 없습니다.");
+        }
+
+        // 3. DB에서 회원 정보 조회
+        Member member = userCommandRepository.findById(Long.valueOf(userId))
+                .orElseThrow(() -> new BadCredentialsException("해당 회원이 존재하지 않습니다."));
+
+        // 4. 새 accessToken, refreshToken 생성
+        String accessToken = jwtTokenProvider.createToken(userId, member.getGender().name());
+        String refreshToken = jwtTokenProvider.createRefreshToken(userId, member.getGender().name());
+
+        // 5. Redis에 새로운 refreshToken 갱신
+        redisTemplate.opsForValue().set(userId,
+                RefreshToken.builder().token(refreshToken).build(),
+                Duration.ofDays(7));
+
+        // 6. 반환
+        return TokenResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
+
 
 }

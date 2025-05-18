@@ -7,6 +7,7 @@ import com.pigma.harusari.common.auth.service.AuthService;
 import com.pigma.harusari.common.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +30,16 @@ public class AuthController {
                 .body(ApiResponse.success(response));
     }
 
+    @PostMapping("/refresh")
+    public ResponseEntity<ApiResponse<TokenResponse>> refreshToken(
+            @CookieValue(name = "refreshToken", required = false) String refreshToken
+    ) {
+        if (refreshToken == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        TokenResponse tokenResponse = authService.refreshToken(refreshToken);
+        return buildTokenResponse(tokenResponse);
+    }
 
 
     /* accessToken 과 refreshToken을 body와 쿠키에 담아 반환 */
