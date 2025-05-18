@@ -26,6 +26,7 @@ repositories {
 dependencies {
     // spring-boot-starter-web
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-amqp'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
     // validation
@@ -37,6 +38,9 @@ dependencies {
     // mybatis
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4'
     testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.4'
+
+    // RabbitMQ
+    testImplementation 'org.springframework.amqp:spring-rabbit-test'
 
     // mariadb
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'

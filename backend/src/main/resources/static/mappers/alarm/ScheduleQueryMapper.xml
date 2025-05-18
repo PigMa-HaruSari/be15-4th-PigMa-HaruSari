@@ -1,0 +1,8 @@
+<select id="findIncompleteSchedules" resultType="map">
+    SELECT s.schedule_id, s.schedule_content, s.completion_status, s.schedule_deadline
+    FROM schedule s
+    JOIN category c ON s.category_id = c.category_id
+    WHERE c.member_id = #{memberId}
+    AND s.completion_status = 0
+    AND DATE(s.schedule_deadline) = CURRENT_DATE
+</select>
