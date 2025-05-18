@@ -62,7 +62,6 @@ public class AuthService {
                 .build();
     }
 
-
     public TokenResponse refreshToken(String providedRefreshToken) {
         // 1. refreshToken 유효성 검증
         jwtTokenProvider.validateToken(providedRefreshToken);
@@ -94,5 +93,13 @@ public class AuthService {
                 .build();
     }
 
+    public void logout(String refreshToken) {
+        // 1. refreshToken 유효성 검증
+        jwtTokenProvider.validateToken(refreshToken);
+
+        // 2. 사용자를 찾아 Redis에서 삭제
+        String userId = jwtTokenProvider.getUsernameFromJWT(refreshToken);
+        redisTemplate.delete(userId);
+    }
 
 }
