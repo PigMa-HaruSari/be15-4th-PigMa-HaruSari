@@ -20,7 +20,9 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class StatisticsController {
 
-    private static final long ONE_DAY = 1L;
+    private static final long STATISTICS_DAY_RANGE = 1L;
+    private static final long STATISTICS_MONTH_RANGE = 1L;
+    private static final int FIRST_DAY_OF_MONTH = 1;
 
     private final StatisticsService statisticsService;
 
@@ -33,7 +35,7 @@ public class StatisticsController {
         Long memberId = 1L; // 스프링 시큐리티 구현 완료되면 변경할 예정
 
         LocalDateTime startDateTime = parseDate.atStartOfDay();
-        LocalDateTime endDateTime = parseDate.plusDays(ONE_DAY).atStartOfDay();
+        LocalDateTime endDateTime = parseDate.plusDays(STATISTICS_DAY_RANGE).atStartOfDay();
 
         StatisticsDayResponse statisticsDaily = statisticsService.getStatisticsDaily(memberId, startDateTime, endDateTime);
 
@@ -50,8 +52,8 @@ public class StatisticsController {
 
         Long memberId = 1L; // 스프링 시큐리티 구현 완료되면 변경할 예정
 
-        LocalDateTime startDateTime = parseDate.withDayOfMonth(1).atStartOfDay();
-        LocalDateTime endDateTime = parseDate.plusMonths(1).withDayOfMonth(1).atStartOfDay();
+        LocalDateTime startDateTime = parseDate.withDayOfMonth(FIRST_DAY_OF_MONTH).atStartOfDay();
+        LocalDateTime endDateTime = parseDate.plusMonths(STATISTICS_MONTH_RANGE).withDayOfMonth(FIRST_DAY_OF_MONTH).atStartOfDay();
 
         StatisticsMonthResponse statisticsMonthly = statisticsService.getStatisticsMonthly(memberId, startDateTime, endDateTime);
 
