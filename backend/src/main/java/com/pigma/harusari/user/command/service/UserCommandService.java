@@ -6,6 +6,7 @@ import com.pigma.harusari.category.command.repository.CategoryCommandRepository;
 import com.pigma.harusari.user.command.dto.SignUpRequest;
 import com.pigma.harusari.user.command.entity.Gender;
 import com.pigma.harusari.user.command.entity.Member;
+import com.pigma.harusari.user.command.exception.*;
 import com.pigma.harusari.user.command.repository.UserCommandRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -27,13 +28,21 @@ public class UserCommandService {
     @Transactional
     public void register(SignUpRequest request) {
 
-        // 1. 이메일 관련 검증
+        // 1. 유효성 검증: 이메일, 닉네임, 카테고리
         String verified = redisTemplate.opsForValue().get("EMAIL_VERIFIED:" + request.getEmail());
         if (!"true".equals(verified)) {
-            throw new IllegalStateException("이메일 인증이 완료되지 않았습니다.");
+            throw new EmailVerificationFailedException(UserCommandErrorCode.EMAIL_VERIFICATION_FAILED);
         }
         if (memberRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalStateException("이미 사용 중인 이메일입니다.");
+            throw new EmailDuplicatedException(UserCommandErrorCode.EMAIL_DUPLICATED);
+        }
+
+        if(request.getNickname() == null || request.getNickname().trim().isEmpty()){
+            throw new NicknameRequiredException(UserCommandErrorCode.NICKNAME_REQUIRED);
+        }
+
+        if(request.getCategoryList() == null || request.getCategoryList().isEmpty()){
+            throw new CategoryRequiredException(UserCommandErrorCode.CATEGORY_REQUIRED);
         }
 
         // 2. 성별 변환
