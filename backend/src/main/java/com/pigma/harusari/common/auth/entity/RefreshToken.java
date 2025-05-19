@@ -30,4 +30,5 @@ public class RefreshToken {
         this.token = token;
         this.expiryDate = expiryDate;
     }
+
 }

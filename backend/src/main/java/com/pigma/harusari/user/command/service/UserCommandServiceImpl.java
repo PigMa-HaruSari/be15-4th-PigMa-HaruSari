@@ -27,7 +27,6 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     @Transactional
     public void register(SignUpRequest request) {
-
         // 1. 유효성 검증: 이메일, 닉네임, 카테고리
         String verified = redisTemplate.opsForValue().get("EMAIL_VERIFIED:" + request.getEmail());
         if (!"true".equals(verified)) {

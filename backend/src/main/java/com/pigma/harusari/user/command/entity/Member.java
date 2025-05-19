@@ -26,7 +26,7 @@ public class Member {
     @Column(name = "nickname", nullable = false)
     private String nickname;
 
-    @Enumerated(EnumType.ORDINAL) // DB에는 0, 1, 2 순서를 tinyint로 저장
+    @Enumerated(EnumType.ORDINAL) // DB에는 0, 1, 2를 순서대로 tinyint로 저장
     @Column(name = "gender", nullable = false)
     private Gender gender;
 
@@ -48,4 +48,5 @@ public class Member {
         this.userRegisteredAt = userRegisteredAt;
         this.userDeletedAt = false;
     }
+
 }

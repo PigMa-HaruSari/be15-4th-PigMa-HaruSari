@@ -22,7 +22,9 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<LoginResponse>> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<ApiResponse<LoginResponse>> login(
+            @RequestBody LoginRequest request
+    ) {
         LoginResponse response = authService.login(request);
         ResponseCookie cookie = createRefreshTokenCookie(response.getRefreshToken());
         return ResponseEntity.ok()

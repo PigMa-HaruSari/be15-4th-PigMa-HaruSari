@@ -50,4 +50,5 @@ public class EmailAuthService {
         int code = new Random().nextInt(900000) + 100000; // 100000 ~ 999999
         return String.valueOf(code);
     }
+
 }

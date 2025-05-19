@@ -14,4 +14,5 @@ public class EmailRequest {
     private String email;
 
     private String code; // 인증 코드
+
 }

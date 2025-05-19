@@ -4,6 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum Gender {
+
     NONE(0),
     MALE(1),
     FEMALE(2);
@@ -29,6 +30,5 @@ public enum Gender {
             default -> NONE;
         };
     }
-
 
 }

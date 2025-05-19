@@ -12,7 +12,6 @@ import lombok.Setter;
 import java.util.List;
 
 @Getter
-@Setter
 @Builder
 public class SignUpRequest {
 
@@ -27,8 +26,9 @@ public class SignUpRequest {
     private String nickname;
 
     @NotBlank
-    private String gender; // "NONE", "MALE", "FEMALE" (예시)
+    private String gender; // "NONE", "MALE", "FEMALE"
 
     @NotEmpty(message = "카테고리는 최소 1개 이상 입력해야 합니다.")
     private List<CategoryCreateRequest> categoryList;
+
 }
