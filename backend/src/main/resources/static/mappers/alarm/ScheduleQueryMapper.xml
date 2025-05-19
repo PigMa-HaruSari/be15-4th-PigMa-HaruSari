@@ -5,16 +5,24 @@
 
 <mapper namespace="com.pigma.harusari.alarm.query.mapper.ScheduleQueryMapper">
 
-    <select id="findIncompleteSchedules" resultType="map">
-        SELECT s.schedule_id,
-               s.schedule_content,
-               s.completion_status,
-               s.schedule_deadline
+    <select id="findIncompleteScheduleCount" resultType="map">
+        SELECT c.member_id, COUNT(*) AS count
+        FROM schedule s
+            JOIN category c ON s.category_id = c.category_id
+        WHERE s.completion_status = 0
+          AND DATE(s.schedule_deadline) = CURRENT_DATE
+        GROUP BY c.member_id
+    </select>
+
+    <select id="findWeeklyAchievementRate" resultType="map">
+        SELECT c.member_id,
+               COUNT(*) AS total,
+               SUM(CASE WHEN s.completion_status = 1 THEN 1 ELSE 0 END) AS completed
         FROM schedule s
                  JOIN category c ON s.category_id = c.category_id
-        WHERE c.member_id = #{memberId}
-          AND s.completion_status = 0
-          AND DATE(s.schedule_deadline) = CURRENT_DATE
+        WHERE s.schedule_deadline BETWEEN DATE_SUB(CURRENT_DATE, INTERVAL WEEKDAY(CURRENT_DATE) DAY)
+                  AND DATE_ADD(CURRENT_DATE, INTERVAL (6 - WEEKDAY(CURRENT_DATE)) DAY)
+        GROUP BY c.member_id
     </select>
 
 </mapper>

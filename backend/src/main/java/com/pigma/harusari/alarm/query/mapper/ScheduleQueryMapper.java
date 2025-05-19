@@ -7,5 +7,7 @@ import java.util.Map;
 
 @Mapper
 public interface ScheduleQueryMapper {
-    List<Map<String, Object>> findIncompleteSchedules();
+    List<Map<String, Object>> findIncompleteScheduleCount();
+
+    List<Map<String, Object>> findWeeklyAchievementRate();
 }
