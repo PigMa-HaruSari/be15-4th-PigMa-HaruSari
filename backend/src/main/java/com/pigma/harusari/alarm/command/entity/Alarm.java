@@ -1,17 +1,13 @@
 package com.pigma.harusari.alarm.command.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Date;
 
 @Entity
 @Table(name = "alarm")
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class Alarm {
 
@@ -22,12 +18,16 @@ public class Alarm {
 
     @Column(name = "member_id")
     private Long memberId;
+
     @Column(name = "alarm_message")
     private String alarmMessage;
+
     @Column(name = "type")
     private String type;
+
     @Column(name = "is_read")
     private Boolean isRead;
+    
     @Column(name = "created_at")
     private Date createdAt;
 
