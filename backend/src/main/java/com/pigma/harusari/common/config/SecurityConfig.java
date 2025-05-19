@@ -4,7 +4,7 @@ import com.pigma.harusari.common.jwt.JwtAuthenticationFilter;
 import com.pigma.harusari.common.jwt.JwtTokenProvider;
 import com.pigma.harusari.common.jwt.RestAccessDeniedHandler;
 import com.pigma.harusari.common.jwt.RestAuthenticationEntryPoint;
-import com.pigma.harusari.common.service.CustomUserDetailsService;
+import com.pigma.harusari.common.auth.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package com.pigma.harusari.common.service;
+package com.pigma.harusari.common.auth.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
