@@ -21,5 +21,11 @@ mybatis:
   mapper-locations: mappers/**/*.xml
   type-aliases-package: com.pigma.harusari
 
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
 server:
   port: ${SERVER_PORT}
