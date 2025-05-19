@@ -42,4 +42,28 @@ public class AlarmScheduler {
 
         log.info("⏰ Daily grouped alarm sent to {} users", counts.size());
     }
+
+    @Scheduled(cron = "0 0 8 * * MON") // 매주 월요일 오전 8시
+    public void sendWeeklyAchievementAlarm() {
+        List<Map<String, Object>> stats = scheduleQueryMapper.findWeeklyAchievementRate();
+
+        for (Map<String, Object> stat : stats) {
+            Long memberId = ((Number) stat.get("member_id")).longValue();
+            int total = ((Number) stat.get("total")).intValue();
+            int completed = ((Number) stat.get("completed")).intValue();
+
+            int percentage = (total == 0) ? 0 : (completed * 100 / total);
+
+            AlarmCreateDto dto = AlarmCreateDto.builder()
+                    .memberId(memberId)
+                    .alarmMessage("지난 주의 일정 달성률은 " + percentage + "% 입니다! 💪")
+                    .type("WEEKLY")
+                    .build();
+
+            var alarm = alarmService.createAlarm(dto);
+            rabbitTemplate.convertAndSend("alarm.exchange", "alarm.key", alarm);
+        }
+
+        log.info("📅 Weekly achievement alarms sent to {} users", stats.size());
+    }
 }
