@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.pigma.harusari.statistics.query.mapper.StatisticsMapper">
+    <select id="findStatisticsDailyRate" resultType="com.pigma.harusari.statistics.query.dto.response.StatisticsDailyRateResponse">
+        SELECT
+            ROUND(
+                CASE
+                    WHEN COUNT(*) = 0 THEN 0
+                    ELSE SUM(CASE WHEN s.completion_status = 1 THEN 1 ELSE 0 END) * 100.0 / COUNT(*)
+                END
+            , 2) AS achievementRate
+        FROM schedule s
+        JOIN category c ON s.category_id = c.category_id
+        WHERE c.member_uid = #{memberId}
+        AND s.schedule_deadline <![CDATA[ >= ]]> #{startDateTime}
+        AND s.schedule_deadline <![CDATA[ < ]]> #{endDateTime}
+    </select>
+
+    <select id="findStatisticsMonthlyRate" resultType="com.pigma.harusari.statistics.query.dto.response.StatisticsMonthlyRateResponse">
+        SELECT
+            ROUND(
+                CASE
+                    WHEN COUNT(*) = 0 THEN 0
+                    ELSE SUM(CASE WHEN s.completion_status = 1 THEN 1 ELSE 0 END) * 100.0 / COUNT(*)
+                END
+            , 2) AS achievementRate
+        FROM schedule s
+        JOIN category c ON s.category_id = c.category_id
+        WHERE c.member_uid = #{memberId}
+        AND s.schedule_deadline <![CDATA[ >= ]]> #{startDateTime}
+        AND s.schedule_deadline <![CDATA[ < ]]> #{endDateTime}
+    </select>
+
+    <select id="findStatisticsCategoryRate" resultType="com.pigma.harusari.statistics.query.dto.response.StatisticsCategoryRateResponse">
+        SELECT
+            c.name AS categoryName,
+            ROUND(
+                CASE
+                    WHEN COUNT(*) = 0 THEN 0
+                    ELSE SUM(CASE WHEN s.completion_status = 1 THEN 1 ELSE 0 END) * 100.0 / COUNT(*)
+                END
+            , 2) AS achievementRate
+        FROM schedule s
+        JOIN category c ON s.category_id = c.category_id
+        WHERE c.member_uid = #{memberId}
+        GROUP BY c.category_id, c.category_name
+    </select>
+</mapper>

@@ -49,5 +49,11 @@ jwt:
   expiration: ${JWT_EXPIRATION} # 30분
   refresh-expiration : ${JWT_REFRESH_EXPIRATION} # 7일
 
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
 server:
   port: ${SERVER_PORT}
