@@ -73,7 +73,7 @@ class UserCommandControllerTest {
     }
 
     @Test
-    @DisplayName("[회원가입] 이메일 인증이 안 된 경우 400 반환")
+    @DisplayName("[회원가입] 인증코드가 일치하지 않아 이메일 인증이 실패한 경우 예외가 발생하는 테스트")
     void testEmailVerificationFailed() throws Exception {
         doThrow(new EmailVerificationFailedException(UserCommandErrorCode.EMAIL_VERIFICATION_FAILED)).when(userCommandService).register(any());
 
@@ -90,7 +90,7 @@ class UserCommandControllerTest {
     }
 
     @Test
-    @DisplayName("[회원가입] 중복 이메일일 경우 400 반환")
+    @DisplayName("[회원가입] 이메일이 중복될 때 예외가 발생하는 테스트")
     void testEmailDuplicated() throws Exception {
         doThrow(new EmailDuplicatedException(UserCommandErrorCode.EMAIL_DUPLICATED)).when(userCommandService).register(any());
 
@@ -107,7 +107,7 @@ class UserCommandControllerTest {
     }
 
     @Test
-    @DisplayName("[회원가입] 닉네임 누락 시 400 반환")
+    @DisplayName("[회원가입] 닉네임을 입력하지 않았을 때 예외가 발생하는 테스트")
     void testNicknameMissing() throws Exception {
         doThrow(new NicknameRequiredException(UserCommandErrorCode.NICKNAME_REQUIRED)).when(userCommandService).register(any());
 
@@ -124,7 +124,7 @@ class UserCommandControllerTest {
     }
 
     @Test
-    @DisplayName("[회원가입] 카테고리 누락 시 400 반환")
+    @DisplayName("[회원가입] 카테고리를 선택하지 않았을 때 예외가 발생하는 테스트")
     void testCategoryMissing() throws Exception {
         doThrow(new CategoryRequiredException(UserCommandErrorCode.CATEGORY_REQUIRED)).when(userCommandService).register(any());
 
