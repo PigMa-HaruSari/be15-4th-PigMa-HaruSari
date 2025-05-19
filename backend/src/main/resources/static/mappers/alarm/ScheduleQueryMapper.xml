@@ -1,8 +1,20 @@
-<select id="findIncompleteSchedules" resultType="map">
-    SELECT s.schedule_id, s.schedule_content, s.completion_status, s.schedule_deadline
-    FROM schedule s
-    JOIN category c ON s.category_id = c.category_id
-    WHERE c.member_id = #{memberId}
-    AND s.completion_status = 0
-    AND DATE(s.schedule_deadline) = CURRENT_DATE
-</select>
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.pigma.harusari.alarm.query.mapper.ScheduleQueryMapper">
+
+    <select id="findIncompleteSchedules" resultType="map">
+        SELECT s.schedule_id,
+               s.schedule_content,
+               s.completion_status,
+               s.schedule_deadline
+        FROM schedule s
+                 JOIN category c ON s.category_id = c.category_id
+        WHERE c.member_id = #{memberId}
+          AND s.completion_status = 0
+          AND DATE(s.schedule_deadline) = CURRENT_DATE
+    </select>
+
+</mapper>
