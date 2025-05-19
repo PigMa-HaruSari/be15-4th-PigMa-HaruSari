@@ -23,24 +23,23 @@ public class AlarmScheduler {
 
     @Scheduled(cron = "0 0 22 * * *") // 매일 오후 10시
     public void sendDailyUncompletedTaskAlarm() {
-        List<Map<String, Object>> schedules = scheduleQueryMapper.findIncompleteSchedules();
+        List<Map<String, Object>> counts = scheduleQueryMapper.findIncompleteScheduleCount();
 
-        for (Map<String, Object> schedule : schedules) {
-            Long memberId = ((Number) schedule.get("member_uid")).longValue();
+        for (int i = 0; i < counts.size(); i++) {
+            Map<String, Object> result = counts.get(i);
+            Long memberId = ((Number) result.get("member_id")).longValue();
+            int count = ((Number) result.get("count")).intValue();
 
             AlarmCreateDto dto = AlarmCreateDto.builder()
                     .memberId(memberId)
-                    .alarmMessage("미완료된 일정이 있습니다. 확인해 주세요!")
+                    .alarmMessage("아직 완료하지 않은 오늘 일정이 " + count + "개 있어요! 💡")
                     .type("DAILY")
                     .build();
 
-            // DB 저장
             var alarm = alarmService.createAlarm(dto);
-
-            // 큐 전송
             rabbitTemplate.convertAndSend("alarm.exchange", "alarm.key", alarm);
         }
 
-        log.info("⏰ Daily alarm sent to {} users", schedules.size());
+        log.info("⏰ Daily grouped alarm sent to {} users", counts.size());
     }
 }
