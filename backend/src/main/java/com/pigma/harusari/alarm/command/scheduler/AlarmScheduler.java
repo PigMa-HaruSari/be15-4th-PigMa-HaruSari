@@ -27,6 +27,7 @@ public class AlarmScheduler {
 
         for (int i = 0; i < counts.size(); i++) {
             Map<String, Object> result = counts.get(i);
+            // Number는 자바에서 모든 숫자형 클래스의 상위 추상 클래스
             Long memberId = ((Number) result.get("member_id")).longValue();
             int count = ((Number) result.get("count")).intValue();
 
@@ -65,5 +66,29 @@ public class AlarmScheduler {
         }
 
         log.info("📅 Weekly achievement alarms sent to {} users", stats.size());
+    }
+
+    @Scheduled(cron = "0 0 8 1 * *") // 매달 1일 오전 8시
+    public void sendMonthlyAchievementAlarm() {
+        List<Map<String, Object>> stats = scheduleQueryMapper.findMonthlyAchievementRate();
+
+        for (Map<String, Object> stat : stats) {
+            Long memberId = ((Number) stat.get("member_id")).longValue();
+            int total = ((Number) stat.get("total")).intValue();
+            int completed = ((Number) stat.get("completed")).intValue();
+
+            int percentage = (total == 0) ? 0 : (completed * 100 / total);
+
+            AlarmCreateDto dto = AlarmCreateDto.builder()
+                    .memberId(memberId)
+                    .alarmMessage("지난 달의 일정 달성률은 " + percentage + "% 입니다! 🗓️")
+                    .type("MONTHLY")
+                    .build();
+
+            var alarm = alarmService.createAlarm(dto);
+            rabbitTemplate.convertAndSend("alarm.exchange", "alarm.key", alarm);
+        }
+
+        log.info("📆 Monthly achievement alarms sent to {} users", stats.size());
     }
 }
