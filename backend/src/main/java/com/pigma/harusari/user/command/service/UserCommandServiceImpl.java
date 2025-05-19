@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class UserCommandServiceImpl implements UserCommandService {
 
@@ -25,7 +26,7 @@ public class UserCommandServiceImpl implements UserCommandService {
     private final RedisTemplate<String, String> redisTemplate;
     private final PasswordEncoder passwordEncoder;
 
-    @Transactional
+    @Override
     public void register(SignUpRequest request) {
         // 1. 유효성 검증: 이메일, 닉네임, 카테고리
         String verified = redisTemplate.opsForValue().get("EMAIL_VERIFIED:" + request.getEmail());
@@ -71,4 +72,5 @@ public class UserCommandServiceImpl implements UserCommandService {
         // 5. 이메일 인증 상태 삭제
         redisTemplate.delete("EMAIL_VERIFIED:" + request.getEmail());
     }
+
 }
