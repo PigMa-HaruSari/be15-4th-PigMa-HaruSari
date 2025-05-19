@@ -1,14 +1,13 @@
 package com.pigma.harusari.user.command.exception;
 
-import com.pigma.harusari.statistics.query.exception.StatisticsErrorCode;
 import lombok.Getter;
 
 @Getter
 public class NicknameRequiredException extends RuntimeException {
 
-    private final StatisticsErrorCode errorCode;
+    private final UserCommandErrorCode errorCode;
 
-    public NicknameRequiredException(StatisticsErrorCode errorCode) {
+    public NicknameRequiredException(UserCommandErrorCode errorCode) {
         super(errorCode.getErrorMessage());
         this.errorCode = errorCode;
     }
