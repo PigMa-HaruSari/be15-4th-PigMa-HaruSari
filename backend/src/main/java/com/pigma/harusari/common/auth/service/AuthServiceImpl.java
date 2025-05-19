@@ -4,9 +4,11 @@ import com.pigma.harusari.common.auth.dto.LoginRequest;
 import com.pigma.harusari.common.auth.dto.LoginResponse;
 import com.pigma.harusari.common.auth.dto.TokenResponse;
 import com.pigma.harusari.common.auth.entity.RefreshToken;
+import com.pigma.harusari.common.auth.exception.*;
 import com.pigma.harusari.common.jwt.JwtTokenProvider;
 import com.pigma.harusari.user.command.entity.Member;
 import com.pigma.harusari.user.command.repository.UserCommandRepository;
+import jakarta.security.auth.message.AuthException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -30,10 +32,10 @@ public class AuthServiceImpl implements AuthService {
     public LoginResponse login(LoginRequest request) {
         // 1. 회원 조회하고 비밀번호 일치 여부 확인
         Member member = userCommandRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new BadCredentialsException("이메일 또는 비밀번호가 잘못되었습니다."));
+                .orElseThrow(() -> new LogInMemberNotFoundException(AuthErrorCode.LOGIN_MEMBER_NOT_FOUND));
 
         if (!passwordEncoder.matches(request.getPassword(), member.getPassword())) {
-            throw new BadCredentialsException("이메일 또는 비밀번호가 잘못되었습니다.");
+            throw new LogInPasswordMismatchException(AuthErrorCode.LOGIN_PASSWORD_MISMATCH);
         }
 
         // 2. accessToken, refreshToken 발급
@@ -74,12 +76,12 @@ public class AuthServiceImpl implements AuthService {
         String userId = jwtTokenProvider.getUsernameFromJWT(providedRefreshToken);
         RefreshToken stored = redisTemplate.opsForValue().get(userId);
         if (stored == null || !stored.getToken().equals(providedRefreshToken)) {
-            throw new BadCredentialsException("리프레시 토큰이 일치하지 않거나 없습니다.");
+            throw new RefreshTokenInvalidException(AuthErrorCode.REFRESH_TOKEN_INVALID);
         }
 
         // 3. DB에서 회원 정보 조회
         Member member = userCommandRepository.findById(Long.valueOf(userId))
-                .orElseThrow(() -> new BadCredentialsException("해당 회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new RefreshMemberNotFoundException(AuthErrorCode.REFRESH_MEMBER_NOT_FOUND));
 
         // 4. 새 accessToken, refreshToken 생성
         String accessToken = jwtTokenProvider.createToken(userId, member.getGender().name());
