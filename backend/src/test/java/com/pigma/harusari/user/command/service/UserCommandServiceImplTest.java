@@ -26,11 +26,11 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.*;
 
-@DisplayName("[회원 - service] UserCommandService 테스트")
-class UserCommandServiceTest {
+@DisplayName("[회원 - service] UserCommandServiceImpl 테스트")
+class UserCommandServiceImplTest {
 
     @InjectMocks
-    private UserCommandService userCommandService;
+    private UserCommandServiceImpl userCommandServiceImpl;
 
     @Mock
     private UserCommandRepository userCommandRepository;
@@ -70,7 +70,7 @@ class UserCommandServiceTest {
         given(valueOperations.get("EMAIL_VERIFIED:test@example.com")).willReturn(null); // 인증 안됨
 
         // when & then
-        assertThatThrownBy(() -> userCommandService.register(request))
+        assertThatThrownBy(() -> userCommandServiceImpl.register(request))
                 .isInstanceOf(EmailVerificationFailedException.class)
                 .hasMessage("인증번호가 일치하지 않습니다.");
     }
@@ -94,7 +94,7 @@ class UserCommandServiceTest {
         given(userCommandRepository.existsByEmail("test@example.com")).willReturn(true); // 중복 이메일
 
         // when & then
-        assertThatThrownBy(() -> userCommandService.register(request))
+        assertThatThrownBy(() -> userCommandServiceImpl.register(request))
                 .isInstanceOf(EmailDuplicatedException.class)
                 .hasMessage("중복되는 이메일입니다.");
     }
@@ -118,7 +118,7 @@ class UserCommandServiceTest {
         given(userCommandRepository.existsByEmail("test@example.com")).willReturn(false);
 
         // when & then
-        assertThatThrownBy(() -> userCommandService.register(request))
+        assertThatThrownBy(() -> userCommandServiceImpl.register(request))
                 .isInstanceOf(NicknameRequiredException.class)
                 .hasMessage("닉네임을 입력해야 합니다.");
     }
@@ -140,7 +140,7 @@ class UserCommandServiceTest {
         given(userCommandRepository.existsByEmail("test@example.com")).willReturn(false);
 
         // when & then
-        assertThatThrownBy(() -> userCommandService.register(request))
+        assertThatThrownBy(() -> userCommandServiceImpl.register(request))
                 .isInstanceOf(CategoryRequiredException.class)
                 .hasMessage("1개 이상의 카테고리를 등록해야 합니다.");
     }
@@ -176,7 +176,7 @@ class UserCommandServiceTest {
         given(userCommandRepository.save(any(Member.class))).willReturn(member);
 
         // when
-        userCommandService.register(request);
+        userCommandServiceImpl.register(request);
 
         // then
         verify(userCommandRepository).save(any(Member.class));
