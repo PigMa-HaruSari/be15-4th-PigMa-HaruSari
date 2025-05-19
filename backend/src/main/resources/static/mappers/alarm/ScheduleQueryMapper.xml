@@ -25,4 +25,15 @@
         GROUP BY c.member_id
     </select>
 
+    <select id="findMonthlyAchievementRate" resultType="map">
+        SELECT c.member_id,
+               COUNT(*) AS total,
+               SUM(CASE WHEN s.completion_status = 1 THEN 1 ELSE 0 END) AS completed
+        FROM schedule s
+                 JOIN category c ON s.category_id = c.category_id
+        WHERE s.schedule_deadline BETWEEN DATE_FORMAT(CURRENT_DATE - INTERVAL 1 MONTH, '%Y-%m-01')
+                  AND LAST_DAY(CURRENT_DATE - INTERVAL 1 MONTH)
+        GROUP BY c.member_id
+    </select>
+
 </mapper>
