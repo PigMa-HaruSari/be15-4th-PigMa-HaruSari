@@ -21,9 +21,8 @@ public class AlarmQueryController {
     private final AlarmQueryService alarmQueryService;
 
     @GetMapping("/unread")
-    public ResponseEntity<ApiResponse<List<AlarmResponseDto>>> getUnreadAlarms(/*@AuthenticationPrincipal User userDetails*/) {
-        //Long memberId = userDetails.getId();
-        Long memberId = 1L;
+    public ResponseEntity<ApiResponse<List<AlarmResponseDto>>> getUnreadAlarms(@AuthenticationPrincipal User userDetails) {
+        Long memberId = Long.parseLong(userDetails.getUsername());
 
         List<AlarmResponseDto> alarms = alarmQueryService.getUnreadAlarms(memberId);
 
