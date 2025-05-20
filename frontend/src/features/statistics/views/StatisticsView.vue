@@ -29,7 +29,9 @@ onMounted(() => {
     }
     ,
     datesSet: (info) => {
-      selectedMonth.value = new Date(info.startStr)
+      // 현재 표시 중인 달의 첫 번째 날짜 기준으로 설정
+      const currentMonth = info.view.currentStart
+      selectedMonth.value = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1)
     }
   })
 
