@@ -4,7 +4,10 @@ package com.pigma.harusari.user.command.service;
 import com.pigma.harusari.category.command.application.dto.request.CategoryCreateRequest;
 import com.pigma.harusari.category.command.domain.aggregate.Category;
 import com.pigma.harusari.category.command.domain.repository.CategoryCommandRepository;
+import com.pigma.harusari.common.auth.exception.AuthErrorCode;
+import com.pigma.harusari.common.auth.exception.LogInMemberNotFoundException;
 import com.pigma.harusari.user.command.dto.SignUpRequest;
+import com.pigma.harusari.user.command.dto.UpdateUserProfileRequest;
 import com.pigma.harusari.user.command.entity.Gender;
 import com.pigma.harusari.user.command.entity.Member;
 import com.pigma.harusari.user.command.exception.*;
@@ -74,6 +77,28 @@ public class UserCommandServiceImpl implements UserCommandService {
 
         // 5. 이메일 인증 상태 삭제
         redisTemplate.delete("EMAIL_VERIFIED:" + request.getEmail());
+    }
+
+    @Override
+    public void updateUserProfile(Long userId, UpdateUserProfileRequest request) {
+        // 1. 사용자 존재 여부 확인
+        Member member = memberRepository.findById(userId)
+                .orElseThrow(() -> new LogInMemberNotFoundException(AuthErrorCode.LOGIN_MEMBER_NOT_FOUND));
+
+        // 2. 업데이트 요청이 아예 비어 있는 경우
+        if (request.getNickname() == null
+                && request.getGender() == null
+                && request.getConsentPersonalInfo() == null) {
+            throw new EmptyUpdateRequestException(UserCommandErrorCode.EMPTY_UPDATE_REQUEST);
+        }
+
+        // 3. null인 경우 기존 값으로 유지
+        String newNickname = request.getNickname() != null ? request.getNickname() : member.getNickname();
+        Gender newGender = request.getGender() != null ? request.getGender() : member.getGender();
+        Boolean newConsent = request.getConsentPersonalInfo() != null ? request.getConsentPersonalInfo() : member.getConsentPersonalInfo();
+
+        // 4. 변경사항 반영
+        member.updateProfile(newNickname, newGender, newConsent);
     }
 
 }

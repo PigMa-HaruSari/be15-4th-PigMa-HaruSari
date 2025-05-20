@@ -13,6 +13,7 @@ public enum UserCommandErrorCode {
     NICKNAME_REQUIRED("10003", "닉네임을 입력해야 합니다.", HttpStatus.BAD_REQUEST),
     CONSENT_REQUIRED("10004", "개인 정보 수집 동의는 필수입니다.", HttpStatus.BAD_REQUEST),
     CATEGORY_REQUIRED("10005", "1개 이상의 카테고리를 등록해야 합니다.", HttpStatus.BAD_REQUEST),
+    EMPTY_UPDATE_REQUEST("10006", "수정할 정보가 없습니다.", HttpStatus.BAD_REQUEST),
     END_OF_ERROR("19999", "", HttpStatus.BAD_REQUEST);
 
 

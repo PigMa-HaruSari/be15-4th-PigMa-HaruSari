@@ -52,4 +52,11 @@ public class Member {
         this.userDeletedAt = false;
     }
 
+    public void updateProfile(String nickname, Gender gender, Boolean consentPersonalInfo) {
+        this.nickname = nickname;
+        this.gender = gender;
+        this.consentPersonalInfo = consentPersonalInfo;
+        this.userModifiedAt = LocalDateTime.now();
+    }
+
 }
