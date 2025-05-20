@@ -4,6 +4,7 @@ import com.pigma.harusari.common.dto.ApiResponse;
 import com.pigma.harusari.user.query.dto.UserProfileResponse;
 import com.pigma.harusari.user.query.service.UserQueryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,12 +19,12 @@ public class UserQueryController {
     private final UserQueryService userQueryService;
 
     @GetMapping("/mypage")
-    public ApiResponse<UserProfileResponse> getProfile(
+    public ResponseEntity<ApiResponse<UserProfileResponse>> getProfile(
             @AuthenticationPrincipal UserDetails userDetails
     ) {
         Long userId = Long.valueOf(userDetails.getUsername());
         UserProfileResponse profile = userQueryService.getUserProfile(userId);
-        return ApiResponse.success(profile);
+        return ResponseEntity.ok(ApiResponse.success(profile));
     }
 
 }

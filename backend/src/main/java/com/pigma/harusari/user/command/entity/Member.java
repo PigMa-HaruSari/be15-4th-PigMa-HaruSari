@@ -30,7 +30,7 @@ public class Member {
     private Gender gender;
 
     @Column(name = "consent_personal_info", nullable = false)
-    private Boolean consentPersonalInfo;
+    private Boolean consentPersonalInfo = false;
 
     @Column(name = "user_registered_at", nullable = false)
     private LocalDateTime userRegisteredAt;
@@ -39,7 +39,7 @@ public class Member {
     private LocalDateTime userModifiedAt;
 
     @Column(name = "user_deleted_at")
-    private Boolean userDeletedAt;
+    private Boolean userDeletedAt = false;
 
     @Builder
     public Member(String email, String password, String nickname, Gender gender, Boolean consentPersonalInfo, LocalDateTime userRegisteredAt) {
@@ -47,8 +47,8 @@ public class Member {
         this.password = password;
         this.nickname = nickname;
         this.gender = gender;
-        this.consentPersonalInfo = consentPersonalInfo;
-        this.userRegisteredAt = userRegisteredAt;
+        this.consentPersonalInfo = (consentPersonalInfo != null) ? consentPersonalInfo : false;
+        this.userRegisteredAt = (userRegisteredAt != null) ? userRegisteredAt : LocalDateTime.now();
         this.userDeletedAt = false;
     }
 
