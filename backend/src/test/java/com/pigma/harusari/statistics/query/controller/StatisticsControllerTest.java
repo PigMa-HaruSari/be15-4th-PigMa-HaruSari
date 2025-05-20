@@ -67,6 +67,7 @@ class StatisticsControllerTest {
                 .type(StatisticsType.CATEGORY.name())
                 .categoryRates(List.of(StatisticsCategoryRateResponse.builder()
                         .categoryName("코딩")
+                        .color("#FF0000")
                         .achievementRate(80.55)
                         .build()))
                 .build();
@@ -231,7 +232,9 @@ class StatisticsControllerTest {
                 .andExpect(jsonPath("$.data.type").value(StatisticsType.CATEGORY.name()))
                 .andExpect(jsonPath("$.data.categoryRates[0].categoryName").exists())
                 .andExpect(jsonPath("$.data.categoryRates[0].categoryName").value(statisticsCategory.categoryRates().get(0).categoryName()))
-                .andExpect(jsonPath("$.data.categoryRates[0].categoryName").exists())
+                .andExpect(jsonPath("$.data.categoryRates[0].color").exists())
+                .andExpect(jsonPath("$.data.categoryRates[0].color").value(statisticsCategory.categoryRates().get(0).color()))
+                .andExpect(jsonPath("$.data.categoryRates[0].achievementRate").exists())
                 .andExpect(jsonPath("$.data.categoryRates[0].achievementRate").value(statisticsCategory.categoryRates().get(0).achievementRate()))
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andExpect(jsonPath("$.errorCode").doesNotExist())
