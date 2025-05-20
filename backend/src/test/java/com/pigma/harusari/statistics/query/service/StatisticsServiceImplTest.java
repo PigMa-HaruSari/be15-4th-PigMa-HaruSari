@@ -51,10 +51,12 @@ class StatisticsServiceImplTest {
         statisticsCategoryRateList = List.of(
                 StatisticsCategoryRateResponse.builder()
                         .categoryName("코딩")
+                        .color("#000000")
                         .achievementRate(80.55)
                         .build(),
                 StatisticsCategoryRateResponse.builder()
                         .categoryName("운동")
+                        .color("#FF0000")
                         .achievementRate(65.15)
                         .build()
         );
@@ -167,8 +169,10 @@ class StatisticsServiceImplTest {
         assertThat(statisticsCategory).isEqualTo(statisticsCategoryResponse);
         assertThat(statisticsCategory.type()).isEqualTo(statisticsCategoryResponse.type());
         assertThat(statisticsCategory.categoryRates().get(0).categoryName()).isEqualTo(statisticsCategoryRateList.get(0).categoryName());
+        assertThat(statisticsCategory.categoryRates().get(0).color()).isEqualTo(statisticsCategoryRateList.get(0).color());
         assertThat(statisticsCategory.categoryRates().get(0).achievementRate()).isEqualTo(statisticsCategoryRateList.get(0).achievementRate());
         assertThat(statisticsCategory.categoryRates().get(1).categoryName()).isEqualTo(statisticsCategoryRateList.get(1).categoryName());
+        assertThat(statisticsCategory.categoryRates().get(1).color()).isEqualTo(statisticsCategoryRateList.get(1).color());
         assertThat(statisticsCategory.categoryRates().get(1).achievementRate()).isEqualTo(statisticsCategoryRateList.get(1).achievementRate());
     }
 
