@@ -1,6 +1,6 @@
 package com.pigma.harusari.user.command.dto;
 
-import com.pigma.harusari.category.command.dto.CategoryCreateRequest;
+import com.pigma.harusari.category.command.application.dto.request.CategoryCreateRequest;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
