@@ -1,5 +1,7 @@
 package com.pigma.harusari.alarm.sse;
 
+import com.pigma.harusari.alarm.exception.AlarmErrorCode;
+import com.pigma.harusari.alarm.exception.AlarmException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -29,6 +31,7 @@ public class SseService {
             emitter.send(SseEmitter.event().name("connect").data("connected"));
         } catch (IOException e) {
             log.error("❌ Connection error", e);
+            throw new AlarmException(AlarmErrorCode.SSE_CONNECTION_ERROR);
         }
 
         return emitter;
@@ -42,7 +45,10 @@ public class SseService {
             } catch (IOException e) {
                 log.error("❌ Failed to send SSE", e);
                 emitters.remove(memberId);
+                throw new AlarmException(AlarmErrorCode.SSE_SEND_ERROR);
             }
+        } else {
+            throw new AlarmException(AlarmErrorCode.SSE_NOT_FOUND);
         }
     }
 }
