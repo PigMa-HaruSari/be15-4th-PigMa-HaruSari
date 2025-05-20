@@ -24,7 +24,7 @@ public class AlarmQueryController {
     public ResponseEntity<ApiResponse<List<AlarmResponseDto>>> getUnreadAlarms(
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        Long memberId = Long.parseLong(userDetails.getUsername());
+        Long memberId = userDetails.getMemberId();
 
         List<AlarmResponseDto> alarms = alarmQueryService.getUnreadAlarms(memberId);
 
