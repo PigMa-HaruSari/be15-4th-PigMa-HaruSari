@@ -3,6 +3,7 @@ package com.pigma.harusari.user.query.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pigma.harusari.common.auth.exception.AuthErrorCode;
 import com.pigma.harusari.common.auth.exception.LogInMemberNotFoundException;
+import com.pigma.harusari.support.WithMockCustomUser;
 import com.pigma.harusari.user.query.dto.UserProfileResponse;
 import com.pigma.harusari.user.query.service.UserQueryService;
 import org.junit.jupiter.api.DisplayName;
@@ -12,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -36,7 +36,7 @@ class UserQueryControllerTest {
 
     @Test
     @DisplayName("[회원 정보 조회] 회원 정보 조회 성공")
-    @WithMockUser(username = "1", roles = "USER")
+    @WithMockCustomUser(memberId = 1L)
     void testGetMyPage() throws Exception {
         // given
         UserProfileResponse mockResponse = UserProfileResponse.builder()
@@ -52,7 +52,6 @@ class UserQueryControllerTest {
 
         // when & then
         mockMvc.perform(get("/api/v1/users/mypage")
-                        .header("Authorization", "Bearer fake-jwt-token")  // 실제 토큰 검증은 생략됨
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
@@ -64,7 +63,7 @@ class UserQueryControllerTest {
 
     @Test
     @DisplayName("[회원 정보 조회] 존재하지 않는 회원에게 예외를 발생하는 테스트")
-    @WithMockUser(username = "999", roles = "USER")
+    @WithMockCustomUser(memberId = 999L)
     void testGetMyPageUserNotFound() throws Exception {
         // given
         Mockito.when(userQueryService.getUserProfile(anyLong()))
@@ -72,7 +71,6 @@ class UserQueryControllerTest {
 
         // when & then
         mockMvc.perform(get("/api/v1/users/mypage")
-                        .header("Authorization", "Bearer fake-jwt-token")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.success").value(false))
