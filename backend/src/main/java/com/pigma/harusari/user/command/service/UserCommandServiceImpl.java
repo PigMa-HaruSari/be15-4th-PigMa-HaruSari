@@ -1,8 +1,9 @@
 package com.pigma.harusari.user.command.service;
 
-import com.pigma.harusari.category.command.dto.CategoryCreateRequest;
-import com.pigma.harusari.category.command.entity.Category;
-import com.pigma.harusari.category.command.repository.CategoryCommandRepository;
+
+import com.pigma.harusari.category.command.application.dto.request.CategoryCreateRequest;
+import com.pigma.harusari.category.command.domain.aggregate.Category;
+import com.pigma.harusari.category.command.domain.repository.CategoryCommandRepository;
 import com.pigma.harusari.user.command.dto.SignUpRequest;
 import com.pigma.harusari.user.command.entity.Gender;
 import com.pigma.harusari.user.command.entity.Member;
@@ -65,7 +66,7 @@ public class UserCommandServiceImpl implements UserCommandService {
                     .memberId(savedMember.getMemberId())
                     .categoryName(catReq.getCategoryName())
                     .color(catReq.getColor() != null ? catReq.getColor() : "#111111")
-                    .completionStatus(false)
+                    .completed(false)
                     .build());
         }
 
