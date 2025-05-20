@@ -1,7 +1,7 @@
 package com.pigma.harusari.category.query.controller;
 
 import com.pigma.harusari.category.query.dto.response.CategoryResponse;
-import com.pigma.harusari.category.query.service.category.query.service.CategoryQueryServiceImpl;
+import com.pigma.harusari.category.query.service.CategoryQueryServiceImpl;
 import com.pigma.harusari.common.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

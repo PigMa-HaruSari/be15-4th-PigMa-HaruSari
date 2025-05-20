@@ -2,11 +2,11 @@ package com.pigma.harusari.category.command.application.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
+@Builder
 public class CategoryCreateRequest {
 
     private Long memberId;
@@ -17,4 +17,5 @@ public class CategoryCreateRequest {
 
     @NotBlank(message = "색상은 필수입니다.")
     private String color;
+
 }

@@ -1,4 +1,4 @@
-package com.pigma.harusari.category.query.service.category.query.service;
+package com.pigma.harusari.category.query.service;
 
 import com.pigma.harusari.category.query.dto.response.CategoryResponse;
 

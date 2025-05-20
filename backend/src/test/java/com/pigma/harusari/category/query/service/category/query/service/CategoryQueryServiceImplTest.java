@@ -1,8 +1,9 @@
 package com.pigma.harusari.category.query.service.category.query.service;
 
 import com.pigma.harusari.category.command.domain.aggregate.Category;
-import com.pigma.harusari.category.command.domain.repository.CategoryRepository;
+import com.pigma.harusari.category.command.domain.repository.CategoryCommandRepository;
 import com.pigma.harusari.category.query.dto.response.CategoryResponse;
+import com.pigma.harusari.category.query.service.CategoryQueryServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -19,7 +20,7 @@ import static org.mockito.Mockito.when;
 class CategoryQueryServiceImplTest {
 
     @Mock
-    private CategoryRepository categoryRepository;
+    private CategoryCommandRepository categoryCommandRepository;
 
     @InjectMocks
     private CategoryQueryServiceImpl categoryQueryServiceImpl;
@@ -43,7 +44,7 @@ class CategoryQueryServiceImplTest {
                 .completed(true)
                 .build();
 
-        when(categoryRepository.findByMemberId(memberId))
+        when(categoryCommandRepository.findByMemberId(memberId))
                 .thenReturn(Arrays.asList(category1, category2));
 
         // when
