@@ -1,7 +1,7 @@
 package com.pigma.harusari.user.command.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pigma.harusari.category.command.dto.CategoryCreateRequest;
+import com.pigma.harusari.category.command.application.dto.request.CategoryCreateRequest;
 import com.pigma.harusari.user.command.dto.SignUpRequest;
 import com.pigma.harusari.user.command.exception.*;
 import com.pigma.harusari.user.command.exception.handler.UserCommandExceptionHandler;
