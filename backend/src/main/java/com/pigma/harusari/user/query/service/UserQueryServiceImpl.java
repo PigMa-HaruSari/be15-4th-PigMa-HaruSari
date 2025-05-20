@@ -25,6 +25,7 @@ public class UserQueryServiceImpl implements UserQueryService {
                 .email(member.getEmail())
                 .nickname(member.getNickname())
                 .gender(member.getGender().name())
+                .consentPersonalInfo(member.getConsentPersonalInfo())
                 .userRegisteredAt(member.getUserRegisteredAt())
                 .build();
     }

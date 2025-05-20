@@ -13,5 +13,6 @@ public class UserProfileResponse {
     private String nickname;
     private String gender;
     private LocalDateTime userRegisteredAt;
+    private Boolean consentPersonalInfo;
 
 }
