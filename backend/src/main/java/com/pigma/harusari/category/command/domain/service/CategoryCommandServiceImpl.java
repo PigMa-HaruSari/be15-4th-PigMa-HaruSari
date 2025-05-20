@@ -10,12 +10,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CategoryCommandServiceImpl implements CategoryCommandService {
 
     private final CategoryCommandRepository categoryCommandRepository;
 
     @Override
-    @Transactional
     public Long createCategory(CategoryCreateRequest request) {
         if (categoryCommandRepository.existsByMemberIdAndCategoryName(request.getMemberId(), request.getCategoryName())) {
             throw new IllegalStateException("이미 동일한 이름의 카테고리가 존재합니다.");
@@ -32,7 +32,6 @@ public class CategoryCommandServiceImpl implements CategoryCommandService {
     }
 
     @Override
-    @Transactional
     public void updateCategory(Long categoryId, Long memberId, CategoryUpdateRequest request) {
         Category category = categoryCommandRepository.findByCategoryIdAndMemberId(categoryId, memberId)
                 .orElseThrow(() -> new IllegalArgumentException("카테고리를 찾을 수 없습니다."));
@@ -47,7 +46,6 @@ public class CategoryCommandServiceImpl implements CategoryCommandService {
     }
 
     @Override
-    @Transactional
     public void completeCategory(Long categoryId, Long memberId) {
         Category category = categoryCommandRepository.findByCategoryIdAndMemberId(categoryId, memberId)
                 .orElseThrow(() -> new IllegalArgumentException("카테고리를 찾을 수 없습니다."));
@@ -56,7 +54,6 @@ public class CategoryCommandServiceImpl implements CategoryCommandService {
     }
 
     @Override
-    @Transactional
     public void deleteCategory(Long categoryId, Long memberId, String confirmText, boolean hasSchedules) {
         if (!"카테고리를 삭제하겠습니다.".equals(confirmText)) {
             throw new IllegalArgumentException("삭제 확인 문구가 일치하지 않습니다.");

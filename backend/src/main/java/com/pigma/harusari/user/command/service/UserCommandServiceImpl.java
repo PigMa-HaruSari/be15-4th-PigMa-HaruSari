@@ -63,10 +63,10 @@ public class UserCommandServiceImpl implements UserCommandService {
         // 4. 카테고리 자동 등록
         for (CategoryCreateRequest catReq : request.getCategoryList()) {
             categoryRepository.save(Category.builder()
-                    .memberUid(savedMember.getMemberId())
+                    .memberId(savedMember.getMemberId())
                     .categoryName(catReq.getCategoryName())
                     .color(catReq.getColor() != null ? catReq.getColor() : "#111111")
-                    .completionStatus(false)
+                    .completed(false)
                     .build());
         }
 
