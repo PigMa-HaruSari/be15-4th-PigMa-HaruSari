@@ -28,7 +28,7 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     @Override
     public void register(SignUpRequest request) {
-        // 1. 유효성 검증: 이메일, 닉네임, 카테고리
+        // 1. 유효성 검증: 이메일, 닉네임, 개인정보 수집 동의, 카테고리
         String verified = redisTemplate.opsForValue().get("EMAIL_VERIFIED:" + request.getEmail());
         if (!"true".equals(verified)) {
             throw new EmailVerificationFailedException(UserCommandErrorCode.EMAIL_VERIFICATION_FAILED);
@@ -36,11 +36,12 @@ public class UserCommandServiceImpl implements UserCommandService {
         if (memberRepository.existsByEmail(request.getEmail())) {
             throw new EmailDuplicatedException(UserCommandErrorCode.EMAIL_DUPLICATED);
         }
-
         if(request.getNickname() == null || request.getNickname().trim().isEmpty()){
             throw new NicknameRequiredException(UserCommandErrorCode.NICKNAME_REQUIRED);
         }
-
+        if(request.getConsentPersonalInfo() == null || request.getConsentPersonalInfo().describeConstable().isEmpty()) {
+            throw new ConsentRequiredException(UserCommandErrorCode.CONSENT_REQUIRED);
+        }
         if(request.getCategoryList() == null || request.getCategoryList().isEmpty()){
             throw new CategoryRequiredException(UserCommandErrorCode.CATEGORY_REQUIRED);
         }
