@@ -21,7 +21,7 @@ public class AlarmCommandController {
     public ResponseEntity<ApiResponse<Void>> markAllAsRead(
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        Long memberId = Long.parseLong(userDetails.getUsername());
+        Long memberId = userDetails.getMemberId();
         alarmCommandService.markAllAsRead(memberId);
         return ResponseEntity.ok(ApiResponse.success(null));
     }

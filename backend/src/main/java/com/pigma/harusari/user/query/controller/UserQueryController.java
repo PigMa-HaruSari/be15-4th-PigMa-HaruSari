@@ -22,7 +22,7 @@ public class UserQueryController {
     public ResponseEntity<ApiResponse<UserProfileResponse>> getProfile(
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        Long userId = Long.valueOf(userDetails.getUsername());
+        Long userId = userDetails.getMemberId();
         UserProfileResponse profile = userQueryService.getUserProfile(userId);
         return ResponseEntity.ok(ApiResponse.success(profile));
     }

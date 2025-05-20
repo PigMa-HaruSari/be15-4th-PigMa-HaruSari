@@ -19,7 +19,7 @@ public class SseController {
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         // userDetails에서 memberId(즉 userId) 추출
-        Long memberId = Long.parseLong(userDetails.getUsername());
+        Long memberId = userDetails.getMemberId();
         return sseService.subscribe(memberId);
     }
 
