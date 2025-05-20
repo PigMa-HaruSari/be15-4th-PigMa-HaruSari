@@ -29,3 +29,4 @@ mybatis:
 
 server:
   port: ${SERVER_PORT}
+

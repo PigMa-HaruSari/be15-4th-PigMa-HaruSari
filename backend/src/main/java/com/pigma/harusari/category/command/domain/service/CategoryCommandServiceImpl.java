@@ -30,7 +30,7 @@ public class CategoryCommandServiceImpl implements CategoryCommandService {
     @Override
     @Transactional
     public void updateCategory(Long categoryId, Long memberId, CategoryUpdateRequest request) {
-        Category category = categoryRepository.findByIdAndMemberId(categoryId, memberId)
+        Category category = categoryRepository.findByCategoryIdAndMemberId(categoryId, memberId)
                 .orElseThrow(() -> new IllegalArgumentException("카테고리를 찾을 수 없습니다."));
 
         category.updateCategoryDetails(request.getCategoryName(), request.getColor());
@@ -39,7 +39,7 @@ public class CategoryCommandServiceImpl implements CategoryCommandService {
     @Override
     @Transactional
     public void completeCategory(Long categoryId, Long memberId) {
-        Category category = categoryRepository.findByIdAndMemberId(categoryId, memberId)
+        Category category = categoryRepository.findByCategoryIdAndMemberId(categoryId, memberId)
                 .orElseThrow(() -> new IllegalArgumentException("카테고리를 찾을 수 없습니다."));
 
         category.completeCategory();
@@ -52,7 +52,7 @@ public class CategoryCommandServiceImpl implements CategoryCommandService {
             throw new IllegalArgumentException("삭제 확인 문구가 일치하지 않습니다.");
         }
 
-        Category category = categoryRepository.findByIdAndMemberId(categoryId, memberId)
+        Category category = categoryRepository.findByCategoryIdAndMemberId(categoryId, memberId)
                 .orElseThrow(() -> new IllegalArgumentException("카테고리를 찾을 수 없습니다."));
 
         // 연결된 일정 삭제는 추후 처리

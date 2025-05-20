@@ -22,7 +22,7 @@ public class CategoryCommandController {
 
 
     // 카테고리 생성
-    @PostMapping("")
+    @PostMapping("/create")
     public ResponseEntity<ApiResponse<CategoryCommandResponse>> createCategory(
             @RequestBody @Valid CategoryCreateRequest request
     ) {
@@ -47,7 +47,7 @@ public class CategoryCommandController {
     }
 
     // 카테고리 완료 처리
-    @PatchMapping("/{categoryId}/complete")
+    @PutMapping("/{categoryId}/complete")
     public ResponseEntity<ApiResponse<Void>> completeCategory(
             @PathVariable Long categoryId,
             @RequestParam Long memberId

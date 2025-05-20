@@ -14,7 +14,7 @@ public class Category {
     @Column(name = "category_id")
     private Long categoryId;
 
-    @Column(name = "member_uid")
+    @Column(name = "member_id")
     private Long memberId;
 
     @Column(name = "category_name")

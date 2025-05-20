@@ -12,7 +12,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     boolean existsByMemberIdAndCategoryName(Long memberId, String categoryName);
 
     // 본인 카테고리만 삭제 가능
-    Optional<Category> findByIdAndMemberId(Long categoryId, Long memberId);
+    Optional<Category> findByCategoryIdAndMemberId(Long categoryId, Long memberId);
 
     List<Category> findByMemberId(Long memberId);
 
