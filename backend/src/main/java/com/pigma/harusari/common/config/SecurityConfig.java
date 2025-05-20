@@ -42,6 +42,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers("/test/daily","/test/monthly","test/weekly","test/send").permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex

@@ -17,8 +17,8 @@ public class Category {
     @Column(name = "category_id")
     private Long categoryId;
 
-    @Column(name = "member_uid", nullable = false)
-    private Long memberUid;
+    @Column(name = "member_id", nullable = false)
+    private Long memberId;
 
     @Column(name = "category_name", nullable = false)
     private String categoryName;
@@ -30,8 +30,8 @@ public class Category {
     private boolean completionStatus;
 
     @Builder
-    public Category(Long memberUid, String categoryName, String color, boolean completionStatus) {
-        this.memberUid = memberUid;
+    public Category(Long memberId, String categoryName, String color, boolean completionStatus) {
+        this.memberId = memberId;
         this.categoryName = categoryName;
         this.color = color;
         this.completionStatus = completionStatus;
