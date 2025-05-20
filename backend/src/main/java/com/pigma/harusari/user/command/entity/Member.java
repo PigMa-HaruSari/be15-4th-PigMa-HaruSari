@@ -64,4 +64,9 @@ public class Member {
         this.userModifiedAt = LocalDateTime.now();
     }
 
+    public void signOut() {
+        this.userDeletedAt = true;
+        this.userModifiedAt = LocalDateTime.now();
+    }
+
 }

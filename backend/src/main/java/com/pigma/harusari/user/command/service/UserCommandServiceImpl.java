@@ -6,6 +6,7 @@ import com.pigma.harusari.category.command.domain.aggregate.Category;
 import com.pigma.harusari.category.command.domain.repository.CategoryCommandRepository;
 import com.pigma.harusari.common.auth.exception.AuthErrorCode;
 import com.pigma.harusari.common.auth.exception.LogInMemberNotFoundException;
+import com.pigma.harusari.user.command.dto.SignOutRequest;
 import com.pigma.harusari.user.command.dto.SignUpRequest;
 import com.pigma.harusari.user.command.dto.UpdatePasswordRequest;
 import com.pigma.harusari.user.command.dto.UpdateUserProfileRequest;
@@ -125,6 +126,21 @@ public class UserCommandServiceImpl implements UserCommandService {
 
         // 5. 비밀번호 변경 완료
         member.changePassword(passwordEncoder.encode(request.getNewPassword()));
+    }
+
+    @Override
+    public void signOut(Long userId, SignOutRequest request) {
+        // 1. 사용자 존재 여부 확인
+        Member member = memberRepository.findById(userId)
+                .orElseThrow(() -> new LogInMemberNotFoundException(AuthErrorCode.LOGIN_MEMBER_NOT_FOUND));
+
+        // 2. 입력한 비밀번호 일치 여부 확인
+        if (!passwordEncoder.matches(request.getPassword(), member.getPassword())) {
+            throw new CurrentPasswordIncorrectException(UserCommandErrorCode.PASSWORD_MISMATCH);
+        }
+
+        // 3. 회원 탈퇴
+        member.signOut();
     }
 
 }

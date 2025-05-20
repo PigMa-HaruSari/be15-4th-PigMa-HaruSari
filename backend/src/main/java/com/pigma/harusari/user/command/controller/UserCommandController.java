@@ -2,6 +2,7 @@ package com.pigma.harusari.user.command.controller;
 
 import com.pigma.harusari.common.auth.model.CustomUserDetails;
 import com.pigma.harusari.common.dto.ApiResponse;
+import com.pigma.harusari.user.command.dto.SignOutRequest;
 import com.pigma.harusari.user.command.dto.SignUpRequest;
 import com.pigma.harusari.user.command.dto.UpdatePasswordRequest;
 import com.pigma.harusari.user.command.dto.UpdateUserProfileRequest;
@@ -22,7 +23,9 @@ public class UserCommandController {
     private final UserCommandService userCommandService;
 
     @PostMapping("/auth/signup")
-    public ResponseEntity<ApiResponse<Void>> signup(@Valid @RequestBody SignUpRequest request) {
+    public ResponseEntity<ApiResponse<Void>> signup(
+            @Valid @RequestBody SignUpRequest request
+    ) {
         userCommandService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success(null));
@@ -39,9 +42,21 @@ public class UserCommandController {
 
     @PutMapping("/user/password")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<ApiResponse<Void>> changePassword(@Valid @RequestBody UpdatePasswordRequest request,
-                                                            @AuthenticationPrincipal CustomUserDetails user) {
+    public ResponseEntity<ApiResponse<Void>> changePassword(
+            @Valid @RequestBody UpdatePasswordRequest request,
+            @AuthenticationPrincipal CustomUserDetails user
+    ) {
         userCommandService.changePassword(user.getMemberId(), request);
+        return ResponseEntity.ok(ApiResponse.success(null));
+    }
+
+    @PutMapping("/user/signout")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ApiResponse<Void>> signOut(
+            @Valid @RequestBody SignOutRequest request,
+            @AuthenticationPrincipal CustomUserDetails user
+    ) {
+        userCommandService.signOut(user.getMemberId(), request);
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 
