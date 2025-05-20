@@ -4,7 +4,10 @@ package com.pigma.harusari.user.command.service;
 import com.pigma.harusari.category.command.application.dto.request.CategoryCreateRequest;
 import com.pigma.harusari.category.command.domain.aggregate.Category;
 import com.pigma.harusari.category.command.domain.repository.CategoryCommandRepository;
+import com.pigma.harusari.common.auth.exception.AuthErrorCode;
+import com.pigma.harusari.common.auth.exception.LogInMemberNotFoundException;
 import com.pigma.harusari.user.command.dto.SignUpRequest;
+import com.pigma.harusari.user.command.dto.UpdateUserProfileRequest;
 import com.pigma.harusari.user.command.entity.Gender;
 import com.pigma.harusari.user.command.entity.Member;
 import com.pigma.harusari.user.command.exception.*;
@@ -20,8 +23,10 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.BDDMockito.*;
 
 @DisplayName("[회원 - service] UserCommandServiceImpl 테스트")
@@ -211,6 +216,84 @@ class UserCommandServiceImplTest {
         assertThatThrownBy(() -> userCommandServiceImpl.register(request))
                 .isInstanceOf(CategoryRequiredException.class)
                 .hasMessage(UserCommandErrorCode.CATEGORY_REQUIRED.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("[개인정보 수정] 정상 수정 완료 테스트")
+    void testUpdateProfileSuccess() {
+        // given
+        Long memberId = 1L;
+        Member member = Member.builder()
+                .email("test@example.com")
+                .password("password123")
+                .nickname("기존닉네임")
+                .gender(Gender.FEMALE)
+                .consentPersonalInfo(false)
+                .userRegisteredAt(LocalDateTime.now())
+                .build();
+        ReflectionTestUtils.setField(member, "memberId", memberId);
+        given(userCommandRepository.findById(memberId)).willReturn(Optional.of(member));
+
+        UpdateUserProfileRequest request = UpdateUserProfileRequest.builder()
+                .nickname("새닉네임")
+                .gender(Gender.MALE)
+                .consentPersonalInfo(true)
+                .build();
+
+        // when
+        userCommandServiceImpl.updateUserProfile(memberId, request);
+
+        // then
+        assertThat(member.getNickname()).isEqualTo("새닉네임");
+        assertThat(member.getGender()).isEqualTo(Gender.MALE);
+        assertThat(member.getConsentPersonalInfo()).isTrue();
+    }
+
+    @Test
+    @DisplayName("[개인정보 수정] 사용자 정보가 잘못된 경우에 예외가 발생하는 테스트")
+    void testUpdateProfileUserNotFound() {
+        // given
+        Long memberId = 999L;
+        UpdateUserProfileRequest request = UpdateUserProfileRequest.builder()
+                .nickname("변경닉네임")
+                .gender(Gender.MALE)
+                .consentPersonalInfo(true)
+                .build();
+
+        given(userCommandRepository.findById(memberId)).willReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> userCommandServiceImpl.updateUserProfile(memberId, request))
+                .isInstanceOf(LogInMemberNotFoundException.class)
+                .hasMessage(AuthErrorCode.LOGIN_MEMBER_NOT_FOUND.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("[개인정보 수정] 수정 요청이 비어있는 경우에 예외가 발생하는 테스트")
+    void testUpdateProfileEmptyRequest() {
+        // given
+        Long memberId = 1L;
+        Member member = Member.builder()
+                .email("test@example.com")
+                .password("password123")
+                .nickname("기존닉네임")
+                .gender(Gender.FEMALE)
+                .consentPersonalInfo(false)
+                .userRegisteredAt(LocalDateTime.now())
+                .build();
+        ReflectionTestUtils.setField(member, "memberId", memberId);
+        given(userCommandRepository.findById(memberId)).willReturn(Optional.of(member));
+
+        UpdateUserProfileRequest emptyRequest = UpdateUserProfileRequest.builder()
+                .nickname(null)
+                .gender(null)
+                .consentPersonalInfo(null)
+                .build();
+
+        // when & then
+        assertThatThrownBy(() -> userCommandServiceImpl.updateUserProfile(memberId, emptyRequest))
+                .isInstanceOf(EmptyUpdateRequestException.class)
+                .hasMessage(UserCommandErrorCode.EMPTY_UPDATE_REQUEST.getErrorMessage());
     }
 
 }

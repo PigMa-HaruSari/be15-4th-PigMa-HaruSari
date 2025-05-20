@@ -2,7 +2,11 @@ package com.pigma.harusari.user.command.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pigma.harusari.category.command.application.dto.request.CategoryCreateRequest;
+import com.pigma.harusari.common.auth.exception.AuthErrorCode;
+import com.pigma.harusari.common.auth.exception.LogInMemberNotFoundException;
+import com.pigma.harusari.support.WithMockCustomUser;
 import com.pigma.harusari.user.command.dto.SignUpRequest;
+import com.pigma.harusari.user.command.dto.UpdateUserProfileRequest;
 import com.pigma.harusari.user.command.exception.*;
 import com.pigma.harusari.user.command.exception.handler.UserCommandExceptionHandler;
 import com.pigma.harusari.user.command.service.UserCommandService;
@@ -13,16 +17,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -44,6 +50,7 @@ class UserCommandControllerTest {
     private UserCommandExceptionHandler userCommandExceptionHandler;
 
     SignUpRequest signUpRequest;
+    UpdateUserProfileRequest updateRequest;
 
     @BeforeEach
     void setUp() {
@@ -54,6 +61,12 @@ class UserCommandControllerTest {
                 .gender("FEMALE")
                 .consentPersonalInfo(true)
                 .categoryList(List.of(CategoryCreateRequest.builder().categoryName("운동").build()))
+                .build();
+
+        updateRequest = UpdateUserProfileRequest.builder()
+                .nickname("변경된닉네임")
+                .gender(null)
+                .consentPersonalInfo(true)
                 .build();
     }
 
@@ -139,4 +152,62 @@ class UserCommandControllerTest {
                 .andExpect(jsonPath("$.message").value(UserCommandErrorCode.CATEGORY_REQUIRED.getErrorMessage()))
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE));
     }
+
+    @Test
+    @DisplayName("[개인정보 수정] 정상 수정 완료 테스트")
+    @WithMockCustomUser(memberId = 1L)
+    void testUpdateSuccess() throws Exception {
+        mockMvc.perform(put("/api/v1/user/mypage")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.errorCode").doesNotExist())
+                .andExpect(jsonPath("$.message").doesNotExist())
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE));
+    }
+
+    @Test
+    @DisplayName("[개인정보 수정] 사용자 정보가 잘못된 경우에 예외가 발생하는 테스트")
+    @WithMockCustomUser(memberId = 999L)
+    void testUserNotFound() throws Exception {
+        doThrow(new LogInMemberNotFoundException(AuthErrorCode.LOGIN_MEMBER_NOT_FOUND))
+                .when(userCommandService).updateUserProfile(anyLong(), any());
+
+        mockMvc.perform(put("/api/v1/user/mypage")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateRequest)))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.errorCode").exists())
+                .andExpect(jsonPath("$.errorCode").value(AuthErrorCode.LOGIN_MEMBER_NOT_FOUND.getErrorCode()))
+                .andExpect(jsonPath("$.message").exists())
+                .andExpect(jsonPath("$.message").value(AuthErrorCode.LOGIN_MEMBER_NOT_FOUND.getErrorMessage()))
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE));
+    }
+
+    @Test
+    @DisplayName("[개인정보 수정] 수정 요청이 비어있는 경우에 예외가 발생하는 테스트")
+    @WithMockCustomUser(memberId = 1L)
+    void testEmptyUpdateRequest() throws Exception {
+        UpdateUserProfileRequest emptyRequest = UpdateUserProfileRequest.builder()
+                .nickname(null)
+                .gender(null)
+                .consentPersonalInfo(null)
+                .build();
+
+        doThrow(new EmptyUpdateRequestException(UserCommandErrorCode.EMPTY_UPDATE_REQUEST)).when(userCommandService).updateUserProfile(eq(1L), any());
+
+        mockMvc.perform(put("/api/v1/user/mypage")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(emptyRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.errorCode").exists())
+                .andExpect(jsonPath("$.errorCode").value(UserCommandErrorCode.EMPTY_UPDATE_REQUEST.getErrorCode()))
+                .andExpect(jsonPath("$.message").exists())
+                .andExpect(jsonPath("$.message").value(UserCommandErrorCode.EMPTY_UPDATE_REQUEST.getErrorMessage()))
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE));
+    }
+
 }
