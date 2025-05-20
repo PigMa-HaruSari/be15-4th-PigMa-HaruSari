@@ -20,8 +20,9 @@
                SUM(CASE WHEN s.completion_status = 1 THEN 1 ELSE 0 END) AS completed
         FROM schedule s
                  JOIN category c ON s.category_id = c.category_id
-        WHERE s.schedule_deadline BETWEEN DATE_SUB(CURRENT_DATE, INTERVAL WEEKDAY(CURRENT_DATE) DAY)
-                  AND DATE_ADD(CURRENT_DATE, INTERVAL (6 - WEEKDAY(CURRENT_DATE)) DAY)
+        WHERE s.schedule_deadline BETWEEN
+                  DATE_SUB(CURRENT_DATE, INTERVAL (WEEKDAY(CURRENT_DATE) + 7) DAY)
+                  AND DATE_SUB(CURRENT_DATE, INTERVAL (WEEKDAY(CURRENT_DATE) + 1) DAY)
         GROUP BY c.member_id
     </select>
 
