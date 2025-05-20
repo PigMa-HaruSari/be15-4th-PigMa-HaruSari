@@ -2,13 +2,13 @@ package com.pigma.harusari.alarm.query.controller;
 
 import com.pigma.harusari.alarm.query.dto.AlarmResponseDto;
 import com.pigma.harusari.alarm.query.service.AlarmQueryService;
+import com.pigma.harusari.support.WithMockCustomUser;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Date;
@@ -29,7 +29,7 @@ public class AlarmQueryControllerTest {
     private AlarmQueryService alarmQueryService;
 
     @Test
-    @WithMockUser(username = "1")
+    @WithMockCustomUser(memberId = 1L)
     @DisplayName("[미확인 알림 조회] 인증된 사용자로 요청 시 성공")
     void testGetUnreadAlarms() throws Exception {
         // given

@@ -1,9 +1,9 @@
 package com.pigma.harusari.alarm.sse;
 
+import com.pigma.harusari.common.auth.model.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -15,7 +15,9 @@ public class SseController {
     private final SseService sseService;
 
     @GetMapping(value = "/alarm", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter subscribe(@AuthenticationPrincipal User userDetails) {
+    public SseEmitter subscribe(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
         // userDetails에서 memberId(즉 userId) 추출
         Long memberId = Long.parseLong(userDetails.getUsername());
         return sseService.subscribe(memberId);
