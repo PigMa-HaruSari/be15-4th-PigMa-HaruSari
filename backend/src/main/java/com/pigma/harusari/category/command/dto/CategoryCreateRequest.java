@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-@Setter
 @Builder
 public class CategoryCreateRequest {
     /* 회원이 최초 회원가입할 때 사용하는 dto */
