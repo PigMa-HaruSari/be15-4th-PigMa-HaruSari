@@ -44,4 +44,25 @@ public class UserCommandExceptionHandler {
         return new ResponseEntity<>(response, errorCode.getHttpStatus());
     }
 
+    @ExceptionHandler(CurrentPasswordIncorrectException.class)
+    public ResponseEntity<ApiResponse<Void>> handleCurrentPasswordIncorrectException(CurrentPasswordIncorrectException e) {
+        UserCommandErrorCode errorCode = e.getErrorCode();
+        ApiResponse<Void> response = ApiResponse.failure(errorCode.getErrorCode(), errorCode.getErrorMessage());
+        return new ResponseEntity<>(response, errorCode.getHttpStatus());
+    }
+
+    @ExceptionHandler(NewPasswordMismatchException.class)
+    public ResponseEntity<ApiResponse<Void>> handleNewPasswordMismatchException(NewPasswordMismatchException e) {
+        UserCommandErrorCode errorCode = e.getErrorCode();
+        ApiResponse<Void> response = ApiResponse.failure(errorCode.getErrorCode(), errorCode.getErrorMessage());
+        return new ResponseEntity<>(response, errorCode.getHttpStatus());
+    }
+
+    @ExceptionHandler(PasswordLengthInvalidException.class)
+    public ResponseEntity<ApiResponse<Void>> handlePasswordLengthInvalidException(PasswordLengthInvalidException e) {
+        UserCommandErrorCode errorCode = e.getErrorCode();
+        ApiResponse<Void> response = ApiResponse.failure(errorCode.getErrorCode(), errorCode.getErrorMessage());
+        return new ResponseEntity<>(response, errorCode.getHttpStatus());
+    }
+
 }

@@ -59,4 +59,9 @@ public class Member {
         this.userModifiedAt = LocalDateTime.now();
     }
 
+    public void changePassword(String encodedPassword) {
+        this.password = encodedPassword;
+        this.userModifiedAt = LocalDateTime.now();
+    }
+
 }

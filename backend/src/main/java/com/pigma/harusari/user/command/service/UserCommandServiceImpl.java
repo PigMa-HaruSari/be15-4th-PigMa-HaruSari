@@ -7,6 +7,7 @@ import com.pigma.harusari.category.command.domain.repository.CategoryCommandRepo
 import com.pigma.harusari.common.auth.exception.AuthErrorCode;
 import com.pigma.harusari.common.auth.exception.LogInMemberNotFoundException;
 import com.pigma.harusari.user.command.dto.SignUpRequest;
+import com.pigma.harusari.user.command.dto.UpdatePasswordRequest;
 import com.pigma.harusari.user.command.dto.UpdateUserProfileRequest;
 import com.pigma.harusari.user.command.entity.Gender;
 import com.pigma.harusari.user.command.entity.Member;
@@ -99,6 +100,31 @@ public class UserCommandServiceImpl implements UserCommandService {
 
         // 4. 변경사항 반영
         member.updateProfile(newNickname, newGender, newConsent);
+    }
+
+    @Override
+    public void changePassword(Long userId, UpdatePasswordRequest request) {
+        // 1. 사용자 존재 여부 확인
+        Member member = memberRepository.findById(userId)
+                .orElseThrow(() -> new LogInMemberNotFoundException(AuthErrorCode.LOGIN_MEMBER_NOT_FOUND));
+
+        // 2. 기존 비밀번호가 일치하지 않을 때
+        if (!passwordEncoder.matches(request.getCurrentPassword(), member.getPassword())) {
+            throw new CurrentPasswordIncorrectException(UserCommandErrorCode.PASSWORD_MISMATCH);
+        }
+
+        // 3. 새로 입력한 비밀번호가 확인 값과 일치하지 않을 때
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            throw new NewPasswordMismatchException(UserCommandErrorCode.NEW_PASSWORD_MISMATCH);
+        }
+
+        // 4. 새 비밀번호가 길이 기준을 만족하지 않을 때
+        if (request.getNewPassword().length() < 10 || request.getNewPassword().length() > 20) {
+            throw new PasswordLengthInvalidException(UserCommandErrorCode.PASSWORD_LENGTH_INVALID);
+        }
+
+        // 5. 비밀번호 변경 완료
+        member.changePassword(passwordEncoder.encode(request.getNewPassword()));
     }
 
 }

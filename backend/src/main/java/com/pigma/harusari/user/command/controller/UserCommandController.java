@@ -3,6 +3,7 @@ package com.pigma.harusari.user.command.controller;
 import com.pigma.harusari.common.auth.model.CustomUserDetails;
 import com.pigma.harusari.common.dto.ApiResponse;
 import com.pigma.harusari.user.command.dto.SignUpRequest;
+import com.pigma.harusari.user.command.dto.UpdatePasswordRequest;
 import com.pigma.harusari.user.command.dto.UpdateUserProfileRequest;
 import com.pigma.harusari.user.command.service.UserCommandService;
 import jakarta.validation.Valid;
@@ -33,6 +34,14 @@ public class UserCommandController {
             @Valid @RequestBody UpdateUserProfileRequest request
     ) {
         userCommandService.updateUserProfile(userDetails.getMemberId(), request);
+        return ResponseEntity.ok(ApiResponse.success(null));
+    }
+
+    @PutMapping("/user/password")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ApiResponse<Void>> changePassword(@Valid @RequestBody UpdatePasswordRequest request,
+                                                            @AuthenticationPrincipal CustomUserDetails user) {
+        userCommandService.changePassword(user.getMemberId(), request);
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 
