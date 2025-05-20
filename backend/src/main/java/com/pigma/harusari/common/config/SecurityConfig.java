@@ -4,7 +4,7 @@ import com.pigma.harusari.common.jwt.JwtAuthenticationFilter;
 import com.pigma.harusari.common.jwt.JwtTokenProvider;
 import com.pigma.harusari.common.jwt.RestAccessDeniedHandler;
 import com.pigma.harusari.common.jwt.RestAuthenticationEntryPoint;
-import com.pigma.harusari.common.service.CustomUserDetailsService;
+import com.pigma.harusari.common.auth.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,7 +41,12 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll()
+                        .requestMatchers("/api/v1/auth/**").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(restAuthenticationEntryPoint)
+                        .accessDeniedHandler(restAccessDeniedHandler)
                 )
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()));
