@@ -6,6 +6,7 @@ import com.pigma.harusari.common.auth.exception.AuthErrorCode;
 import com.pigma.harusari.common.auth.exception.LogInMemberNotFoundException;
 import com.pigma.harusari.support.WithMockCustomUser;
 import com.pigma.harusari.user.command.dto.SignUpRequest;
+import com.pigma.harusari.user.command.dto.UpdatePasswordRequest;
 import com.pigma.harusari.user.command.dto.UpdateUserProfileRequest;
 import com.pigma.harusari.user.command.exception.*;
 import com.pigma.harusari.user.command.exception.handler.UserCommandExceptionHandler;
@@ -51,6 +52,7 @@ class UserCommandControllerTest {
 
     SignUpRequest signUpRequest;
     UpdateUserProfileRequest updateRequest;
+    UpdatePasswordRequest updatePasswordRequest;
 
     @BeforeEach
     void setUp() {
@@ -68,6 +70,13 @@ class UserCommandControllerTest {
                 .gender(null)
                 .consentPersonalInfo(true)
                 .build();
+
+        updatePasswordRequest = UpdatePasswordRequest.builder()
+                .currentPassword("pastPassword123!")
+                .newPassword("changedPassword456@")
+                .confirmPassword("changedPassword456@")
+                .build();
+
     }
 
     @Test
@@ -209,5 +218,71 @@ class UserCommandControllerTest {
                 .andExpect(jsonPath("$.message").value(UserCommandErrorCode.EMPTY_UPDATE_REQUEST.getErrorMessage()))
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE));
     }
+
+    @Test
+    @DisplayName("[비밀번호 변경] 비밀번호 변경 요청 성공 테스트")
+    @WithMockCustomUser(memberId = 1L)
+    void testChangePasswordSuccess() throws Exception {
+        mockMvc.perform(put("/api/v1/user/password")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updatePasswordRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.errorCode").doesNotExist())
+                .andExpect(jsonPath("$.message").doesNotExist())
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE));
+    }
+
+    @Test
+    @DisplayName("[비밀번호 변경] 기존 비밀번호가 틀린 경우 예외 발생 테스트")
+    @WithMockCustomUser(memberId = 1L)
+    void testIncorrectCurrentPassword() throws Exception {
+        doThrow(new CurrentPasswordIncorrectException(UserCommandErrorCode.PASSWORD_MISMATCH))
+                .when(userCommandService).changePassword(eq(1L), any());
+
+        mockMvc.perform(put("/api/v1/user/password")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updatePasswordRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.errorCode").value(UserCommandErrorCode.PASSWORD_MISMATCH.getErrorCode()))
+                .andExpect(jsonPath("$.message").value(UserCommandErrorCode.PASSWORD_MISMATCH.getErrorMessage()))
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE));
+    }
+
+    @Test
+    @DisplayName("[비밀번호 변경] 새 비밀번호와 확인 값이 일치하지 않는 경우 예외 발생 테스트")
+    @WithMockCustomUser(memberId = 1L)
+    void testNewPasswordMismatch() throws Exception {
+        doThrow(new NewPasswordMismatchException(UserCommandErrorCode.NEW_PASSWORD_MISMATCH))
+                .when(userCommandService).changePassword(eq(1L), any());
+
+        mockMvc.perform(put("/api/v1/user/password")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updatePasswordRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.errorCode").value(UserCommandErrorCode.NEW_PASSWORD_MISMATCH.getErrorCode()))
+                .andExpect(jsonPath("$.message").value(UserCommandErrorCode.NEW_PASSWORD_MISMATCH.getErrorMessage()))
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE));
+    }
+
+    @Test
+    @DisplayName("[비밀번호 변경] 새 비밀번호가 길이 규칙을 위반한 경우 예외 발생 테스트")
+    @WithMockCustomUser(memberId = 1L)
+    void testNewPasswordLengthInvalid() throws Exception {
+        doThrow(new PasswordLengthInvalidException(UserCommandErrorCode.PASSWORD_LENGTH_INVALID))
+                .when(userCommandService).changePassword(eq(1L), any());
+
+        mockMvc.perform(put("/api/v1/user/password")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updatePasswordRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.errorCode").value(UserCommandErrorCode.PASSWORD_LENGTH_INVALID.getErrorCode()))
+                .andExpect(jsonPath("$.message").value(UserCommandErrorCode.PASSWORD_LENGTH_INVALID.getErrorMessage()))
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE));
+    }
+
 
 }

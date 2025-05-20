@@ -7,6 +7,7 @@ import com.pigma.harusari.category.command.domain.repository.CategoryCommandRepo
 import com.pigma.harusari.common.auth.exception.AuthErrorCode;
 import com.pigma.harusari.common.auth.exception.LogInMemberNotFoundException;
 import com.pigma.harusari.user.command.dto.SignUpRequest;
+import com.pigma.harusari.user.command.dto.UpdatePasswordRequest;
 import com.pigma.harusari.user.command.dto.UpdateUserProfileRequest;
 import com.pigma.harusari.user.command.entity.Gender;
 import com.pigma.harusari.user.command.entity.Member;
@@ -49,6 +50,11 @@ class UserCommandServiceImplTest {
 
     @Mock
     private PasswordEncoder passwordEncoder;
+
+    private final String rawPassword = "pastPassword123!";
+    private final String encodedPassword = "$2a$10$1234567890123456789012";
+    private final String newSecurePassword = "changedPassword456@";
+    private final String newEncodedPassword = "$2a$10$98765432109876543210987";
 
     @BeforeEach
     void setUp() {
@@ -294,6 +300,118 @@ class UserCommandServiceImplTest {
         assertThatThrownBy(() -> userCommandServiceImpl.updateUserProfile(memberId, emptyRequest))
                 .isInstanceOf(EmptyUpdateRequestException.class)
                 .hasMessage(UserCommandErrorCode.EMPTY_UPDATE_REQUEST.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("[비밀번호 변경] 비밀번호 변경 요청 성공 테스트")
+    void testChangePasswordSuccess() {
+        // given
+        Member member = Member.builder()
+                .email("test@example.com")
+                .password(encodedPassword)
+                .nickname("테스트")
+                .gender(Gender.FEMALE)
+                .consentPersonalInfo(true)
+                .userRegisteredAt(LocalDateTime.now())
+                .build();
+        ReflectionTestUtils.setField(member, "memberId", 1L);
+
+        given(userCommandRepository.findById(1L)).willReturn(Optional.of(member));
+        given(passwordEncoder.matches(rawPassword, encodedPassword)).willReturn(true);
+        given(passwordEncoder.encode(newSecurePassword)).willReturn(newEncodedPassword);
+
+        UpdatePasswordRequest request = UpdatePasswordRequest.builder()
+                .currentPassword(rawPassword)
+                .newPassword(newSecurePassword)
+                .confirmPassword(newSecurePassword)
+                .build();
+
+        // when
+        userCommandServiceImpl.changePassword(1L, request);
+
+        // then
+        assertThat(member.getPassword()).isEqualTo(newEncodedPassword);
+    }
+
+    @Test
+    @DisplayName("[비밀번호 변경] 기존 비밀번호가 틀린 경우 예외 발생 테스트")
+    void testChangePasswordFail_dueToWrongCurrentPassword() {
+        Member member = Member.builder()
+                .email("test@example.com")
+                .password(encodedPassword)
+                .nickname("테스트")
+                .gender(Gender.FEMALE)
+                .consentPersonalInfo(true)
+                .userRegisteredAt(LocalDateTime.now())
+                .build();
+        ReflectionTestUtils.setField(member, "memberId", 1L);
+
+        given(userCommandRepository.findById(1L)).willReturn(Optional.of(member));
+        given(passwordEncoder.matches(rawPassword, encodedPassword)).willReturn(false);
+
+        UpdatePasswordRequest request = UpdatePasswordRequest.builder()
+                .currentPassword(rawPassword)
+                .newPassword(newSecurePassword)
+                .confirmPassword(newSecurePassword)
+                .build();
+
+        assertThatThrownBy(() -> userCommandServiceImpl.changePassword(1L, request))
+                .isInstanceOf(CurrentPasswordIncorrectException.class)
+                .hasMessage(UserCommandErrorCode.PASSWORD_MISMATCH.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("[비밀번호 변경] 새 비밀번호와 확인 값이 일치하지 않는 경우 예외 발생 테스트")
+    void testChangePasswordFail_dueToMismatchNewPassword() {
+        Member member = Member.builder()
+                .email("test@example.com")
+                .password(encodedPassword)
+                .nickname("테스트")
+                .gender(Gender.FEMALE)
+                .consentPersonalInfo(true)
+                .userRegisteredAt(LocalDateTime.now())
+                .build();
+        ReflectionTestUtils.setField(member, "memberId", 1L);
+
+        given(userCommandRepository.findById(1L)).willReturn(Optional.of(member));
+        given(passwordEncoder.matches(rawPassword, encodedPassword)).willReturn(true);
+
+        UpdatePasswordRequest request = UpdatePasswordRequest.builder()
+                .currentPassword(rawPassword)
+                .newPassword(newSecurePassword)
+                .confirmPassword("differentPass765@")
+                .build();
+
+        assertThatThrownBy(() -> userCommandServiceImpl.changePassword(1L, request))
+                .isInstanceOf(NewPasswordMismatchException.class)
+                .hasMessage(UserCommandErrorCode.NEW_PASSWORD_MISMATCH.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("[비밀번호 변경] 새 비밀번호가 길이 규칙을 위반한 경우 예외 발생 테스트")
+    void testChangePasswordFail_dueToInvalidLength() {
+        Member member = Member.builder()
+                .email("test@example.com")
+                .password(encodedPassword)
+                .nickname("테스트")
+                .gender(Gender.FEMALE)
+                .consentPersonalInfo(true)
+                .userRegisteredAt(LocalDateTime.now())
+                .build();
+        ReflectionTestUtils.setField(member, "memberId", 1L);
+
+        given(userCommandRepository.findById(1L)).willReturn(Optional.of(member));
+        given(passwordEncoder.matches(rawPassword, encodedPassword)).willReturn(true);
+
+        UpdatePasswordRequest request = UpdatePasswordRequest.builder()
+                .currentPassword(rawPassword)
+                .newPassword("short")
+                .confirmPassword("short")
+                .build();
+
+        assertThatThrownBy(() -> userCommandServiceImpl.changePassword(1L, request))
+                .isInstanceOf(PasswordLengthInvalidException.class)
+                .hasMessage(UserCommandErrorCode.PASSWORD_LENGTH_INVALID.getErrorMessage());
     }
 
 }
