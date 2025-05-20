@@ -60,6 +60,7 @@ class UserCommandServiceImplTest {
                 .password("password123")
                 .nickname("성이름")
                 .gender("FEMALE")
+                .consentPersonalInfo(true)
                 .categoryList(List.of(CategoryCreateRequest.builder()
                         .categoryName("운동")
                         .build()))
@@ -76,6 +77,7 @@ class UserCommandServiceImplTest {
                 .password("password123")
                 .nickname("성+이름")
                 .gender(Gender.FEMALE)
+                .consentPersonalInfo(true)
                 .userRegisteredAt(LocalDateTime.now())
                 .build();
         ReflectionTestUtils.setField(member, "memberId", 1L);
@@ -99,6 +101,7 @@ class UserCommandServiceImplTest {
                 .password("password123")
                 .nickname("성이름")
                 .gender("FEMALE")
+                .consentPersonalInfo(true)
                 .categoryList(List.of(CategoryCreateRequest.builder()
                         .categoryName("운동")
                         .build()))
@@ -122,6 +125,7 @@ class UserCommandServiceImplTest {
                 .password("password123")
                 .nickname("성이름")
                 .gender("FEMALE")
+                .consentPersonalInfo(true)
                 .categoryList(List.of(CategoryCreateRequest.builder()
                         .categoryName("운동")
                         .build()))
@@ -146,6 +150,7 @@ class UserCommandServiceImplTest {
                 .password("password123")
                 .nickname(null) // 닉네임 누락
                 .gender("FEMALE")
+                .consentPersonalInfo(true)
                 .categoryList(List.of(CategoryCreateRequest.builder()
                         .categoryName("운동")
                         .build()))
@@ -162,6 +167,30 @@ class UserCommandServiceImplTest {
     }
 
     @Test
+    @DisplayName("[회원가입] 개인정보 수집 동의가 누락되었을 때 예외가 발생하는 테스트")
+    void testConsentRequired() {
+        // given
+        SignUpRequest request = SignUpRequest.builder()
+                .email("test@example.com")
+                .password("password123")
+                .nickname("성이름")
+                .gender("FEMALE")
+                .categoryList(List.of(CategoryCreateRequest.builder().categoryName("운동").build()))
+                .consentPersonalInfo(null) // 동의 누락
+                .build();
+
+        given(redisTemplate.opsForValue()).willReturn(valueOperations);
+        given(valueOperations.get("EMAIL_VERIFIED:test@example.com")).willReturn("true");
+        given(userCommandRepository.existsByEmail("test@example.com")).willReturn(false);
+
+
+        // when & then
+        assertThatThrownBy(() -> userCommandServiceImpl.register(request))
+                .isInstanceOf(ConsentRequiredException.class)
+                .hasMessage(UserCommandErrorCode.CONSENT_REQUIRED.getErrorMessage());
+    }
+
+    @Test
     @DisplayName("[회원가입] 카테고리를 선택하지 않았을 때 예외가 발생하는 테스트")
     void testCategoryRequired(){
         // given
@@ -170,6 +199,7 @@ class UserCommandServiceImplTest {
                 .password("password123")
                 .nickname("성이름")
                 .gender("FEMALE")
+                .consentPersonalInfo(true)
                 .categoryList(null) // 카테고리 누락
                 .build();
 
@@ -180,7 +210,7 @@ class UserCommandServiceImplTest {
         // when & then
         assertThatThrownBy(() -> userCommandServiceImpl.register(request))
                 .isInstanceOf(CategoryRequiredException.class)
-                .hasMessage("1개 이상의 카테고리를 등록해야 합니다.");
+                .hasMessage(UserCommandErrorCode.CATEGORY_REQUIRED.getErrorMessage());
     }
 
 }
