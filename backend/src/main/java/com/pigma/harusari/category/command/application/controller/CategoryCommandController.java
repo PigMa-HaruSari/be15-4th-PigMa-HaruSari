@@ -4,6 +4,7 @@ package com.pigma.harusari.category.command.application.controller;
 import com.pigma.harusari.category.command.application.dto.request.CategoryCreateRequest;
 import com.pigma.harusari.category.command.application.dto.request.CategoryUpdateRequest;
 import com.pigma.harusari.category.command.application.dto.response.CategoryCommandResponse;
+import com.pigma.harusari.category.command.domain.service.CategoryCommandService;
 import com.pigma.harusari.category.command.domain.service.CategoryCommandServiceImpl;
 import com.pigma.harusari.common.dto.ApiResponse;
 import jakarta.validation.Valid;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class CategoryCommandController {
 
-    private final CategoryCommandServiceImpl categoryCommandServiceImpl;
+    private final CategoryCommandService categoryCommandService;
 
 
     // 카테고리 생성
@@ -26,7 +27,7 @@ public class CategoryCommandController {
     public ResponseEntity<ApiResponse<CategoryCommandResponse>> createCategory(
             @RequestBody @Valid CategoryCreateRequest request
     ) {
-        Long categoryId = categoryCommandServiceImpl.createCategory(request);
+        Long categoryId = categoryCommandService.createCategory(request);
 
         CategoryCommandResponse response = new CategoryCommandResponse(categoryId);
 
@@ -42,7 +43,7 @@ public class CategoryCommandController {
             @RequestParam Long memberId,
             @RequestBody @Valid CategoryUpdateRequest request
     ) {
-        categoryCommandServiceImpl.updateCategory(categoryId, memberId, request);
+        categoryCommandService.updateCategory(categoryId, memberId, request);
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 
@@ -52,7 +53,7 @@ public class CategoryCommandController {
             @PathVariable Long categoryId,
             @RequestParam Long memberId
     ) {
-        categoryCommandServiceImpl.completeCategory(categoryId, memberId);
+        categoryCommandService.completeCategory(categoryId, memberId);
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 
@@ -65,7 +66,7 @@ public class CategoryCommandController {
             @RequestParam String confirmText,
             @RequestParam(defaultValue = "false") boolean hasSchedules
     ) {
-        categoryCommandServiceImpl.deleteCategory(categoryId, memberId, confirmText, hasSchedules);
+        categoryCommandService.deleteCategory(categoryId, memberId, confirmText, hasSchedules);
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 }

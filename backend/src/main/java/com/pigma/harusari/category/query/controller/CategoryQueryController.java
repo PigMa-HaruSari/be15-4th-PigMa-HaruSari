@@ -1,6 +1,7 @@
 package com.pigma.harusari.category.query.controller;
 
 import com.pigma.harusari.category.query.dto.response.CategoryResponse;
+import com.pigma.harusari.category.query.service.CategoryQueryService;
 import com.pigma.harusari.category.query.service.CategoryQueryServiceImpl;
 import com.pigma.harusari.common.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -14,13 +15,13 @@ import java.util.List;
 @RequestMapping("/api/v1")
 public class CategoryQueryController {
 
-    private final CategoryQueryServiceImpl categoryQueryServiceImpl;
+    private final CategoryQueryService categoryQueryService;
 
     @GetMapping("/categories")
     public ResponseEntity<ApiResponse<List<CategoryResponse>>> getMyCategories(
             @RequestParam Long memberId
     ) {
-        List<CategoryResponse> categories = categoryQueryServiceImpl.findCategoriesByMember(memberId);
+        List<CategoryResponse> categories = categoryQueryService.findCategoriesByMember(memberId);
         return ResponseEntity.ok(ApiResponse.success(categories));
     }
 }
