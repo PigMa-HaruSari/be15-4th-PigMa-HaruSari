@@ -32,6 +32,7 @@ class UserQueryServiceImplTest {
                 .nickname("테스트유저")
                 .password("encrypted-pw")
                 .gender(Gender.FEMALE)
+                .consentPersonalInfo(false)
                 .userRegisteredAt(LocalDateTime.of(2025, 1, 1, 12, 0))
                 .build();
 
@@ -44,6 +45,7 @@ class UserQueryServiceImplTest {
         assertThat(response.getEmail()).isEqualTo("test@naver.com");
         assertThat(response.getNickname()).isEqualTo("테스트유저");
         assertThat(response.getGender()).isEqualTo("FEMALE");
+        assertThat(response.getConsentPersonalInfo()).isEqualTo(false);
         assertThat(response.getUserRegisteredAt()).isEqualTo(LocalDateTime.of(2025, 1, 1, 12, 0));
     }
 

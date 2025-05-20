@@ -43,6 +43,7 @@ class UserQueryControllerTest {
                 .email("test@naver.com")
                 .nickname("테스트유저")
                 .gender("FEMALE")
+                .consentPersonalInfo(false)
                 .userRegisteredAt(LocalDateTime.of(2025, 1, 1, 12, 0))
                 .build();
 
@@ -57,7 +58,8 @@ class UserQueryControllerTest {
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data.nickname").value("테스트유저"))
                 .andExpect(jsonPath("$.data.email").value("test@naver.com"))
-                .andExpect(jsonPath("$.data.gender").value("FEMALE"));
+                .andExpect(jsonPath("$.data.gender").value("FEMALE"))
+                .andExpect(jsonPath("$.data.consentPersonalInfo").value(false));
     }
 
     @Test
