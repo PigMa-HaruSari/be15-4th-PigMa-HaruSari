@@ -54,6 +54,7 @@ public class UserCommandServiceImpl implements UserCommandService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .nickname(request.getNickname())
                 .gender(gender)
+                .consentPersonalInfo(request.getConsentPersonalInfo())
                 .userRegisteredAt(LocalDateTime.now())
                 .build();
 

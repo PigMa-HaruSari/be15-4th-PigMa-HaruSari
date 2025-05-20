@@ -1,13 +1,9 @@
 package com.pigma.harusari.user.command.dto;
 
 import com.pigma.harusari.category.command.dto.CategoryCreateRequest;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.List;
 
@@ -27,6 +23,9 @@ public class SignUpRequest {
 
     @NotBlank
     private String gender; // "NONE", "MALE", "FEMALE"
+
+    @NotNull(message = "개인정보 수집 동의 여부는 필수입니다.")
+    private Boolean consentPersonalInfo; // true: 동의, false: 비동의
 
     @NotEmpty(message = "카테고리는 최소 1개 이상 입력해야 합니다.")
     private List<CategoryCreateRequest> categoryList;

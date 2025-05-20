@@ -29,6 +29,9 @@ public class Member {
     @Column(name = "gender", nullable = false)
     private Gender gender;
 
+    @Column(name = "consent_personal_info", nullable = false)
+    private Boolean consentPersonalInfo;
+
     @Column(name = "user_registered_at", nullable = false)
     private LocalDateTime userRegisteredAt;
 
@@ -39,11 +42,12 @@ public class Member {
     private Boolean userDeletedAt;
 
     @Builder
-    public Member(String email, String password, String nickname, Gender gender, LocalDateTime userRegisteredAt) {
+    public Member(String email, String password, String nickname, Gender gender, Boolean consentPersonalInfo, LocalDateTime userRegisteredAt) {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
         this.gender = gender;
+        this.consentPersonalInfo = consentPersonalInfo;
         this.userRegisteredAt = userRegisteredAt;
         this.userDeletedAt = false;
     }
