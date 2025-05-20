@@ -1,0 +1,41 @@
+package com.pigma.harusari.user.command.exception.handler;
+
+import com.pigma.harusari.common.dto.ApiResponse;
+import com.pigma.harusari.user.command.exception.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+@RestControllerAdvice
+public class UserCommandExceptionHandler {
+
+    @ExceptionHandler(EmailVerificationFailedException.class)
+    public ResponseEntity<ApiResponse<Void>> handleEmailVerificationFailedException(EmailVerificationFailedException e) {
+        UserCommandErrorCode errorCode = e.getErrorCode();
+        ApiResponse<Void> response = ApiResponse.failure(errorCode.getErrorCode(), errorCode.getErrorMessage());
+        return new ResponseEntity<>(response, errorCode.getHttpStatus());
+    }
+
+    @ExceptionHandler(EmailDuplicatedException.class)
+    public ResponseEntity<ApiResponse<Void>> handleEmailDuplicatedException(EmailDuplicatedException e) {
+        UserCommandErrorCode errorCode = e.getErrorCode();
+        ApiResponse<Void> response = ApiResponse.failure(errorCode.getErrorCode(), errorCode.getErrorMessage());
+        return new ResponseEntity<>(response, errorCode.getHttpStatus());
+    }
+
+    @ExceptionHandler(NicknameRequiredException.class)
+    public ResponseEntity<ApiResponse<Void>> handleNicknameRequiredException(NicknameRequiredException e) {
+        UserCommandErrorCode errorCode = e.getErrorCode();
+        ApiResponse<Void> response = ApiResponse.failure(errorCode.getErrorCode(), errorCode.getErrorMessage());
+        return new ResponseEntity<>(response, errorCode.getHttpStatus());
+    }
+
+    @ExceptionHandler(CategoryRequiredException.class)
+    public ResponseEntity<ApiResponse<Void>> handleCategoryRequiredException(CategoryRequiredException e) {
+        UserCommandErrorCode errorCode = e.getErrorCode();
+        ApiResponse<Void> response = ApiResponse.failure(errorCode.getErrorCode(), errorCode.getErrorMessage());
+        return new ResponseEntity<>(response, errorCode.getHttpStatus());
+    }
+
+
+}
