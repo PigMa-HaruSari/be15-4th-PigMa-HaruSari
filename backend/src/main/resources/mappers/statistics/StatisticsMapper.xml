@@ -12,7 +12,7 @@
             , 2) AS achievementRate
         FROM schedule s
         JOIN category c ON s.category_id = c.category_id
-        WHERE c.member_uid = #{memberId}
+        WHERE c.member_id = #{memberId}
         AND s.schedule_deadline <![CDATA[ >= ]]> #{startDateTime}
         AND s.schedule_deadline <![CDATA[ < ]]> #{endDateTime}
     </select>
@@ -27,7 +27,7 @@
             , 2) AS achievementRate
         FROM schedule s
         JOIN category c ON s.category_id = c.category_id
-        WHERE c.member_uid = #{memberId}
+        WHERE c.member_id = #{memberId}
         AND s.schedule_deadline <![CDATA[ >= ]]> #{startDateTime}
         AND s.schedule_deadline <![CDATA[ < ]]> #{endDateTime}
     </select>
@@ -43,7 +43,7 @@
             , 2) AS achievementRate
         FROM schedule s
         JOIN category c ON s.category_id = c.category_id
-        WHERE c.member_uid = #{memberId}
+        WHERE c.member_id = #{memberId}
         GROUP BY c.category_id, c.category_name
     </select>
 </mapper>
