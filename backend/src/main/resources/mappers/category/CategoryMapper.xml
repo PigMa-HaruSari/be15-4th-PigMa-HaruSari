@@ -12,7 +12,7 @@
             color,
             completion_status AS completed
         FROM category
-        WHERE member_uid = #{memberId}
+        WHERE member_id = #{memberId}
     </select>
 
 </mapper>
