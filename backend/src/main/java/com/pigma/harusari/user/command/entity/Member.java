@@ -52,4 +52,21 @@ public class Member {
         this.userDeletedAt = false;
     }
 
+    public void updateProfile(String nickname, Gender gender, Boolean consentPersonalInfo) {
+        this.nickname = nickname;
+        this.gender = gender;
+        this.consentPersonalInfo = consentPersonalInfo;
+        this.userModifiedAt = LocalDateTime.now();
+    }
+
+    public void changePassword(String encodedPassword) {
+        this.password = encodedPassword;
+        this.userModifiedAt = LocalDateTime.now();
+    }
+
+    public void signOut() {
+        this.userDeletedAt = true;
+        this.userModifiedAt = LocalDateTime.now();
+    }
+
 }
