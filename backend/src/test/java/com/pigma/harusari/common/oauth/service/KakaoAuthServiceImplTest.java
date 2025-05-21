@@ -1,6 +1,9 @@
 package com.pigma.harusari.common.oauth.service;
 
+import com.pigma.harusari.category.command.application.dto.request.CategoryCreateRequest;
+import com.pigma.harusari.category.command.domain.repository.CategoryCommandRepository;
 import com.pigma.harusari.common.auth.dto.LoginResponse;
+import com.pigma.harusari.common.jwt.JwtTokenProvider;
 import com.pigma.harusari.common.oauth.dto.KakaoSignupRequest;
 import com.pigma.harusari.common.oauth.dto.KakaoTokenResponse;
 import com.pigma.harusari.common.oauth.dto.KakaoUserBasicInfo;
@@ -13,12 +16,12 @@ import com.pigma.harusari.user.command.repository.UserCommandRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -29,11 +32,20 @@ import static org.mockito.Mockito.doReturn;
 
 @DisplayName("[카카오 - service] KakaoAuthServiceImpl 테스트")
 class KakaoAuthServiceImplTest {
+
+    @Spy
     @InjectMocks
     private KakaoAuthServiceImpl kakaoAuthServiceImpl;
 
     @Mock
     private UserCommandRepository memberRepository;
+
+    @Mock
+    private CategoryCommandRepository categoryRepository;
+
+    @Mock private WebClient webClient;
+    @Mock private JwtTokenProvider jwtTokenProvider;
+    @Mock private RedisTemplate<String, Object> redisTemplate;
 
     private final String fakeCode = "fake-code";
     private final String fakeAccessToken = "access-token";
@@ -68,6 +80,11 @@ class KakaoAuthServiceImplTest {
                 .email(email)
                 .nickname(nickname)
                 .consentPersonalInfo(true)
+                .gender("NONE")
+                .categoryList(List.of(CategoryCreateRequest.builder()
+                        .categoryName("취업")
+                        .color("#000000")
+                        .build()))
                 .build();
 
         ReflectionTestUtils.setField(member, "memberId", 1L);
@@ -126,13 +143,20 @@ class KakaoAuthServiceImplTest {
     @DisplayName("[카카오 회원가입 - 최종 가입] 성공 테스트")
     void testSignupSuccess() {
         // given
-        KakaoAuthServiceImpl spyService = Mockito.spy(kakaoAuthServiceImpl);
         given(memberRepository.findByEmail(email)).willReturn(Optional.empty());
-        given(memberRepository.save(any())).willReturn(member);
-        doReturn(loginResponse).when(spyService).issueJwtTokens(member);
+        given(categoryRepository.save(any())).willReturn(null);
+
+        // memberId 강제로 삽입
+        given(memberRepository.save(any())).willAnswer(invocation -> {
+            Member input = invocation.getArgument(0);
+            ReflectionTestUtils.setField(input, "memberId", 1L);
+            return input;
+        });
+
+        doReturn(loginResponse).when(kakaoAuthServiceImpl).issueJwtTokens(any(Member.class));
 
         // when
-        LoginResponse actual = spyService.signup(request);
+        LoginResponse actual = kakaoAuthServiceImpl.signup(request);
 
         // then
         assertThat(actual.getNickname()).isEqualTo(loginResponse.getNickname());
