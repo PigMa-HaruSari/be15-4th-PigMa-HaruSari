@@ -19,6 +19,7 @@ public enum UserCommandErrorCode {
     PASSWORD_LENGTH_INVALID("10009", "비밀번호는 10자 이상 20자 이하여야 합니다.", HttpStatus.BAD_REQUEST),
     ALREADY_SIGNED_OUT_MEMBER("10010", "이미 탈퇴한 회원입니다.", HttpStatus.BAD_REQUEST),
     EMAIL_NOT_FOUND("10011", "이미 탈퇴한 회원입니다.", HttpStatus.BAD_REQUEST),
+    INVALID_RESET_TOKEN("10012", "비밀번호 재설정 인증 토큰이 유효하지 않습니다.", HttpStatus.BAD_REQUEST),
     END_OF_ERROR("19999", "", HttpStatus.BAD_REQUEST);
 
 

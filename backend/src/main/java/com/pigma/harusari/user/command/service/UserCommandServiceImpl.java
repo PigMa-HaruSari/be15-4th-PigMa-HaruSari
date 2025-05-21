@@ -6,10 +6,7 @@ import com.pigma.harusari.category.command.domain.aggregate.Category;
 import com.pigma.harusari.category.command.domain.repository.CategoryCommandRepository;
 import com.pigma.harusari.common.auth.exception.AuthErrorCode;
 import com.pigma.harusari.common.auth.exception.LogInMemberNotFoundException;
-import com.pigma.harusari.user.command.dto.SignOutRequest;
-import com.pigma.harusari.user.command.dto.SignUpRequest;
-import com.pigma.harusari.user.command.dto.UpdatePasswordRequest;
-import com.pigma.harusari.user.command.dto.UpdateUserProfileRequest;
+import com.pigma.harusari.user.command.dto.*;
 import com.pigma.harusari.user.command.entity.Gender;
 import com.pigma.harusari.user.command.entity.Member;
 import com.pigma.harusari.user.command.exception.*;
@@ -148,6 +145,31 @@ public class UserCommandServiceImpl implements UserCommandService {
 
         // 4. 회원 탈퇴
         member.signOut();
+    }
+
+    @Override
+    public void resetPassword(ResetPasswordPerformRequest request) {
+        // 1. 인증토큰 검증
+        String email = redisTemplate.opsForValue().get("RESET_TOKEN:" + request.getToken());
+        if (email == null) {
+            throw new ResetTokenInvalidException(UserCommandErrorCode.INVALID_RESET_TOKEN);
+        }
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new LogInMemberNotFoundException(AuthErrorCode.LOGIN_MEMBER_NOT_FOUND));
+
+        // 2. 입력한 비밀번호 일치 여부 확인
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            throw new NewPasswordMismatchException(UserCommandErrorCode.NEW_PASSWORD_MISMATCH);
+        }
+
+        // 3. 비밀번호 조건 검증
+        if (request.getNewPassword().length() < 10 || request.getNewPassword().length() > 20) {
+            throw new PasswordLengthInvalidException(UserCommandErrorCode.PASSWORD_LENGTH_INVALID);
+        }
+
+        // 4. 비밀번호 재설정 후 Redis에 저장된 토큰 삭제
+        member.changePassword(passwordEncoder.encode(request.getNewPassword()));
+        redisTemplate.delete("RESET_TOKEN:" + request.getToken());
     }
 
 }
