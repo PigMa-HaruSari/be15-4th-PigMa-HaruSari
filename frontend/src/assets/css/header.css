@@ -1,7 +1,4 @@
-:root {
-    --header: #B8B8FF;
-}
-html, body {
+html,body {
     margin: 0;
     padding: 0;
 }

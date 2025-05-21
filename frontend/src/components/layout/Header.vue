@@ -1,3 +1,4 @@
+<template>
 <!-- Header.vue -->
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
@@ -35,14 +36,13 @@ onBeforeUnmount(() => {
 })
 </script>
 
-<template>
-  <header>
+  <header class="header">
     <div class="header-inner">
       <div class="logo">
         <img src="@/assets/images/HARURAMENSARI.png" alt="하루살이 로고" />
         HARUSARI
       </div>
-      <nav>
+      <nav class="nav">
         <div class="bell-wrapper">
           <img
               src="@/assets/images/header-bell-white.svg"
@@ -54,56 +54,57 @@ onBeforeUnmount(() => {
               @close="closeDropdown"
           />
         </div>
-
-        <img src="@/assets/images/header-statistics-white.svg" alt="통계" />
-        <img src="@/assets/images/header-categories-white.svg" alt="카테고리" />
-        <img src="@/assets/images/header-profile-white.svg" alt="마이페이지" />
+        <button>카테고리</button>
+        <button>통계</button>
+        <button>마이페이지</button>
       </nav>
     </div>
   </header>
 </template>
 
+<script setup>
+
+</script>
+
 <style scoped>
-header {
-  width: 100%;
-  background: var(--header, #b8b8ff);
+
+
+.header {
+  width: 100vw;
   height: 100px;
+  background-color: #b8b8ff;
   display: flex;
+  justify-content: center;
   align-items: center;
 }
-
 .header-inner {
-  width: 1200px;
-  margin: 0 auto;
+  width: 100%;
+  max-width: 1200px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 0; /* padding 제거 */
 }
-
 .logo {
   font-size: 30px;
   font-weight: bold;
   color: #ffffff;
   display: flex;
   align-items: center;
+  gap: 10px;
 }
-
 .logo img {
   height: 60px;
-  margin-right: 10px;
 }
-
-nav {
+.nav {
   display: flex;
   gap: 20px;
-  align-items: center;
 }
-
-nav img {
+.nav button {
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: #ffffff;
   cursor: pointer;
-}
-
-.bell-wrapper {
-  position: relative;
 }
 </style>

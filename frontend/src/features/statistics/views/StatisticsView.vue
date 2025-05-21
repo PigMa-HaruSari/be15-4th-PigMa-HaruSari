@@ -1,4 +1,8 @@
 <script setup>
+
+import Header from '@/components/layout/Header.vue'
+
+
 import {ref, onMounted} from 'vue'
 import {Calendar} from '@fullcalendar/core'
 import dayGridPlugin from '@fullcalendar/daygrid'
@@ -43,6 +47,7 @@ onMounted(() => {
 </script>
 
 <template>
+  <Header />
   <div class="statistics-wrapper">
     <div class="left-column">
       <div id="calendar" ref="calendarRef"></div>
