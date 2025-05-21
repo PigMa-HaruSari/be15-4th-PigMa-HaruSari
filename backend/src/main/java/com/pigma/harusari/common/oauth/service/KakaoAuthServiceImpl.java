@@ -1,5 +1,8 @@
 package com.pigma.harusari.common.oauth.service;
 
+import com.pigma.harusari.category.command.application.dto.request.CategoryCreateRequest;
+import com.pigma.harusari.category.command.domain.aggregate.Category;
+import com.pigma.harusari.category.command.domain.repository.CategoryCommandRepository;
 import com.pigma.harusari.common.auth.dto.LoginResponse;
 import com.pigma.harusari.common.jwt.JwtTokenProvider;
 import com.pigma.harusari.common.oauth.dto.*;
@@ -18,6 +21,7 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 
 @Service
 @Transactional
@@ -26,6 +30,7 @@ public class KakaoAuthServiceImpl implements KakaoAuthService {
 
     private final WebClient webClient;
     private final UserCommandRepository memberRepository;
+    private final CategoryCommandRepository categoryRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisTemplate<String, String> redisTemplate;
 
@@ -63,18 +68,43 @@ public class KakaoAuthServiceImpl implements KakaoAuthService {
             throw new OAuthAlreadyRegisteredException(OAuthExceptionErrorCode.OAUTH_ALREADY_REGISTERED);
         }
 
+        Gender gender;
+        try {
+            gender = Gender.fromString(request.getGender());
+        } catch (Exception e) {
+            throw new OAuthUserInfoIncompleteException(OAuthExceptionErrorCode.OAUTH_USER_INFO_INCOMPLETE);
+        }
+
         Member member = Member.builder()
                 .email(request.getEmail())
                 .nickname(request.getNickname())
                 .password("")
-                .gender(Gender.NONE)
+                .gender(gender)
                 .consentPersonalInfo(request.getConsentPersonalInfo())
                 .provider(AuthProvider.KAKAO)
+                .userRegisteredAt(LocalDateTime.now())
                 .build();
 
         Member saved;
         try {
             saved = memberRepository.save(member);
+        } catch (Exception e) {
+            throw new OAuthInternalErrorException(OAuthExceptionErrorCode.OAUTH_INTERNAL_ERROR);
+        }
+
+        if (request.getCategoryList() == null || request.getCategoryList().isEmpty()) {
+            throw new OAuthUserInfoIncompleteException(OAuthExceptionErrorCode.OAUTH_USER_INFO_INCOMPLETE);
+        }
+
+        try {
+            for (CategoryCreateRequest catReq : request.getCategoryList()) {
+                categoryRepository.save(Category.builder()
+                        .memberId(saved.getMemberId())
+                        .categoryName(catReq.getCategoryName())
+                        .color(catReq.getColor() != null ? catReq.getColor() : "#111111")
+                        .completed(false)
+                        .build());
+            }
         } catch (Exception e) {
             throw new OAuthInternalErrorException(OAuthExceptionErrorCode.OAUTH_INTERNAL_ERROR);
         }
