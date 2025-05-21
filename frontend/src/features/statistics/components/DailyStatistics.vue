@@ -1,5 +1,5 @@
 <script setup>
-import {ref, onMounted, watch, nextTick} from 'vue'
+import {ref, onMounted, watch, nextTick, computed} from 'vue'
 import axios from 'axios'
 import {Chart} from 'chart.js'
 import {format} from 'date-fns'
@@ -55,12 +55,14 @@ const loadData = async () => {
   drawChart(rate)
 }
 
+const labelText = computed(() => `${props.date.getDate()}일 달성률`)
+
 watch(() => props.date, loadData, {immediate: true})
 </script>
 
 <template>
   <div class="circle-box">
-    <h4>일일 달성률</h4>
+    <h4>{{ labelText }}</h4>
     <canvas ref="chartRef" width="150" height="150"></canvas>
   </div>
 </template>
