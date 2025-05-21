@@ -32,6 +32,10 @@ public class Member {
     @Column(name = "consent_personal_info", nullable = false)
     private Boolean consentPersonalInfo = false;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "auth_provider", nullable = false)
+    private AuthProvider provider;
+
     @Column(name = "user_registered_at", nullable = false)
     private LocalDateTime userRegisteredAt;
 
@@ -42,12 +46,13 @@ public class Member {
     private Boolean userDeletedAt = false;
 
     @Builder
-    public Member(String email, String password, String nickname, Gender gender, Boolean consentPersonalInfo, LocalDateTime userRegisteredAt) {
+    public Member(String email, String password, String nickname, Gender gender, Boolean consentPersonalInfo, AuthProvider provider, LocalDateTime userRegisteredAt) {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
         this.gender = gender;
         this.consentPersonalInfo = (consentPersonalInfo != null) ? consentPersonalInfo : false;
+        this.provider = provider != null ? provider : AuthProvider.LOCAL;
         this.userRegisteredAt = (userRegisteredAt != null) ? userRegisteredAt : LocalDateTime.now();
         this.userDeletedAt = false;
     }
