@@ -96,7 +96,7 @@ public class KakaoAuthServiceImpl implements KakaoAuthService {
     }
 
     /* 카카오 인가 코드 기반으로 토큰 요청 */
-    private KakaoTokenResponse requestAccessToken(String code) {
+    KakaoTokenResponse requestAccessToken(String code) {
         try {
             return webClient.post()
                     .uri(tokenUri)
@@ -116,7 +116,7 @@ public class KakaoAuthServiceImpl implements KakaoAuthService {
     }
 
     /* AccessToken 기반으로 카카오 사용자의 정보 조회 */
-    private KakaoUserInfo requestUserInfo(String accessToken) {
+    KakaoUserInfo requestUserInfo(String accessToken) {
         try {
             return webClient.get()
                     .uri(userInfoUri)
@@ -131,7 +131,7 @@ public class KakaoAuthServiceImpl implements KakaoAuthService {
     }
 
     /* JWT 토큰 생성하고 리프레스 토큰을 Redis에 저장 */
-    private LoginResponse issueJwtTokens(Member member) {
+    LoginResponse issueJwtTokens(Member member) {
         try {
             String userId = String.valueOf(member.getMemberId());
             String accessToken = jwtTokenProvider.createToken(userId, member.getGender().name());
