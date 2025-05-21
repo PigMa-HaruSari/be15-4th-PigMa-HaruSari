@@ -5,6 +5,7 @@ import com.pigma.harusari.category.command.application.dto.request.CategoryCreat
 import com.pigma.harusari.common.auth.exception.AuthErrorCode;
 import com.pigma.harusari.common.auth.exception.LogInMemberNotFoundException;
 import com.pigma.harusari.support.WithMockCustomUser;
+import com.pigma.harusari.user.command.dto.SignOutRequest;
 import com.pigma.harusari.user.command.dto.SignUpRequest;
 import com.pigma.harusari.user.command.dto.UpdatePasswordRequest;
 import com.pigma.harusari.user.command.dto.UpdateUserProfileRequest;
@@ -35,6 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 @WebMvcTest(UserCommandController.class)
+@Import(UserCommandExceptionHandler.class)
 @AutoConfigureMockMvc(addFilters = false)
 @DisplayName("[회원 - controller] UserCommandController 테스트")
 class UserCommandControllerTest {
@@ -166,7 +168,7 @@ class UserCommandControllerTest {
     @DisplayName("[개인정보 수정] 정상 수정 완료 테스트")
     @WithMockCustomUser(memberId = 1L)
     void testUpdateSuccess() throws Exception {
-        mockMvc.perform(put("/api/v1/user/mypage")
+        mockMvc.perform(put("/api/v1/users/mypage")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateRequest)))
                 .andExpect(status().isOk())
@@ -183,7 +185,7 @@ class UserCommandControllerTest {
         doThrow(new LogInMemberNotFoundException(AuthErrorCode.LOGIN_MEMBER_NOT_FOUND))
                 .when(userCommandService).updateUserProfile(anyLong(), any());
 
-        mockMvc.perform(put("/api/v1/user/mypage")
+        mockMvc.perform(put("/api/v1/users/mypage")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateRequest)))
                 .andExpect(status().isUnauthorized())
@@ -207,7 +209,7 @@ class UserCommandControllerTest {
 
         doThrow(new EmptyUpdateRequestException(UserCommandErrorCode.EMPTY_UPDATE_REQUEST)).when(userCommandService).updateUserProfile(eq(1L), any());
 
-        mockMvc.perform(put("/api/v1/user/mypage")
+        mockMvc.perform(put("/api/v1/users/mypage")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(emptyRequest)))
                 .andExpect(status().isBadRequest())
@@ -223,7 +225,7 @@ class UserCommandControllerTest {
     @DisplayName("[비밀번호 변경] 비밀번호 변경 요청 성공 테스트")
     @WithMockCustomUser(memberId = 1L)
     void testChangePasswordSuccess() throws Exception {
-        mockMvc.perform(put("/api/v1/user/password")
+        mockMvc.perform(put("/api/v1/users/password")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updatePasswordRequest)))
                 .andExpect(status().isOk())
@@ -240,7 +242,7 @@ class UserCommandControllerTest {
         doThrow(new CurrentPasswordIncorrectException(UserCommandErrorCode.PASSWORD_MISMATCH))
                 .when(userCommandService).changePassword(eq(1L), any());
 
-        mockMvc.perform(put("/api/v1/user/password")
+        mockMvc.perform(put("/api/v1/users/password")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updatePasswordRequest)))
                 .andExpect(status().isBadRequest())
@@ -257,7 +259,7 @@ class UserCommandControllerTest {
         doThrow(new NewPasswordMismatchException(UserCommandErrorCode.NEW_PASSWORD_MISMATCH))
                 .when(userCommandService).changePassword(eq(1L), any());
 
-        mockMvc.perform(put("/api/v1/user/password")
+        mockMvc.perform(put("/api/v1/users/password")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updatePasswordRequest)))
                 .andExpect(status().isBadRequest())
@@ -274,7 +276,7 @@ class UserCommandControllerTest {
         doThrow(new PasswordLengthInvalidException(UserCommandErrorCode.PASSWORD_LENGTH_INVALID))
                 .when(userCommandService).changePassword(eq(1L), any());
 
-        mockMvc.perform(put("/api/v1/user/password")
+        mockMvc.perform(put("/api/v1/users/password")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updatePasswordRequest)))
                 .andExpect(status().isBadRequest())
@@ -284,5 +286,67 @@ class UserCommandControllerTest {
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE));
     }
 
+    @Test
+    @DisplayName("[회원탈퇴] 회원탈퇴 성공 테스트")
+    @WithMockCustomUser(memberId = 1L)
+    void testSignOutSuccess() throws Exception {
+        SignOutRequest request = SignOutRequest.builder().password("password123").build();
+
+        mockMvc.perform(put("/api/v1/users/signout")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.errorCode").doesNotExist())
+                .andExpect(jsonPath("$.message").doesNotExist());
+    }
+
+    @Test
+    @DisplayName("[회원탈퇴] 존재하지 않는 사용자에 대해 예외 발생하는 테스트")
+    @WithMockCustomUser(memberId = 999L)
+    void testSignOutUserNotFound() throws Exception {
+        SignOutRequest request = SignOutRequest.builder().password("password123").build();
+        doThrow(new LogInMemberNotFoundException(AuthErrorCode.LOGIN_MEMBER_NOT_FOUND))
+                .when(userCommandService).signOut(eq(1L), any(SignOutRequest.class));
+
+        mockMvc.perform(put("/api/v1/users/signout")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.errorCode").value(AuthErrorCode.LOGIN_MEMBER_NOT_FOUND.getErrorCode()));
+    }
+
+    @Test
+    @DisplayName("[회원탈퇴] 비밀번호 불일치로 인해 예외 발생하는 테스트")
+    @WithMockCustomUser(memberId = 1L)
+    void testSignOutPasswordMismatch() throws Exception {
+        SignOutRequest request = SignOutRequest.builder().password("wrongPassword").build();
+        doThrow(new CurrentPasswordIncorrectException(UserCommandErrorCode.PASSWORD_MISMATCH))
+                .when(userCommandService).signOut(eq(1L), any());
+
+        mockMvc.perform(put("/api/v1/users/signout")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.errorCode").value(UserCommandErrorCode.PASSWORD_MISMATCH.getErrorCode()));
+    }
+
+    @Test
+    @DisplayName("[회원탈퇴] 이미 탈퇴한 사용자에 대해 예외 발생하는 테스트")
+    @WithMockCustomUser(memberId = 1L)
+    void testSignOutAlreadySignedOut() throws Exception {
+        SignOutRequest request = SignOutRequest.builder().password("password123").build();
+        doThrow(new AlreadySignedOutMemberException(UserCommandErrorCode.ALREADY_SIGNED_OUT_MEMBER))
+                .when(userCommandService).signOut(eq(1L), any());
+
+        mockMvc.perform(put("/api/v1/users/signout")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.errorCode").value(UserCommandErrorCode.ALREADY_SIGNED_OUT_MEMBER.getErrorCode()));
+    }
 
 }

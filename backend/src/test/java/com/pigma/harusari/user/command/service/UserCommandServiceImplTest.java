@@ -6,6 +6,7 @@ import com.pigma.harusari.category.command.domain.aggregate.Category;
 import com.pigma.harusari.category.command.domain.repository.CategoryCommandRepository;
 import com.pigma.harusari.common.auth.exception.AuthErrorCode;
 import com.pigma.harusari.common.auth.exception.LogInMemberNotFoundException;
+import com.pigma.harusari.user.command.dto.SignOutRequest;
 import com.pigma.harusari.user.command.dto.SignUpRequest;
 import com.pigma.harusari.user.command.dto.UpdatePasswordRequest;
 import com.pigma.harusari.user.command.dto.UpdateUserProfileRequest;
@@ -412,6 +413,96 @@ class UserCommandServiceImplTest {
         assertThatThrownBy(() -> userCommandServiceImpl.changePassword(1L, request))
                 .isInstanceOf(PasswordLengthInvalidException.class)
                 .hasMessage(UserCommandErrorCode.PASSWORD_LENGTH_INVALID.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("[회원탈퇴] 회원탈퇴 성공 테스트")
+    void testSignOutSuccess() {
+        // given
+        Member member = Member.builder()
+                .email("test@example.com")
+                .password(encodedPassword)
+                .nickname("닉네임")
+                .gender(Gender.FEMALE)
+                .consentPersonalInfo(true)
+                .userRegisteredAt(LocalDateTime.now())
+                .build();
+        ReflectionTestUtils.setField(member, "memberId", 1L);
+
+        SignOutRequest request = SignOutRequest.builder().password(rawPassword).build();
+
+        given(userCommandRepository.findById(1L)).willReturn(Optional.of(member));
+        given(passwordEncoder.matches(rawPassword, encodedPassword)).willReturn(true);
+
+        // when
+        userCommandServiceImpl.signOut(1L, request);
+
+        // then
+        assertThat(member.getUserDeletedAt()).isTrue();
+    }
+
+    @Test
+    @DisplayName("[회원탈퇴] 존재하지 않는 사용자에 대해 예외 발생하는 테스트")
+    void testSignOutUserNotFound() {
+        // given
+        SignOutRequest request = SignOutRequest.builder().password(rawPassword).build();
+        given(userCommandRepository.findById(999L)).willReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> userCommandServiceImpl.signOut(999L, request))
+                .isInstanceOf(LogInMemberNotFoundException.class)
+                .hasMessage(AuthErrorCode.LOGIN_MEMBER_NOT_FOUND.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("[회원탈퇴] 비밀번호 불일치로 인해 예외 발생하는 테스트")
+    void testSignOutPasswordMismatch() {
+        // given
+        Member member = Member.builder()
+                .email("test@example.com")
+                .password(encodedPassword)
+                .nickname("닉네임")
+                .gender(Gender.FEMALE)
+                .consentPersonalInfo(true)
+                .userRegisteredAt(LocalDateTime.now())
+                .build();
+        ReflectionTestUtils.setField(member, "memberId", 1L);
+
+        SignOutRequest request = SignOutRequest.builder().password("wrongPassword").build();
+
+        given(userCommandRepository.findById(1L)).willReturn(Optional.of(member));
+        given(passwordEncoder.matches("wrongPassword", encodedPassword)).willReturn(false);
+
+        // when & then
+        assertThatThrownBy(() -> userCommandServiceImpl.signOut(1L, request))
+                .isInstanceOf(CurrentPasswordIncorrectException.class)
+                .hasMessage(UserCommandErrorCode.PASSWORD_MISMATCH.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("[회원탈퇴] 이미 탈퇴한 사용자에 대해 예외 발생하는 테스트")
+    void testSignOutAlreadySignedOut() {
+        // given
+        Member member = Member.builder()
+                .email("test@example.com")
+                .password(encodedPassword)
+                .nickname("닉네임")
+                .gender(Gender.FEMALE)
+                .consentPersonalInfo(true)
+                .userRegisteredAt(LocalDateTime.now())
+                .build();
+        ReflectionTestUtils.setField(member, "memberId", 1L);
+        ReflectionTestUtils.setField(member, "userDeletedAt", true);
+
+        SignOutRequest request = SignOutRequest.builder().password(rawPassword).build();
+
+        given(userCommandRepository.findById(1L)).willReturn(Optional.of(member));
+        given(passwordEncoder.matches(rawPassword, encodedPassword)).willReturn(true);
+
+        // when & then
+        assertThatThrownBy(() -> userCommandServiceImpl.signOut(1L, request))
+                .isInstanceOf(AlreadySignedOutMemberException.class)
+                .hasMessage(UserCommandErrorCode.ALREADY_SIGNED_OUT_MEMBER.getErrorMessage());
     }
 
 }
