@@ -43,6 +43,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/test/daily","/test/monthly","test/weekly","test/send").permitAll()
+                        .requestMatchers("/api/v1/alarms/unread","api/v1/alarms/read-all").permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex
