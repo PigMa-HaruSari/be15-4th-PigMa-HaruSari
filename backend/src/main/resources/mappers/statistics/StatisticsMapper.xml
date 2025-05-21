@@ -34,7 +34,7 @@
 
     <select id="findStatisticsCategoryRate" resultType="com.pigma.harusari.statistics.query.dto.response.StatisticsCategoryRateResponse">
         SELECT
-            c.name AS categoryName,
+            c.category_name AS categoryName, c.color AS color,
             ROUND(
                 CASE
                     WHEN COUNT(*) = 0 THEN 0
@@ -44,6 +44,6 @@
         FROM schedule s
         JOIN category c ON s.category_id = c.category_id
         WHERE c.member_id = #{memberId}
-        GROUP BY c.category_id, c.category_name
+        GROUP BY c.category_id, c.category_name, c.color
     </select>
 </mapper>
