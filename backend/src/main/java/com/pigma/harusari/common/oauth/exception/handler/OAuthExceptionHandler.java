@@ -37,4 +37,32 @@ public class OAuthExceptionHandler {
         return new ResponseEntity<>(response, errorCode.getHttpStatus());
     }
 
+    @ExceptionHandler(OAuthAlreadyRegisteredException.class)
+    public ResponseEntity<ApiResponse<Void>> handleOAuthAlreadyRegisteredException(OAuthAlreadyRegisteredException e) {
+        OAuthExceptionErrorCode errorCode = e.getErrorCode();
+        ApiResponse<Void> response = ApiResponse.failure(errorCode.getErrorCode(), errorCode.getErrorMessage());
+        return new ResponseEntity<>(response, errorCode.getHttpStatus());
+    }
+
+    @ExceptionHandler(OAuthRedisSaveFailedException.class)
+    public ResponseEntity<ApiResponse<Void>> handleOAuthRedisSaveFailedException(OAuthRedisSaveFailedException e) {
+        OAuthExceptionErrorCode errorCode = e.getErrorCode();
+        ApiResponse<Void> response = ApiResponse.failure(errorCode.getErrorCode(), errorCode.getErrorMessage());
+        return new ResponseEntity<>(response, errorCode.getHttpStatus());
+    }
+
+    @ExceptionHandler(OAuthJWTIssutFailedException.class)
+    public ResponseEntity<ApiResponse<Void>> handleOAuthJWTIssutFailedException(OAuthJWTIssutFailedException e) {
+        OAuthExceptionErrorCode errorCode = e.getErrorCode();
+        ApiResponse<Void> response = ApiResponse.failure(errorCode.getErrorCode(), errorCode.getErrorMessage());
+        return new ResponseEntity<>(response, errorCode.getHttpStatus());
+    }
+
+    @ExceptionHandler(OAuthInternalErrorException.class)
+    public ResponseEntity<ApiResponse<Void>> handleOAuthInternalErrorException(OAuthInternalErrorException e) {
+        OAuthExceptionErrorCode errorCode = e.getErrorCode();
+        ApiResponse<Void> response = ApiResponse.failure(errorCode.getErrorCode(), errorCode.getErrorMessage());
+        return new ResponseEntity<>(response, errorCode.getHttpStatus());
+    }
+
 }

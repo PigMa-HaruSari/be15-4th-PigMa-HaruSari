@@ -1,6 +1,8 @@
 package com.pigma.harusari.common.oauth.controller;
 
+import com.pigma.harusari.common.auth.dto.LoginResponse;
 import com.pigma.harusari.common.dto.ApiResponse;
+import com.pigma.harusari.common.oauth.dto.KakaoSignupRequest;
 import com.pigma.harusari.common.oauth.dto.KakaoUserBasicInfo;
 import com.pigma.harusari.common.oauth.service.KakaoAuthService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,15 @@ public class KakaoAuthController {
     ) {
         KakaoUserBasicInfo userInfo = kakaoAuthService.getUserInfo(code);
         return ResponseEntity.ok(ApiResponse.success(userInfo));
+    }
+
+    /* 카카오 회원가입 - 최종 회원가입 처리(성별, 개인정보 동의 등) */
+    @PostMapping("/signup/kakao")
+    public ResponseEntity<ApiResponse<LoginResponse>> signupWithKakao(
+            @RequestBody KakaoSignupRequest request
+    ) {
+        LoginResponse response = kakaoAuthService.signup(request);
+        return ResponseEntity.ok(ApiResponse.success(response));
     }
 
 }

@@ -1,14 +1,23 @@
 package com.pigma.harusari.common.oauth.service;
 
+import com.pigma.harusari.common.auth.dto.LoginResponse;
+import com.pigma.harusari.common.jwt.JwtTokenProvider;
 import com.pigma.harusari.common.oauth.dto.*;
 import com.pigma.harusari.common.oauth.exception.*;
+import com.pigma.harusari.user.command.entity.AuthProvider;
+import com.pigma.harusari.user.command.entity.Gender;
+import com.pigma.harusari.user.command.entity.Member;
+import com.pigma.harusari.user.command.repository.UserCommandRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import java.time.Duration;
 
 @Service
 @Transactional
@@ -16,6 +25,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class KakaoAuthServiceImpl implements KakaoAuthService {
 
     private final WebClient webClient;
+    private final UserCommandRepository memberRepository;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final RedisTemplate<String, String> redisTemplate;
 
     @Value("${kakao.client-id}")
     private String clientId;
@@ -42,6 +54,32 @@ public class KakaoAuthServiceImpl implements KakaoAuthService {
             throw new OAuthUserInfoIncompleteException(OAuthExceptionErrorCode.OAUTH_USER_INFO_INCOMPLETE);
         }
         return new KakaoUserBasicInfo(email, nickname);
+    }
+
+    /* 카카오 회원가입 - 최종 회원가입 처리(성별, 개인정보 동의 등) */
+    @Override
+    public LoginResponse signup(KakaoSignupRequest request) {
+        if (memberRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new OAuthAlreadyRegisteredException(OAuthExceptionErrorCode.OAUTH_ALREADY_REGISTERED);
+        }
+
+        Member member = Member.builder()
+                .email(request.getEmail())
+                .nickname(request.getNickname())
+                .password("")
+                .gender(Gender.NONE)
+                .consentPersonalInfo(request.getConsentPersonalInfo())
+                .provider(AuthProvider.KAKAO)
+                .build();
+
+        Member saved;
+        try {
+            saved = memberRepository.save(member);
+        } catch (Exception e) {
+            throw new OAuthInternalErrorException(OAuthExceptionErrorCode.OAUTH_INTERNAL_ERROR);
+        }
+
+        return issueJwtTokens(saved);
     }
 
     /* 카카오 인가 코드 기반으로 토큰 요청 */
@@ -76,6 +114,31 @@ public class KakaoAuthServiceImpl implements KakaoAuthService {
                     .orElseThrow(() -> new OAuthUserInfoRequestFailedException(OAuthExceptionErrorCode.OAUTH_USER_INFO_REQUEST_FAILED));
         } catch (Exception e) {
             throw new OAuthUserInfoRequestFailedException(OAuthExceptionErrorCode.OAUTH_USER_INFO_REQUEST_FAILED);
+        }
+    }
+
+    /* JWT 토큰 생성하고 리프레스 토큰을 Redis에 저장 */
+    private LoginResponse issueJwtTokens(Member member) {
+        try {
+            String userId = String.valueOf(member.getMemberId());
+            String accessToken = jwtTokenProvider.createToken(userId, member.getGender().name());
+            String refreshToken = jwtTokenProvider.createRefreshToken(userId, member.getGender().name());
+
+            try {
+                redisTemplate.opsForValue().set(userId, refreshToken, Duration.ofDays(7));
+            } catch (Exception e) {
+                throw new OAuthRedisSaveFailedException(OAuthExceptionErrorCode.OAUTH_REDIS_SAVE_FAILED);
+            }
+
+            return LoginResponse.builder()
+                    .accessToken(accessToken)
+                    .refreshToken(refreshToken)
+                    .userId(member.getMemberId())
+                    .nickname(member.getNickname())
+                    .build();
+
+        } catch (Exception e) {
+            throw new OAuthJWTIssutFailedException(OAuthExceptionErrorCode.OAUTH_JWT_ISSUE_FAILED);
         }
     }
 
