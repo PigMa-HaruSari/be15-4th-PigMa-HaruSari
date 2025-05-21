@@ -18,6 +18,7 @@ public enum UserCommandErrorCode {
     NEW_PASSWORD_MISMATCH("10008", "새 비밀번호와 확인 값이 일치하지 않습니다.", HttpStatus.BAD_REQUEST),
     PASSWORD_LENGTH_INVALID("10009", "비밀번호는 10자 이상 20자 이하여야 합니다.", HttpStatus.BAD_REQUEST),
     ALREADY_SIGNED_OUT_MEMBER("10010", "이미 탈퇴한 회원입니다.", HttpStatus.BAD_REQUEST),
+    EMAIL_NOT_FOUND("10011", "이미 탈퇴한 회원입니다.", HttpStatus.BAD_REQUEST),
     END_OF_ERROR("19999", "", HttpStatus.BAD_REQUEST);
 
 
