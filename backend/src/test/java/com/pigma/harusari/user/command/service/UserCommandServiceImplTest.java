@@ -6,10 +6,7 @@ import com.pigma.harusari.category.command.domain.aggregate.Category;
 import com.pigma.harusari.category.command.domain.repository.CategoryCommandRepository;
 import com.pigma.harusari.common.auth.exception.AuthErrorCode;
 import com.pigma.harusari.common.auth.exception.LogInMemberNotFoundException;
-import com.pigma.harusari.user.command.dto.SignOutRequest;
-import com.pigma.harusari.user.command.dto.SignUpRequest;
-import com.pigma.harusari.user.command.dto.UpdatePasswordRequest;
-import com.pigma.harusari.user.command.dto.UpdateUserProfileRequest;
+import com.pigma.harusari.user.command.dto.*;
 import com.pigma.harusari.user.command.entity.Gender;
 import com.pigma.harusari.user.command.entity.Member;
 import com.pigma.harusari.user.command.exception.*;
@@ -503,6 +500,106 @@ class UserCommandServiceImplTest {
         assertThatThrownBy(() -> userCommandServiceImpl.signOut(1L, request))
                 .isInstanceOf(AlreadySignedOutMemberException.class)
                 .hasMessage(UserCommandErrorCode.ALREADY_SIGNED_OUT_MEMBER.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("[비밀번호 재설정] 비밀번호 재설정 요청 성공 테스트")
+    void testResetPasswordSuccess() {
+        // given
+        ResetPasswordPerformRequest request = ResetPasswordPerformRequest.builder()
+                .token("valid-token")
+                .newPassword(newSecurePassword)
+                .confirmPassword(newSecurePassword)
+                .build();
+
+        Member member = Member.builder()
+                .email("test@example.com")
+                .password(encodedPassword)
+                .nickname("테스트")
+                .gender(Gender.FEMALE)
+                .consentPersonalInfo(true)
+                .userRegisteredAt(LocalDateTime.now())
+                .build();
+
+        given(redisTemplate.opsForValue()).willReturn(valueOperations);
+        given(valueOperations.get("RESET_TOKEN:valid-token")).willReturn("test@example.com");
+        given(userCommandRepository.findByEmail("test@example.com")).willReturn(Optional.of(member));
+        given(passwordEncoder.encode(newSecurePassword)).willReturn(newEncodedPassword);
+
+        // when
+        userCommandServiceImpl.resetPassword(request);
+
+        // then
+        assertThat(member.getPassword()).isEqualTo(newEncodedPassword);
+        verify(redisTemplate).delete("RESET_TOKEN:valid-token");
+    }
+
+    @Test
+    @DisplayName("[비밀번호 재설정] 유효하지 않은 인증 토큰 예외 테스트")
+    void testResetPasswordTokenInvalid() {
+        // given
+        ResetPasswordPerformRequest request = ResetPasswordPerformRequest.builder()
+                .token("invalid-token")
+                .newPassword(newSecurePassword)
+                .confirmPassword(newSecurePassword)
+                .build();
+
+        given(redisTemplate.opsForValue()).willReturn(valueOperations);
+        given(valueOperations.get("RESET_TOKEN:invalid-token")).willReturn(null);
+
+        // when & then
+        assertThatThrownBy(() -> userCommandServiceImpl.resetPassword(request))
+                .isInstanceOf(ResetTokenInvalidException.class)
+                .hasMessage(UserCommandErrorCode.INVALID_RESET_TOKEN.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("[비밀번호 재설정] 이메일로 사용자를 찾지 못한 경우의 예외 테스트")
+    void testResetPasswordUserNotFound() {
+        // given
+        ResetPasswordPerformRequest request = ResetPasswordPerformRequest.builder()
+                .token("valid-token")
+                .newPassword(newSecurePassword)
+                .confirmPassword(newSecurePassword)
+                .build();
+
+        given(redisTemplate.opsForValue()).willReturn(valueOperations);
+        given(valueOperations.get("RESET_TOKEN:valid-token")).willReturn("test@example.com");
+        given(userCommandRepository.findByEmail("test@example.com")).willReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> userCommandServiceImpl.resetPassword(request))
+                .isInstanceOf(LogInMemberNotFoundException.class)
+                .hasMessage(AuthErrorCode.LOGIN_MEMBER_NOT_FOUND.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("[비밀번호 재설정] 새비밀번호 불일치 예외 테스트")
+    void testResetPasswordMismatch() {
+        // given
+        ResetPasswordPerformRequest request = ResetPasswordPerformRequest.builder()
+                .token("valid-token")
+                .newPassword(newSecurePassword)
+                .confirmPassword("wrongConfirmPassword")
+                .build();
+
+        Member member = Member.builder()
+                .email("test@example.com")
+                .password(encodedPassword)
+                .nickname("테스트")
+                .gender(Gender.FEMALE)
+                .consentPersonalInfo(true)
+                .userRegisteredAt(LocalDateTime.now())
+                .build();
+
+        given(redisTemplate.opsForValue()).willReturn(valueOperations);
+        given(valueOperations.get("RESET_TOKEN:valid-token")).willReturn("test@example.com");
+        given(userCommandRepository.findByEmail("test@example.com")).willReturn(Optional.of(member));
+
+        // when & then
+        assertThatThrownBy(() -> userCommandServiceImpl.resetPassword(request))
+                .isInstanceOf(NewPasswordMismatchException.class)
+                .hasMessage(UserCommandErrorCode.NEW_PASSWORD_MISMATCH.getErrorMessage());
     }
 
 }
