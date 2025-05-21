@@ -2,9 +2,11 @@ package com.pigma.harusari.user.command.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@Builder
 public class ResetPasswordPerformRequest {
 
     @NotBlank(message = "토큰은 필수입니다.")
