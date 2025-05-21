@@ -1,5 +1,7 @@
 import {createApp} from 'vue'
 import {createPinia} from 'pinia'
+import '/src/assets/css/header.css'
+
 
 import App from './App.vue'
 import router from './router'
@@ -15,6 +17,7 @@ import {
     DoughnutController,
     BarController
 } from 'chart.js'
+import {useUserStore} from "@/stores/userStore.js";
 
 Chart.register(
     ArcElement,
@@ -31,5 +34,12 @@ const app = createApp(App)
 
 app.use(createPinia())
 app.use(router)
+
+const userStore = useUserStore();
+const savedUser = localStorage.getItem('user');
+if (savedUser) {
+    userStore.setUser(JSON.parse(savedUser));
+}
+
 
 app.mount('#app')
