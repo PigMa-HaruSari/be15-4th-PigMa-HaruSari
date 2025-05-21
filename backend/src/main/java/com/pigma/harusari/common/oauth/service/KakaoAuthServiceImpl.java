@@ -82,6 +82,19 @@ public class KakaoAuthServiceImpl implements KakaoAuthService {
         return issueJwtTokens(saved);
     }
 
+    /* 카카오 로그인 */
+    @Override
+    public LoginResponse login(String code) {
+        String accessToken = requestAccessToken(code).getAccessToken();
+        KakaoUserInfo kakaoUser = requestUserInfo(accessToken);
+
+        String email = kakaoUser.getKakao_account().getEmail();
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new OAuthUserNotFoundException(OAuthExceptionErrorCode.OAUTH_USER_NOT_FOUND));
+
+        return issueJwtTokens(member);
+    }
+
     /* 카카오 인가 코드 기반으로 토큰 요청 */
     private KakaoTokenResponse requestAccessToken(String code) {
         try {

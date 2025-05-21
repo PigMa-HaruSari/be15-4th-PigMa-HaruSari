@@ -8,5 +8,6 @@ public interface KakaoAuthService {
 
     KakaoUserBasicInfo getUserInfo(String code);
     LoginResponse signup(KakaoSignupRequest request);
+    LoginResponse login(String code);
 
 }

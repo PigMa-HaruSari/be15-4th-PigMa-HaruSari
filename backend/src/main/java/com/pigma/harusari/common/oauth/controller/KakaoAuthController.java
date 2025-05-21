@@ -34,4 +34,13 @@ public class KakaoAuthController {
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
+    /* 카카오 로그인 */
+    @GetMapping("/login/kakao")
+    public ResponseEntity<ApiResponse<LoginResponse>> loginWithKakao(
+            @RequestParam String code
+    ) {
+        LoginResponse response = kakaoAuthService.login(code);
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
 }
