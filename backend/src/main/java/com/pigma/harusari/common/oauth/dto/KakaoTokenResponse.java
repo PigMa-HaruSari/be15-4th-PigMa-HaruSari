@@ -1,9 +1,11 @@
 package com.pigma.harusari.common.oauth.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@Builder
 public class KakaoTokenResponse {
 
     @JsonProperty("access_token")
