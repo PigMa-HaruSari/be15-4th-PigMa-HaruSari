@@ -1,4 +1,4 @@
-package com.pigma.harusari.common.email.service;
+package com.pigma.harusari.user.infrastructure.email.service;
 
 public interface PasswordResetService {
 

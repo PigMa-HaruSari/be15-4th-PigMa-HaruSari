@@ -1,4 +1,4 @@
-package com.pigma.harusari.common.email.service;
+package com.pigma.harusari.user.infrastructure.email.service;
 
 import com.pigma.harusari.user.command.entity.Member;
 import com.pigma.harusari.user.command.exception.EmailNotFoundException;
@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.util.Optional;
 import java.util.Random;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor

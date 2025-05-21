@@ -1,4 +1,4 @@
-package com.pigma.harusari.common.email.dto;
+package com.pigma.harusari.user.infrastructure.email.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

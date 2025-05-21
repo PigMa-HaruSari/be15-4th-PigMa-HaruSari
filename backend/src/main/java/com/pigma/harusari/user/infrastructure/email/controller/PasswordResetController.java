@@ -1,8 +1,8 @@
-package com.pigma.harusari.common.email.controller;
+package com.pigma.harusari.user.infrastructure.email.controller;
 
 import com.pigma.harusari.common.dto.ApiResponse;
-import com.pigma.harusari.common.email.dto.PasswordResetRequest;
-import com.pigma.harusari.common.email.service.PasswordResetService;
+import com.pigma.harusari.user.infrastructure.email.dto.PasswordResetRequest;
+import com.pigma.harusari.user.infrastructure.email.service.PasswordResetService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
