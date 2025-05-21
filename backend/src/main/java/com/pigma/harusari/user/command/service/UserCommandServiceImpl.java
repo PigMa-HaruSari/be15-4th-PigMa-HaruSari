@@ -15,6 +15,7 @@ import com.pigma.harusari.user.command.entity.Member;
 import com.pigma.harusari.user.command.exception.*;
 import com.pigma.harusari.user.command.repository.UserCommandRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -139,7 +141,12 @@ public class UserCommandServiceImpl implements UserCommandService {
             throw new CurrentPasswordIncorrectException(UserCommandErrorCode.PASSWORD_MISMATCH);
         }
 
-        // 3. 회원 탈퇴
+        // 3. 이미 탈퇴한 회원인지 확인
+        if (Boolean.TRUE.equals(member.getUserDeletedAt())) {
+            throw new AlreadySignedOutMemberException(UserCommandErrorCode.ALREADY_SIGNED_OUT_MEMBER);
+        }
+
+        // 4. 회원 탈퇴
         member.signOut();
     }
 

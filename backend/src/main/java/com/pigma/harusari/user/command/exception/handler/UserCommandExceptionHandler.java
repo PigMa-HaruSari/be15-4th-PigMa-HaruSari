@@ -65,4 +65,11 @@ public class UserCommandExceptionHandler {
         return new ResponseEntity<>(response, errorCode.getHttpStatus());
     }
 
+    @ExceptionHandler(AlreadySignedOutMemberException.class)
+    public ResponseEntity<ApiResponse<Void>> handleAlreadySignedOutMemberException(AlreadySignedOutMemberException e) {
+        UserCommandErrorCode errorCode = e.getErrorCode();
+        ApiResponse<Void> response = ApiResponse.failure(errorCode.getErrorCode(), errorCode.getErrorMessage());
+        return new ResponseEntity<>(response, errorCode.getHttpStatus());
+    }
+
 }

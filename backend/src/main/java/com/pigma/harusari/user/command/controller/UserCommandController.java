@@ -11,7 +11,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +30,7 @@ public class UserCommandController {
                 .body(ApiResponse.success(null));
     }
 
-    @PutMapping("/user/mypage")
+    @PutMapping("/users/mypage")
     public ResponseEntity<ApiResponse<Void>> updateProfile(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @Valid @RequestBody UpdateUserProfileRequest request
@@ -40,23 +39,21 @@ public class UserCommandController {
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 
-    @PutMapping("/user/password")
-    @PreAuthorize("isAuthenticated()")
+    @PutMapping("/users/password")
     public ResponseEntity<ApiResponse<Void>> changePassword(
             @Valid @RequestBody UpdatePasswordRequest request,
-            @AuthenticationPrincipal CustomUserDetails user
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        userCommandService.changePassword(user.getMemberId(), request);
+        userCommandService.changePassword(userDetails.getMemberId(), request);
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 
-    @PutMapping("/user/signout")
-    @PreAuthorize("isAuthenticated()")
+    @PutMapping("/users/signout")
     public ResponseEntity<ApiResponse<Void>> signOut(
             @Valid @RequestBody SignOutRequest request,
-            @AuthenticationPrincipal CustomUserDetails user
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        userCommandService.signOut(user.getMemberId(), request);
+        userCommandService.signOut(userDetails.getMemberId(), request);
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 
