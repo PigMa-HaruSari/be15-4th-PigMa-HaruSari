@@ -7,6 +7,7 @@ import com.pigma.harusari.statistics.query.dto.response.StatisticsDayResponse;
 import com.pigma.harusari.statistics.query.dto.response.StatisticsMonthResponse;
 import com.pigma.harusari.statistics.query.exception.StatisticsErrorCode;
 import com.pigma.harusari.statistics.query.service.StatisticsService;
+import com.pigma.harusari.support.WithMockCustomUser;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,8 +17,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
@@ -35,7 +34,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Slf4j
 @WebMvcTest(StatisticsController.class)
-@ImportAutoConfiguration(exclude = SecurityAutoConfiguration.class)
 @DisplayName("[통계 - controller] StatisticsController 테스트")
 class StatisticsControllerTest {
 
@@ -48,6 +46,8 @@ class StatisticsControllerTest {
     StatisticsDayResponse statisticsDayResponse;
     StatisticsMonthResponse statisticsMonthResponse;
     StatisticsCategoryResponse statisticsCategory;
+
+    private final Long MEMBER_ID = 1L;
 
     @BeforeEach
     void setUp() {
@@ -76,14 +76,13 @@ class StatisticsControllerTest {
     /* 일일 달성률 */
     @Test
     @DisplayName("[일일 달성률] 통계 조회 테스트")
+    @WithMockCustomUser
     void testGetStatisticsDaily() throws Exception {
-        Long memberId = 1L;
-
         LocalDate date = LocalDate.now();
         LocalDateTime startDateTime = date.atStartOfDay();
         LocalDateTime endDateTime = date.plusDays(1).atStartOfDay();
 
-        when(statisticsService.getStatisticsDaily(memberId, startDateTime, endDateTime)).thenReturn(statisticsDayResponse);
+        when(statisticsService.getStatisticsDaily(MEMBER_ID, startDateTime, endDateTime)).thenReturn(statisticsDayResponse);
 
         mockMvc.perform(get("/api/v1/statistics/daily")
                         .param("date", date.toString())
@@ -107,6 +106,7 @@ class StatisticsControllerTest {
     @NullAndEmptySource
     @ValueSource(strings = {" ", "\t", "\n"})
     @DisplayName("[일일 달성률] 통계 조회 시 날짜 값이 경우 예외가 발생하는 테스트")
+    @WithMockCustomUser
     void testGetStatisticsDailyDateMissingDateException(String condition) throws Exception {
         mockMvc.perform(get("/api/v1/statistics/daily")
                         .param("date", condition)
@@ -126,6 +126,7 @@ class StatisticsControllerTest {
     @ParameterizedTest
     @CsvSource({"2025.01.01", "2025-01-01 15:30:15"})
     @DisplayName("[일일 달성률] 통계 조회 시 날짜 형식이 맞지 않는 경우 예외가 발생하는 테스트")
+    @WithMockCustomUser
     void testGetStatisticsDailyInvalidDateFormatException(String condition) throws Exception {
         mockMvc.perform(get("/api/v1/statistics/daily")
                         .param("date", condition)
@@ -145,9 +146,8 @@ class StatisticsControllerTest {
     /* 월별 달성률 */
     @Test
     @DisplayName("[월별 달성률] 통계 조회 테스트")
+    @WithMockCustomUser
     void testGetStatisticsMonthly() throws Exception {
-        Long memberId = 1L;
-
         LocalDate date = LocalDate.now();
         LocalDateTime startDateTime = date.withDayOfMonth(1).atStartOfDay();
         LocalDateTime endDateTime = date.plusMonths(1).withDayOfMonth(1).atStartOfDay();
@@ -155,7 +155,7 @@ class StatisticsControllerTest {
         log.info("startDateTime = {}", startDateTime);
         log.info("endDateTime = {}", endDateTime);
 
-        when(statisticsService.getStatisticsMonthly(memberId, startDateTime, endDateTime)).thenReturn(statisticsMonthResponse);
+        when(statisticsService.getStatisticsMonthly(MEMBER_ID, startDateTime, endDateTime)).thenReturn(statisticsMonthResponse);
 
         mockMvc.perform(get("/api/v1/statistics/monthly")
                         .param("date", date.toString())
@@ -179,6 +179,7 @@ class StatisticsControllerTest {
     @NullAndEmptySource
     @ValueSource(strings = {" ", "\t", "\n"})
     @DisplayName("[월별 달성률] 통계 조회 시 날짜 값이 경우 예외가 발생하는 테스트")
+    @WithMockCustomUser
     void testGetStatisticsMonthlyDateMissingDateException(String condition) throws Exception {
         mockMvc.perform(get("/api/v1/statistics/monthly")
                         .param("date", condition)
@@ -198,6 +199,7 @@ class StatisticsControllerTest {
     @ParameterizedTest
     @CsvSource({"2025.02.22", "2025-10-01 23:44:11"})
     @DisplayName("[월별 달성률] 통계 조회 시 날짜 형식이 맞지 않는 경우 예외가 발생하는 테스트")
+    @WithMockCustomUser
     void testGetStatisticsMonthlyInvalidDateFormatException(String condition) throws Exception {
         mockMvc.perform(get("/api/v1/statistics/monthly")
                         .param("date", condition)
@@ -217,10 +219,9 @@ class StatisticsControllerTest {
     /* 카테고리별 달성률 */
     @Test
     @DisplayName("[카테고리 달성률] 통계 조회 테스트")
+    @WithMockCustomUser
     void testGetStatisticsCategory() throws Exception {
-        Long memberId = 1L;
-
-        when(statisticsService.getStatisticsCategory(memberId)).thenReturn(statisticsCategory);
+        when(statisticsService.getStatisticsCategory(MEMBER_ID)).thenReturn(statisticsCategory);
 
         mockMvc.perform(get("/api/v1/statistics/category")
                         .contentType(MediaType.APPLICATION_JSON)
