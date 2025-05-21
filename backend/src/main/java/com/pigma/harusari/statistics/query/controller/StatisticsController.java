@@ -1,5 +1,6 @@
 package com.pigma.harusari.statistics.query.controller;
 
+import com.pigma.harusari.common.auth.model.CustomUserDetails;
 import com.pigma.harusari.common.dto.ApiResponse;
 import com.pigma.harusari.statistics.query.dto.response.StatisticsCategoryResponse;
 import com.pigma.harusari.statistics.query.dto.response.StatisticsDayResponse;
@@ -10,6 +11,7 @@ import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -28,11 +30,12 @@ public class StatisticsController {
 
     @GetMapping("/statistics/daily")
     public ResponseEntity<ApiResponse<StatisticsDayResponse>> getStatisticsDaily(
-            @RequestParam(value = "date") @Nullable String date
+            @RequestParam(value = "date") @Nullable String date,
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         LocalDate parseDate = StatisticsRequestParser.parseDate(date);
 
-        Long memberId = 1L; // 스프링 시큐리티 구현 완료되면 변경할 예정
+        Long memberId = userDetails.getMemberId();
 
         LocalDateTime startDateTime = parseDate.atStartOfDay();
         LocalDateTime endDateTime = parseDate.plusDays(STATISTICS_DAY_RANGE).atStartOfDay();
@@ -46,11 +49,12 @@ public class StatisticsController {
 
     @GetMapping("/statistics/monthly")
     public ResponseEntity<ApiResponse<StatisticsMonthResponse>> getStatisticsMonthly(
-            @RequestParam(value = "date") @Nullable String date
+            @RequestParam(value = "date") @Nullable String date,
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         LocalDate parseDate = StatisticsRequestParser.parseDate(date);
 
-        Long memberId = 1L; // 스프링 시큐리티 구현 완료되면 변경할 예정
+        Long memberId = userDetails.getMemberId();
 
         LocalDateTime startDateTime = parseDate.withDayOfMonth(FIRST_DAY_OF_MONTH).atStartOfDay();
         LocalDateTime endDateTime = parseDate.plusMonths(STATISTICS_MONTH_RANGE).withDayOfMonth(FIRST_DAY_OF_MONTH).atStartOfDay();
@@ -63,8 +67,10 @@ public class StatisticsController {
     }
 
     @GetMapping("/statistics/category")
-    public ResponseEntity<ApiResponse<StatisticsCategoryResponse>> getStatisticsCategory() {
-        Long memberId = 1L; // 스프링 시큐리티 구현 완료되면 변경할 예정
+    public ResponseEntity<ApiResponse<StatisticsCategoryResponse>> getStatisticsCategory(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        Long memberId = userDetails.getMemberId();
 
         StatisticsCategoryResponse statisticsCategory = statisticsService.getStatisticsCategory(memberId);
 
