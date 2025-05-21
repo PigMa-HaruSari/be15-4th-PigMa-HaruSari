@@ -93,7 +93,6 @@ class KakaoAuthServiceImplTest {
     @Test
     @DisplayName("[카카오 회원가입 - 사용자 조회] 정상 정보 반환")
     void testGetUserInfoSuccess() {
-        // given
         KakaoTokenResponse tokenResponse = KakaoTokenResponse.builder().accessToken(fakeAccessToken).build();
         KakaoUserInfo kakaoUserInfo = KakaoUserInfo.builder()
                 .id(123L)
@@ -103,14 +102,11 @@ class KakaoAuthServiceImplTest {
                         .build())
                 .build();
 
-        KakaoAuthServiceImpl spyService = Mockito.spy(kakaoAuthServiceImpl);
-        doReturn(tokenResponse).when(spyService).requestAccessToken(fakeCode);
-        doReturn(kakaoUserInfo).when(spyService).requestUserInfo(fakeAccessToken);
+        doReturn(tokenResponse).when(kakaoAuthServiceImpl).requestAccessToken(fakeCode);
+        doReturn(kakaoUserInfo).when(kakaoAuthServiceImpl).requestUserInfo(fakeAccessToken);
 
-        // when
-        KakaoUserBasicInfo info = spyService.getUserInfo(fakeCode);
+        KakaoUserBasicInfo info = kakaoAuthServiceImpl.getUserInfo(fakeCode);
 
-        // then
         assertThat(info.getEmail()).isEqualTo(email);
         assertThat(info.getNickname()).isEqualTo(nickname);
     }
@@ -118,7 +114,6 @@ class KakaoAuthServiceImplTest {
     @Test
     @DisplayName("[카카오 회원가입 - 사용자 조회] 사용자 정보 누락 예외")
     void testGetUserInfoMissingData() {
-        // given
         KakaoTokenResponse tokenResponse = KakaoTokenResponse.builder().accessToken(fakeAccessToken).build();
         KakaoUserInfo kakaoUserInfo = KakaoUserInfo.builder()
                 .id(123L)
@@ -128,12 +123,10 @@ class KakaoAuthServiceImplTest {
                         .build())
                 .build();
 
-        KakaoAuthServiceImpl spyService = Mockito.spy(kakaoAuthServiceImpl);
-        doReturn(tokenResponse).when(spyService).requestAccessToken(fakeCode);
-        doReturn(kakaoUserInfo).when(spyService).requestUserInfo(fakeAccessToken);
+        doReturn(tokenResponse).when(kakaoAuthServiceImpl).requestAccessToken(fakeCode);
+        doReturn(kakaoUserInfo).when(kakaoAuthServiceImpl).requestUserInfo(fakeAccessToken);
 
-        // when & then
-        assertThatThrownBy(() -> spyService.getUserInfo(fakeCode))
+        assertThatThrownBy(() -> kakaoAuthServiceImpl.getUserInfo(fakeCode))
                 .isInstanceOf(OAuthUserInfoIncompleteException.class)
                 .hasMessage(OAuthExceptionErrorCode.OAUTH_USER_INFO_INCOMPLETE.getErrorMessage());
     }
@@ -219,14 +212,13 @@ class KakaoAuthServiceImplTest {
                 .nickname(nickname)
                 .build();
 
-        KakaoAuthServiceImpl spyService = Mockito.spy(kakaoAuthServiceImpl);
-        doReturn(tokenResponse).when(spyService).requestAccessToken(fakeCode);
-        doReturn(kakaoUserInfo).when(spyService).requestUserInfo(fakeAccessToken);
-        doReturn(expectedResponse).when(spyService).issueJwtTokens(member);
+        doReturn(tokenResponse).when(kakaoAuthServiceImpl).requestAccessToken(fakeCode);
+        doReturn(kakaoUserInfo).when(kakaoAuthServiceImpl).requestUserInfo(fakeAccessToken);
+        doReturn(expectedResponse).when(kakaoAuthServiceImpl).issueJwtTokens(member);
         given(memberRepository.findByEmail(email)).willReturn(Optional.of(member));
 
         // when
-        LoginResponse actual = spyService.login(fakeCode);
+        LoginResponse actual = kakaoAuthServiceImpl.login(fakeCode);
 
         // then
         assertThat(actual.getAccessToken()).isEqualTo("jwtAccessToken");
@@ -237,7 +229,6 @@ class KakaoAuthServiceImplTest {
     @Test
     @DisplayName("[카카오 로그인] 이메일 기반 사용자 없을 시 예외 테스트")
     void testLoginUserNotFound() {
-        // given
         KakaoTokenResponse tokenResponse = KakaoTokenResponse.builder()
                 .accessToken(fakeAccessToken)
                 .build();
@@ -252,13 +243,11 @@ class KakaoAuthServiceImplTest {
                         .build())
                 .build();
 
-        KakaoAuthServiceImpl spyService = Mockito.spy(kakaoAuthServiceImpl);
-        doReturn(tokenResponse).when(spyService).requestAccessToken(fakeCode);
-        doReturn(kakaoUserInfo).when(spyService).requestUserInfo(fakeAccessToken);
+        doReturn(tokenResponse).when(kakaoAuthServiceImpl).requestAccessToken(fakeCode);
+        doReturn(kakaoUserInfo).when(kakaoAuthServiceImpl).requestUserInfo(fakeAccessToken);
         given(memberRepository.findByEmail(email)).willReturn(Optional.empty());
 
-        // when & then
-        assertThatThrownBy(() -> spyService.login(fakeCode))
+        assertThatThrownBy(() -> kakaoAuthServiceImpl.login(fakeCode))
                 .isInstanceOf(OAuthUserNotFoundException.class)
                 .hasMessage(OAuthExceptionErrorCode.OAUTH_USER_NOT_FOUND.getErrorMessage());
     }
