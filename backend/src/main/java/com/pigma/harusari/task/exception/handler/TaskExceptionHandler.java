@@ -35,10 +35,4 @@ public class TaskExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse<Void>> handleException(Exception e) {
-        ApiResponse<Void> response = ApiResponse.failure("20999", "내부 서버 오류입니다.");
-        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
 }
