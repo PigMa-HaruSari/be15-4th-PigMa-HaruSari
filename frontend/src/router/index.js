@@ -21,17 +21,13 @@ router.beforeEach((to) => {
   const userStore = useUserStore();
   const isLoggedIn = userStore.isAuthenticated;
 
-  // 비회원도 접속 가능한 화면
-  const publicPages = ['/login', '/signup', '/reset-password'];
-  const authRequired = !publicPages.includes(to.path);
-
   // 회원만 접속 가능한 페이지이나 비로그인 상태 : 로그인 페이지로 이동
-  if (authRequired && !isLoggedIn) {
+  if (to.meta.requiresAuth && !isLoggedIn) {
     return { name: 'login', query: { redirect: to.fullPath } };
   }
 
   // 이미 로그인 된 상황에서 로그인 페이지에 접근하면 메인으로 이동
-  if (to.name === 'login' && isLoggedIn) {
+  if (to.meta.requiresGuest && isLoggedIn) {
     return { name: 'main' };
   }
 });
