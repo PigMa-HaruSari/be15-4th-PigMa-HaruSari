@@ -6,7 +6,7 @@ import com.pigma.harusari.diary.command.application.dto.request.DiaryUpdateReque
 
 public interface DiaryCommandService {
 
-    Long createDiary(DiaryCreateRequest request);
+    Long createDiary(Long memberId, DiaryCreateRequest request);
 
     void updateDiary(Long diaryId, Long memberId, DiaryUpdateRequest request);
 

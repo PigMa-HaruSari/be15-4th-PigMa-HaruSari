@@ -1,8 +1,8 @@
-package com.pigma.harusari.common.email.controller;
+package com.pigma.harusari.user.infrastructure.email.controller;
 
 import com.pigma.harusari.common.dto.ApiResponse;
-import com.pigma.harusari.common.email.dto.EmailRequest;
-import com.pigma.harusari.common.email.service.EmailAuthService;
+import com.pigma.harusari.user.infrastructure.email.dto.EmailRequest;
+import com.pigma.harusari.user.infrastructure.email.service.EmailAuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

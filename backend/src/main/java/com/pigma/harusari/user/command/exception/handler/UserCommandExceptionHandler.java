@@ -3,6 +3,7 @@ package com.pigma.harusari.user.command.exception.handler;
 import com.pigma.harusari.common.dto.ApiResponse;
 import com.pigma.harusari.user.command.exception.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -70,6 +71,31 @@ public class UserCommandExceptionHandler {
         UserCommandErrorCode errorCode = e.getErrorCode();
         ApiResponse<Void> response = ApiResponse.failure(errorCode.getErrorCode(), errorCode.getErrorMessage());
         return new ResponseEntity<>(response, errorCode.getHttpStatus());
+    }
+
+    @ExceptionHandler(EmailNotFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleEmailNotFoundException(EmailNotFoundException e) {
+        UserCommandErrorCode errorCode = e.getErrorCode();
+        ApiResponse<Void> response = ApiResponse.failure(errorCode.getErrorCode(), errorCode.getErrorMessage());
+        return new ResponseEntity<>(response, errorCode.getHttpStatus());
+    }
+
+    @ExceptionHandler(ResetTokenInvalidException.class)
+    public ResponseEntity<ApiResponse<Void>> handleResetTokenInvalidException(ResetTokenInvalidException e) {
+        UserCommandErrorCode errorCode = e.getErrorCode();
+        ApiResponse<Void> response = ApiResponse.failure(errorCode.getErrorCode(), errorCode.getErrorMessage());
+        return new ResponseEntity<>(response, errorCode.getHttpStatus());
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiResponse<Void>> handleValidationException(MethodArgumentNotValidException ex) {
+
+        ApiResponse<Void> response = ApiResponse.failure(
+                UserCommandErrorCode.METHOD_ARG_NOT_VALID.getErrorCode(),
+                UserCommandErrorCode.METHOD_ARG_NOT_VALID.getErrorMessage()
+        );
+
+        return ResponseEntity.badRequest().body(response);
     }
 
 }

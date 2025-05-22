@@ -1,4 +1,4 @@
-package com.pigma.harusari.common.email.service;
+package com.pigma.harusari.user.infrastructure.email.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -11,19 +11,19 @@ import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
-public class EmailAuthService {
+public class EmailAuthServiceImpl implements EmailAuthService {
 
     private final RedisTemplate<String, String> redisTemplate;
     private final JavaMailSender mailSender;
 
     public void sendVerificationCode(String email) {
-        // 인증코드 생성
+        // 1. 인증코드 생성
         String code = generateRandomCode();
 
-        // redis에 이메일-인증코드를 저장
+        // 2. Redis에 이메일-인증코드를 저장
         redisTemplate.opsForValue().set("EMAIL_CODE:" + email, code, Duration.ofMinutes(5));
 
-        // 실제 이메일 발송
+        // 3. 실제 이메일 발송
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);
         message.setSubject("[하루살이] 이메일 인증 코드");

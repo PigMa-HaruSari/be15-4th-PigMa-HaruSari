@@ -5,10 +5,7 @@ import com.pigma.harusari.category.command.application.dto.request.CategoryCreat
 import com.pigma.harusari.common.auth.exception.AuthErrorCode;
 import com.pigma.harusari.common.auth.exception.LogInMemberNotFoundException;
 import com.pigma.harusari.support.WithMockCustomUser;
-import com.pigma.harusari.user.command.dto.SignOutRequest;
-import com.pigma.harusari.user.command.dto.SignUpRequest;
-import com.pigma.harusari.user.command.dto.UpdatePasswordRequest;
-import com.pigma.harusari.user.command.dto.UpdateUserProfileRequest;
+import com.pigma.harusari.user.command.dto.*;
 import com.pigma.harusari.user.command.exception.*;
 import com.pigma.harusari.user.command.exception.handler.UserCommandExceptionHandler;
 import com.pigma.harusari.user.command.service.UserCommandService;
@@ -55,6 +52,7 @@ class UserCommandControllerTest {
     SignUpRequest signUpRequest;
     UpdateUserProfileRequest updateRequest;
     UpdatePasswordRequest updatePasswordRequest;
+    ResetPasswordPerformRequest resetPasswordPerformRequest;
 
     @BeforeEach
     void setUp() {
@@ -79,6 +77,11 @@ class UserCommandControllerTest {
                 .confirmPassword("changedPassword456@")
                 .build();
 
+        resetPasswordPerformRequest = ResetPasswordPerformRequest.builder()
+                .token("passwordResetToken")
+                .newPassword("changedPassword456@")
+                .confirmPassword("changedPassword456@")
+                .build();
     }
 
     @Test
@@ -347,6 +350,97 @@ class UserCommandControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.errorCode").value(UserCommandErrorCode.ALREADY_SIGNED_OUT_MEMBER.getErrorCode()));
+    }
+
+    @Test
+    @DisplayName("[비밀번호 재설정] 비밀번호 재설정 요청 성공 테스트")
+    @WithMockCustomUser(memberId = 1L)
+    void testResetPasswordSuccess() throws Exception {
+        mockMvc.perform(post("/api/v1/users/reset-password")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(resetPasswordPerformRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.errorCode").doesNotExist())
+                .andExpect(jsonPath("$.message").doesNotExist())
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE));
+    }
+
+    @Test
+    @DisplayName("[비밀번호 재설정] 유효하지 않은 인증 토큰 예외 테스트")
+    void testResetPasswordInvalidToken() throws Exception {
+        ResetPasswordPerformRequest request = ResetPasswordPerformRequest.builder()
+                .token("invalid-token")
+                .newPassword("newPassword123!")
+                .confirmPassword("newPassword123!")
+                .build();
+
+        doThrow(new ResetTokenInvalidException(UserCommandErrorCode.INVALID_RESET_TOKEN))
+                .when(userCommandService).resetPassword(any());
+
+        mockMvc.perform(post("/api/v1/users/reset-password")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.errorCode").value(UserCommandErrorCode.INVALID_RESET_TOKEN.getErrorCode()));
+    }
+
+    @Test
+    @DisplayName("[비밀번호 재설정] 이메일로 사용자를 찾지 못한 경우의 예외 테스트")
+    void testResetPasswordUserNotFound() throws Exception {
+        ResetPasswordPerformRequest request = ResetPasswordPerformRequest.builder()
+                .token("valid-token")
+                .newPassword("newPassword123!")
+                .confirmPassword("newPassword123!")
+                .build();
+
+        doThrow(new LogInMemberNotFoundException(AuthErrorCode.LOGIN_MEMBER_NOT_FOUND))
+                .when(userCommandService).resetPassword(any());
+
+        mockMvc.perform(post("/api/v1/users/reset-password")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.errorCode").value(AuthErrorCode.LOGIN_MEMBER_NOT_FOUND.getErrorCode()));
+    }
+
+    @Test
+    @DisplayName("[비밀번호 재설정] 비밀번호 불일치 예외 테스트")
+    void testResetPasswordMismatch() throws Exception {
+        ResetPasswordPerformRequest request = ResetPasswordPerformRequest.builder()
+                .token("valid-token")
+                .newPassword("newPassword123!")
+                .confirmPassword("wrongConfirm")
+                .build();
+
+        doThrow(new NewPasswordMismatchException(UserCommandErrorCode.NEW_PASSWORD_MISMATCH))
+                .when(userCommandService).resetPassword(any());
+
+        mockMvc.perform(post("/api/v1/users/reset-password")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.errorCode").value(UserCommandErrorCode.NEW_PASSWORD_MISMATCH.getErrorCode()));
+    }
+
+    @Test
+    @DisplayName("[비밀번호 재설정] 형식에 맞지 않는 비밀번호는 @Valid에 의해 막히는 테스트")
+    void testResetPasswordInvalidFormat() throws Exception {
+        ResetPasswordPerformRequest request = ResetPasswordPerformRequest.builder()
+                .token("valid-token")
+                .newPassword("short")
+                .confirmPassword("short")
+                .build();
+
+        mockMvc.perform(post("/api/v1/users/reset-password")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.message").value(UserCommandErrorCode.METHOD_ARG_NOT_VALID.getErrorMessage()));
     }
 
 }
