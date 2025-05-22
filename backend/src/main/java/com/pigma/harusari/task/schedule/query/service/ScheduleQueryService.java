@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -15,23 +16,13 @@ public class ScheduleQueryService {
 
     private final ScheduleMapper scheduleMapper;
 
-//    @Transactional(readOnly = true)
-//    public ScheduleListResponse getScheduleList(ScheduleSearchRequest scheduleSearchRequest) {
-//        List<ScheduleDto> schedule = scheduleMapper.selectSchedule(scheduleSearchRequest);
-//        return ScheduleListResponse.builder()
-//                .schedule(schedule)
-//                .build();
-//    }
-
     @Transactional(readOnly = true)
-    public ScheduleListResponse getScheduleList(Long categoryId, Long memberId) {
-        // memberId를 조건에 포함해서 해당 회원의 일정만 조회
-        List<ScheduleDto> schedules = scheduleMapper.selectScheduleByMemberId(categoryId, memberId);
-        ScheduleListResponse response = ScheduleListResponse.builder()
+    public ScheduleListResponse getScheduleList(Long categoryId, LocalDate scheduleDate, Long memberId) {
+        // scheduleDate를 파라미터로 추가
+        List<ScheduleDto> schedules = scheduleMapper.selectScheduleByMemberId(categoryId, scheduleDate, memberId);
+        return ScheduleListResponse.builder()
                 .schedule(schedules)
                 .build();
-    return response;
-
     }
 
 }
