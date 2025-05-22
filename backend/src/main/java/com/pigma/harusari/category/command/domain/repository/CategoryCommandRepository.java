@@ -16,4 +16,5 @@ public interface CategoryCommandRepository extends JpaRepository<Category, Long>
 
     List<Category> findByMemberId(Long memberId);
 
+    Optional<Category> findById(Long categoryId);
 }

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pigma.harusari.task.automationSchedule.query.mapper.AutomationScheduleMapper">
+    <select id="selectAutomationScheduleList" resultType="AutomationScheduleDto">
+        SELECT
+        a.automation_schedule_id AS automationScheduleId,
+        a.repeat_type AS repeatType,
+        c.category_id AS categoryId,
+        c.category_name AS categoryName,
+        a.automation_schedule_content AS automationScheduleContent
+        FROM automation_schedule a
+        JOIN category c ON a.category_id = c.category_id
+        <where>
+            c.member_id = #{memberId}
+            <if test="request.repeatType != null">
+                AND UPPER(a.repeat_type) = UPPER(#{request.repeatType})
+            </if>
+            <if test="request.categoryId != null">
+                AND c.category_id = #{request.categoryId}
+            </if>
+        </where>
+    </select>
+
+    <select id="findAll" resultType="AutomationScheduleDto">
+        SELECT
+        s.automation_schedule_id,
+        s.automation_schedule_content,
+        s.repeat_type,
+        s.category_id,
+        c.category_name
+        FROM automation_schedule s
+        JOIN category c ON s.category_id = c.category_id
+        WHERE c.member_id = #{memberId}
+        <if test="categoryId != null">
+            AND s.category_id = #{categoryId}
+        </if>
+    </select>
+
+    <select id="findById" resultType="AutomationScheduleDto">
+        SELECT
+        s.automation_schedule_id,
+        s.automation_schedule_content,
+        s.repeat_type,
+        s.category_id,
+        c.category_name
+        FROM automation_schedule s
+        JOIN category c ON s.category_id = c.category_id
+        WHERE s.automation_schedule_id = #{scheduleId}
+    </select>
+
+
+</mapper>

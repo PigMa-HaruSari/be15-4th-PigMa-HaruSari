@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pigma.harusari.task.schedule.query.mapper.ScheduleMapper">
+    <select id="selectScheduleByMemberId" resultType="ScheduleDto">
+        SELECT
+            a.schedule_id AS scheduleId,
+            a.automation_schedule_id AS automationScheduleId,
+            b.category_id AS categoryId,
+            b.category_name AS categoryName,
+            a.schedule_content AS scheduleContent,
+            a.schedule_date AS scheduleDate,
+            a.created_at AS createdAt,
+            a.modified_at AS modifiedAt,
+            a.completion_status AS completionStatus
+        FROM schedule a
+        JOIN category b ON (a.category_id = b.category_id)
+        <where>
+            b.member_id = #{memberId}
+        <if test="categoryId != null">
+            AND a.category_id = #{ categoryId }
+        </if>
+        </where>
+        ORDER BY a.schedule_id DESC
+    </select>
+
+</mapper>
+
