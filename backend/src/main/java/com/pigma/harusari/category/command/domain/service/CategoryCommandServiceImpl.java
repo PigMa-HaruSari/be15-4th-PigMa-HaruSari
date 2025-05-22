@@ -16,13 +16,19 @@ public class CategoryCommandServiceImpl implements CategoryCommandService {
     private final CategoryCommandRepository categoryCommandRepository;
 
     @Override
-    public Long createCategory(CategoryCreateRequest request) {
-        if (categoryCommandRepository.existsByMemberIdAndCategoryName(request.getMemberId(), request.getCategoryName())) {
-            throw new IllegalStateException("이미 동일한 이름의 카테고리가 존재합니다.");
-        }
+    public Long createCategory(Long memberId, CategoryCreateRequest request) {
+        System.out.println("[카테고리 생성 요청] memberId=" + memberId + ", name=" + request.getCategoryName());
+
+        boolean exists = categoryCommandRepository.existsByMemberIdAndCategoryName(memberId, request.getCategoryName());
+        System.out.println("[중복 검사 결과] exists=" + exists);
+
+//        if (categoryCommandRepository.existsByMemberIdAndCategoryName(memberId, request.getCategoryName())) {
+//            throw new IllegalStateException("이미 동일한 이름의 카테고리가 존재합니다.");
+//        }
+
 
         Category category = Category.builder()
-                .memberId(request.getMemberId())
+                .memberId(memberId)
                 .categoryName(request.getCategoryName())
                 .color(request.getColor())
                 .completed(false)
