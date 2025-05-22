@@ -15,10 +15,15 @@
         <router-link to="/statistics">
           <img src="@/assets/images/header-statistics-white.svg" alt="통계" />
         </router-link>
-        <router-link to="/mypage">
-          <img src="@/assets/images/header-profile-white.svg" alt="마이페이지" />
-        </router-link>
-        <button @click="logoutAndRedirect">로그아웃</button>
+        <div class="profile-dropdown">
+          <img src="@/assets/images/header-profile-white.svg" alt="마이페이지"
+               @click="toggleDropdown" class="profile-icon" />
+          <div v-if="showDropdown" class="dropdown-menu">
+            <router-link to="/mypage">마이페이지</router-link>
+            <router-link to="/feedback">피드백</router-link>
+            <button @click="logout">로그아웃</button>
+          </div>
+        </div>
       </nav>
 
     </div>
@@ -29,14 +34,20 @@
 
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/userStore';
+import {ref} from "vue";
 
-const router = useRouter();
+const showDropdown = ref(false);
+const toggleDropdown = () => {
+  showDropdown.value = !showDropdown.value;
+};
+
 const userStore = useUserStore();
+const router = useRouter();
 
-const logoutAndRedirect = () => {
+const logout = () => {
   userStore.logout();
   router.push('/login');
-}
+};
 </script>
 
 <style scoped>
@@ -80,5 +91,59 @@ const logoutAndRedirect = () => {
   font-size: 16px;
   color: #ffffff;
   cursor: pointer;
+}
+.profile-dropdown {
+  position: relative;
+}
+
+.profile-icon {
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+}
+.profile-icon:hover {
+  transform: scale(1.05);
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 120%;
+  right: 0;
+  background-color: #fff;
+  color: #333;
+  width: 180px;
+  padding: 0.75rem 0;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  box-sizing: border-box;  /* ✅ padding 포함한 총 너비 보장 */
+  overflow: hidden;        /* ✅ 삐져나오는 것 잘라냄 */
+  display: flex;
+  flex-direction: column;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 0.95rem;
+}
+
+.dropdown-menu a,
+.dropdown-menu button {
+  padding: 0.65rem 1.2rem;
+  width: 100%;             /* ✅ 부모 너비에 딱 맞춤 */
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  overflow: hidden;        /* ✅ hover 시 배경 넘침 방지 */
+  transition: background 0.2s;
+}
+
+.dropdown-menu a:hover,
+.dropdown-menu button:hover {
+  background-color: #f0f0ff;
+  color: #5e4bff;
+  font-weight: 500;
+  border-left: 4px solid #9381FF;
 }
 </style>
