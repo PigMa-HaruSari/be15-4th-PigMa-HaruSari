@@ -9,4 +9,10 @@ export const userRoutes = [
         name: 'login',
         component: () => import('@/features/user/views/LoginView.vue'),
     },
+    {
+        path: '/signup',
+        name: 'Signup',
+        component: () => import('@/features/user/views/SignupView.vue'),
+    },
+
 ]

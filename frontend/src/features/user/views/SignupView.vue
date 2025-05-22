@@ -6,14 +6,30 @@
         <img src="@/assets/images/HARURAMENSARI.png" alt="하루살이 로고" />
       </div>
       <div class="subtitle">지금 하루살이에 가입하고 오늘의 삶을 기록해보세요</div>
-      <button class="button">이메일 아이디로 가입하기</button>
-      <button class="button">카카오로 가입하기</button>
+      <button class="button" @click="goToEmailSignup">이메일 아이디로 가입하기</button>
+      <button class="button" @click="goToKakaoSignup">카카오로 가입하기</button>
     </div>
   </div>
 </template>
 
 <script setup>
-import Header from '@/components/layout/Header.vue';
+import { useRouter } from 'vue-router'
+import Header from '@/components/layout/Header.vue'
+
+const router = useRouter()
+
+const goToEmailSignup = () => {
+  router.push('/signup/info')
+}
+
+const goToKakaoSignup = () => {
+  const KAKAO_CLIENT_ID = import.meta.env.VITE_KAKAO_CLIENT_ID
+  const REDIRECT_URI = import.meta.env.VITE_KAKAO_REDIRECT_URI
+
+  const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${KAKAO_CLIENT_ID}&redirect_uri=${REDIRECT_URI}`
+
+  window.location.href = kakaoAuthUrl
+}
 
 </script>
 
