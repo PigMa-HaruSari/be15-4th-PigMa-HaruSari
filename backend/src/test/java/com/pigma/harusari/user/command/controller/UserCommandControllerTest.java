@@ -440,7 +440,7 @@ class UserCommandControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.message").value(UserCommandErrorCode.METHOD_ARG_NOT_VALID.getErrorMessage()));
+                .andExpect(jsonPath("$.message").value(UserCommandErrorCode.PASSWORD_LENGTH_INVALID.getErrorMessage()));
     }
 
 }
