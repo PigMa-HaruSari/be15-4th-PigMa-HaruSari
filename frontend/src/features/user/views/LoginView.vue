@@ -7,7 +7,7 @@
       </div>
       <div class="subtitle">로그인을 위해 정보를 입력해주세요</div>
       <div class="link-row">
-        <RouterLink to="/signup">회원가입</RouterLink>
+        <router-link to="/signup">회원가입</router-link>
       </div>
       <div class="input-box">
         <input v-model="email" type="text" placeholder="이메일 입력" @keyup.enter="handleLogin" />
@@ -16,7 +16,7 @@
         <input v-model="password" type="password" placeholder="비밀번호 입력" @keyup.enter="handleLogin" />
       </div>
       <div class="link-row">
-        <RouterLink to="/reset-password">비번 재설정</RouterLink>
+        <router-link to="/reset-password">비번 재설정</router-link>
       </div>
       <div class="input-box">
         <button class="login-btn" @click="handleLogin">로그인</button>

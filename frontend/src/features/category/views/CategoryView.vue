@@ -220,6 +220,8 @@ const showModal = ref(false);
 const categories = ref([]);
 const selectedCategory = ref(null);
 const showActionModal = ref(false);
+const isEdit = ref(false);
+const editTarget = ref(null);
 
 const loadCategories = async () => {
   try {
@@ -283,8 +285,10 @@ const handleDelete = async (category) => {
 };
 
 const handleEdit = (category) => {
-  // 수정 모달을 띄울지, 기존 생성 모달을 재활용할지 결정해야 함
-  console.log('수정 기능은 아직 미완성이야 👉', category);
+  isEdit.value = true;
+  editTarget.value = category;
+  showActionModal.value = false;
+  showModal.value = true;
 };
 
 onMounted(loadCategories);
