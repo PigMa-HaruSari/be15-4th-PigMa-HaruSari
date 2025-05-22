@@ -33,7 +33,7 @@
 import { ref } from 'vue';
 import { useRouter, useRoute, RouterLink } from 'vue-router';
 import { useUserStore } from '@/stores/userStore';
-import api from '@/lib/api';
+import api from '@/lib/axios.js';
 import Header from '@/components/layout/Header.vue';
 
 const email = ref('');

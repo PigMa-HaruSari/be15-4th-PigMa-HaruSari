@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
-import { showErrorToast } from '@/utill/toast.js'; // toast 유틸 사용
-import router from '@/router'; // 라우터 사용
 
+/* Pinia 사용자 정보 저장소 */
 let logoutTimer = null; // ⏱️ 타이머 전역 변수
 
 export const useUserStore = defineStore('user', {
