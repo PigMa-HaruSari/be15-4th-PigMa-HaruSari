@@ -82,6 +82,8 @@ dependencies {
     // junit
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
+    implementation 'org.modelmapper:modelmapper:3.2.1'
+
     // ai
     implementation 'org.springframework.ai:spring-ai-starter-model-openai'
 }
