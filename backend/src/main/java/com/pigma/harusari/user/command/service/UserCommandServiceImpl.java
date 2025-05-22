@@ -7,6 +7,7 @@ import com.pigma.harusari.category.command.domain.repository.CategoryCommandRepo
 import com.pigma.harusari.common.auth.exception.AuthErrorCode;
 import com.pigma.harusari.common.auth.exception.LogInMemberNotFoundException;
 import com.pigma.harusari.user.command.dto.*;
+import com.pigma.harusari.user.command.entity.AuthProvider;
 import com.pigma.harusari.user.command.entity.Gender;
 import com.pigma.harusari.user.command.entity.Member;
 import com.pigma.harusari.user.command.exception.*;
@@ -61,6 +62,7 @@ public class UserCommandServiceImpl implements UserCommandService {
                 .nickname(request.getNickname())
                 .gender(gender)
                 .consentPersonalInfo(request.getConsentPersonalInfo())
+                .provider(AuthProvider.LOCAL)
                 .userRegisteredAt(LocalDateTime.now())
                 .build();
 
