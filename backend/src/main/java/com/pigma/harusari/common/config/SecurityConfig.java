@@ -48,6 +48,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/api/v1/users/reset-password/**").permitAll()
                         .requestMatchers("/test/daily","/test/monthly","test/weekly","test/send").permitAll()
+                        .requestMatchers("/api/v1/alarms/unread","api/v1/alarms/read-all").permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex
