@@ -5,11 +5,15 @@
 
 <mapper namespace="com.pigma.harusari.feedback.query.mapper.FeedbackQueryMapper">
 
-    <select id="findAllByMemberId" resultType="com.pigma.harusari.feedback.query.dto.FeedbackSummaryDto">
+    <resultMap id="FeedbackSummaryResultMap" type="com.pigma.harusari.feedback.query.dto.FeedbackSummaryDto">
+        <result property="feedbackId" column="feedback_id"/>
+        <result property="date" column="feedback_date"/>
+    </resultMap>
+
+    <select id="findAllByMemberId" resultMap="FeedbackSummaryResultMap">
         SELECT
-            feedback_id AS feedbackId,
-            DATE_FORMAT(feedback_date, '%Y년 %m월 피드백') AS summary,
-            DATE(feedback_date) AS date
+            feedback_id,
+            feedback_date
         FROM feedback
         WHERE member_id = #{memberId}
         ORDER BY feedback_date DESC

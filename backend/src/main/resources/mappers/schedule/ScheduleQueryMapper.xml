@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.query.ScheduleQueryMapper">
+
+    <select id="getLastMonthSchedules" resultType="com.example.domain.Schedule">
+        SELECT *
+        FROM schedule
+        WHERE user_id = #{userId}
+          AND date BETWEEN #{start} AND #{end}
+    </select>
+
+</mapper>

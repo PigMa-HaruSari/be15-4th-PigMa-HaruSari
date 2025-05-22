@@ -1,11 +1,11 @@
 package com.pigma.harusari.feedback.command.service;
 
-import com.pigma.harusari.alarm.query.mapper.ScheduleQueryMapper;
 import com.pigma.harusari.diary.query.mapper.DiaryQueryMapper;
 import com.pigma.harusari.feedback.command.entity.Feedback;
 import com.pigma.harusari.feedback.command.repository.FeedbackRepository;
 import com.pigma.harusari.feedback.util.FeedbackPromptBuilder;
 import com.pigma.harusari.feedback.util.GeminiClient;
+import com.pigma.harusari.task.schedule.query.Mapper.ScheduleQueryMapper;
 import com.pigma.harusari.user.query.mapper.UserQueryMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,8 +35,10 @@ public class FeedbackCommandService {
 
         for (Long memberId : memberIds) {
             var diaries = diaryQueryMapper.getLastMonthDiaries(memberId, start, end);
-            var schedules = scheduleQueryMapper.getLastMonthSchedules(memberId);
-            double achievementRate = scheduleQueryMapper.calculateAchievementRate(schedules);
+            var schedules = scheduleQueryMapper.getLastMonthSchedules(memberId, start, end);
+
+            int completed = scheduleQueryMapper.countCompletedSchedules(schedules);
+            double achievementRate = schedules.isEmpty() ? 0 : (double) completed / schedules.size();
 
             String prompt = promptBuilder.buildPrompt(diaries, schedules, achievementRate);
             String content = geminiClient.generateFeedback(prompt);
@@ -47,5 +49,27 @@ public class FeedbackCommandService {
                     .feedbackDate(new Date())
                     .build());
         }
+    }
+
+    // 피드백 강제 생성 (테스트용)
+    public void generateMonthlyFeedbackForMember(Long memberId) {
+        YearMonth lastMonth = YearMonth.now().minusMonths(1);
+        LocalDate start = lastMonth.atDay(1);
+        LocalDate end = lastMonth.atEndOfMonth();
+
+        var diaries = diaryQueryMapper.getLastMonthDiaries(memberId, start, end);
+        var schedules = scheduleQueryMapper.getLastMonthSchedules(memberId, start, end);
+
+        int completed = scheduleQueryMapper.countCompletedSchedules(schedules);
+        double achievementRate = schedules.isEmpty() ? 0 : (double) completed / schedules.size();
+
+        String prompt = promptBuilder.buildPrompt(diaries, schedules, achievementRate);
+        String content = geminiClient.generateFeedback(prompt);
+
+        feedbackRepository.save(Feedback.builder()
+                .memberId(memberId)
+                .feedbackContent(content)
+                .feedbackDate(new Date())
+                .build());
     }
 }
