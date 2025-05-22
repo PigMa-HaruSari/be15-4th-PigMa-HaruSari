@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
+import java.time.LocalDate;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -20,19 +22,10 @@ public class ScheduleQueryController {
 
     private final ScheduleQueryService scheduleQueryService;
 
-//    @GetMapping("/schedule")
-//    public ResponseEntity<ApiResponse<ScheduleListResponse>> getScheduleList(
-//            @ModelAttribute ScheduleSearchRequest scheduleSearchRequest
-//    ) {
-//            ScheduleListResponse response = scheduleQueryService.getScheduleList(scheduleSearchRequest);
-//            return ResponseEntity.ok(ApiResponse.success(response));
-//    }
-
-    // 사용자 권한 추가
-
-    @GetMapping("/schedule")
+    @GetMapping("/task/schedule")
     public ResponseEntity<ApiResponse<ScheduleListResponse>> getScheduleList(
             @RequestParam(value = "categoryId", required = false) Long categoryId,
+            @RequestParam(value = "scheduleDate", required = false) LocalDate scheduleDate,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         if (userDetails == null) {
@@ -43,8 +36,8 @@ public class ScheduleQueryController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "회원 정보가 올바르지 않습니다.");
         }
 
-        // memberId를 파라미터로 전달
-        ScheduleListResponse response = scheduleQueryService.getScheduleList(categoryId, memberId);
+
+        ScheduleListResponse response = scheduleQueryService.getScheduleList(categoryId, scheduleDate, memberId);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
