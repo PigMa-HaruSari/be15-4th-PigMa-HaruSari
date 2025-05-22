@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.pigma.harusari.feedback.query.mapper.FeedbackQueryMapper">
+
+    <select id="findAllByMemberId" resultType="com.pigma.harusari.feedback.query.dto.FeedbackSummaryDto">
+        SELECT
+            feedback_id AS feedbackId,
+            DATE_FORMAT(feedback_date, '%Y년 %m월 피드백') AS summary,
+            DATE(feedback_date) AS date
+        FROM feedback
+        WHERE member_id = #{memberId}
+        ORDER BY feedback_date DESC
+    </select>
+
+    <select id="findByIdAndMemberId" resultType="com.pigma.harusari.feedback.query.dto.FeedbackDetailDto">
+        SELECT
+            feedback_id AS feedbackId,
+            feedback_content AS content,
+            DATE(feedback_date) AS date
+        FROM feedback
+        WHERE feedback_id = #{feedbackId} AND member_id = #{memberId}
+    </select>
+
+</mapper>
