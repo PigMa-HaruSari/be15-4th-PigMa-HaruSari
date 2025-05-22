@@ -19,7 +19,12 @@
             </div>
 
             <!-- 카테고리별 할 일 리스트 -->
-            <div class="category" v-for="(category, index) in categories" :key="index">
+            <div
+                class="category"
+                v-for="(category, index) in categories"
+                :key="index"
+                v-if="category.tasks.length > 0"
+            >
               <div class="category-title">
                 <span class="category-tag" :style="{ backgroundColor: category.color }"></span>
                 {{ category.title }}
@@ -30,7 +35,6 @@
                   :key="i"
                   :style="getTaskStyle(category.color, task.completed)"
               >
-
                 <input type="checkbox" v-model="task.completed" />
                 {{ task.text }}
               </div>
@@ -53,75 +57,73 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watch } from 'vue';
-import Header from '@/components/layout/Header.vue';
-import { Calendar } from '@fullcalendar/core';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import interactionPlugin from '@fullcalendar/interaction';
-import { fetchCategory, fetchTasks } from '@/features/main/mainApi';
+import { onMounted, ref, watch } from 'vue'
+import Header from '@/components/layout/Header.vue'
+import { Calendar } from '@fullcalendar/core'
+import dayGridPlugin from '@fullcalendar/daygrid'
+import interactionPlugin from '@fullcalendar/interaction'
+import { fetchCategory, fetchTasks } from '@/features/main/mainApi'
 
-const reviewText = ref('');
-const categories = ref([]);
-const calendarRef = ref(null);
-const selectedDate = ref(new Date());
-const selectedMonth = ref(new Date());
+const reviewText = ref('')
+const categories = ref([])
+const calendarRef = ref(null)
+const selectedDate = ref(new Date())
+const selectedMonth = ref(new Date())
 
 function saveReview() {
-  alert('회고가 저장되었습니다.');
+  alert('회고가 저장되었습니다.')
 }
 
-const formatDate = (date) => date.toISOString().split('T')[0];
-
-const loadTasksByDate = async () => {
-  if (!selectedDate.value) return;
-  const scheduleDate = formatDate(selectedDate.value);
-
-  for (const category of categories.value) {
-    try {
-      const res = await fetchTasks(category.categoryId, scheduleDate);
-      const taskList = Array.isArray(res.data.data.schedule) ? res.data.data.schedule : [];
-      category.tasks = taskList.map(task => ({
-        text: task.scheduleContent,
-        completed: task.completionStatus
-      }));
-    } catch (error) {
-      console.error(`❌ 카테고리 ${category.title}의 할 일 조회 실패`, error);
-    }
-  }
-};
+const formatDate = (date) => date.toISOString().split('T')[0]
 
 const isDarkColor = (hex) => {
-  if (!hex) return false;
-  const color = hex.replace('#', '');
-  const r = parseInt(color.substring(0, 2), 16);
-  const g = parseInt(color.substring(2, 4), 16);
-  const b = parseInt(color.substring(4, 6), 16);
-  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-  return brightness < 128;
-};
+  if (!hex) return false
+  const color = hex.replace('#', '')
+  const r = parseInt(color.substring(0, 2), 16)
+  const g = parseInt(color.substring(2, 4), 16)
+  const b = parseInt(color.substring(4, 6), 16)
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000
+  return brightness < 128
+}
 
 const getTaskStyle = (color, completed) => {
-  if (!completed) return {};
-  const dark = isDarkColor(color);
+  if (!completed) return {}
   return {
     backgroundColor: color,
     borderRadius: '8px',
-    color: dark ? 'white' : 'black'
-  };
-};
+    color: isDarkColor(color) ? 'white' : 'black'
+  }
+}
 
-watch(selectedDate, async () => {
-  await loadTasksByDate();
-});
+const loadTasksByDate = async () => {
+  if (!selectedDate.value) return
+  const scheduleDate = formatDate(selectedDate.value)
+
+  for (const category of categories.value) {
+    try {
+      const res = await fetchTasks(category.categoryId, scheduleDate)
+      const taskList = Array.isArray(res.data.data.schedule) ? res.data.data.schedule : []
+      category.tasks = taskList.map(task => ({
+        text: task.scheduleContent,
+        completed: task.completionStatus
+      }))
+    } catch (error) {
+      console.error(`❌ 카테고리 ${category.title}의 할 일 조회 실패`, error)
+      category.tasks = []
+    }
+  }
+}
+
+watch(selectedDate, loadTasksByDate)
 
 onMounted(async () => {
-  const response = await fetchCategory();
+  const response = await fetchCategory()
   categories.value = response.data.data.map(category => ({
     categoryId: category.categoryId,
     title: category.categoryName,
     color: category.color,
     tasks: []
-  }));
+  }))
 
   const calendar = new Calendar(calendarRef.value, {
     plugins: [dayGridPlugin, interactionPlugin],
@@ -129,20 +131,20 @@ onMounted(async () => {
     locale: 'ko',
     height: 'auto',
     dateClick: (info) => {
-      selectedDate.value = new Date(info.dateStr);
-      document.querySelectorAll('.fc-daygrid-day').forEach(cell => cell.classList.remove('selected-date'));
-      info.dayEl.classList.add('selected-date');
+      selectedDate.value = new Date(info.dateStr)
+      document.querySelectorAll('.fc-daygrid-day').forEach(cell => cell.classList.remove('selected-date'))
+      info.dayEl.classList.add('selected-date')
     },
     datesSet: (info) => {
-      const currentMonth = info.view.currentStart;
-      selectedMonth.value = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
+      const currentMonth = info.view.currentStart
+      selectedMonth.value = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1)
     }
-  });
+  })
 
-  calendar.render();
-  selectedMonth.value = calendar.getDate();
-  await loadTasksByDate();
-});
+  calendar.render()
+  selectedMonth.value = calendar.getDate()
+  await loadTasksByDate()
+})
 </script>
 
 <style scoped>
