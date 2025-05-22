@@ -31,15 +31,29 @@
 </template>
 
 <script setup>
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/userStore';
-import {ref} from "vue";
 
 const showDropdown = ref(false);
 const toggleDropdown = () => {
   showDropdown.value = !showDropdown.value;
 };
+
+// 드롭다운 닫을 때 외부 클릭해도 닫히는 설정
+onMounted(() => {
+  const handleClickOutside = (e) => {
+    if (!e.target.closest('.profile-dropdown')) {
+      showDropdown.value = false;
+    }
+  };
+  window.addEventListener('click', handleClickOutside);
+
+  onBeforeUnmount(() => {
+    window.removeEventListener('click', handleClickOutside);
+  });
+});
 
 const userStore = useUserStore();
 const router = useRouter();

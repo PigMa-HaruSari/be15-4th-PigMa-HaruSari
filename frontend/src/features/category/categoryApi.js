@@ -1,4 +1,4 @@
-import api from "@/lib/api.js";
+import api from "@/lib/axios.js";
 
 
 // 카테고리 생성 요청

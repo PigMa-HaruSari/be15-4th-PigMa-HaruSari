@@ -1,4 +1,4 @@
-import api from "@/lib/api.js";
+import api from "@/lib/axios.js";
 
 export const fetchCategory = () => {
     return api.get("/categories"); // memberId 제거
