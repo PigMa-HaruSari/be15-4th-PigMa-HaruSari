@@ -1,19 +1,5 @@
-/* user 관련 api 호출 */
-import axios from "axios";
-
-
+import api from './axios.js';
 
 export function refreshUserToken() {
-    const refreshToken = localStorage.getItem('refreshToken');
-
-    return axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/auth/refresh`,
-        { refreshToken }, // body
-        {
-            headers: {
-                Authorization: `Bearer ${refreshToken}` // 헤더
-            },
-            withCredentials: true
-        }
-    );
+  return api.post('/auth/refresh');  // 쿠키 기반 요청이므로 별도 헤더/바디 없이 호출
 }

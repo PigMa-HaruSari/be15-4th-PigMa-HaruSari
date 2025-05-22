@@ -1,42 +1,20 @@
-import {createApp} from 'vue'
-import {createPinia} from 'pinia'
-import '/src/assets/css/header.css'
-import Toast from 'vue-toastification';
-import 'vue-toastification/dist/index.css';
-
+import { createApp } from 'vue'
+import { createPinia } from 'pinia'
+import Toast from 'vue-toastification'
+import 'vue-toastification/dist/index.css'
+import { jwtDecode } from 'jwt-decode'
 
 import App from './App.vue'
 import router from './router'
+import { useUserStore } from '@/stores/userStore.js'
+import { refreshUserToken } from '@/lib/user.js'
 
-import {
-    Chart,
-    ArcElement,
-    BarElement,
-    CategoryScale,
-    LinearScale,
-    Tooltip,
-    Legend,
-    DoughnutController,
-    BarController
-} from 'chart.js'
-import {useUserStore} from "@/stores/userStore.js";
-
-Chart.register(
-    ArcElement,
-    BarElement,
-    CategoryScale,
-    LinearScale,
-    Tooltip,
-    Legend,
-    DoughnutController,
-    BarController
-)
-
+// 앱 생성 및 플러그인 연결
 const app = createApp(App)
+const pinia = createPinia()
 
-app.use(createPinia())
+app.use(pinia)
 app.use(router)
-
 app.use(Toast, {
     position: 'top-right',
     timeout: 3000,
@@ -50,14 +28,33 @@ app.use(Toast, {
     closeButton: 'button',
     icon: true,
     rtl: false,
-});
+})
 
-const userStore = useUserStore();
-const savedUser = localStorage.getItem('user');
+// localStorage 초기화
+const userStore = useUserStore()
+const savedUser = localStorage.getItem('user')
+
 if (savedUser) {
-    userStore.setUser(JSON.parse(savedUser));
+    userStore.setUser(JSON.parse(savedUser))
 }
 
+// 새로고침 시 refreshToken으로 accessToken 재발급 시도
+refreshUserToken()
+  .then(res => {
+      const newToken = res.data.data.accessToken
+      const payload = jwtDecode(newToken)
 
+      userStore.setUser({
+          accessToken: newToken,
+          userId: payload.sub,
+          nickname: payload.nickname, // 사용 시
+          role: payload.role,
+          expiration: payload.exp * 1000
+      })
+  })
+  .catch(() => {
+      userStore.logout()
+  })
 
+// 앱 마운트
 app.mount('#app')

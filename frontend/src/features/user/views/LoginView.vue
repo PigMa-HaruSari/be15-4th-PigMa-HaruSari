@@ -6,23 +6,25 @@
         <img src="@/assets/images/HARURAMENSARI.png" alt="하루살이 로고" />
       </div>
       <div class="subtitle">로그인을 위해 정보를 입력해주세요</div>
-      <div class="link-row">
-        <router-link to="/signup">회원가입</router-link>
-      </div>
       <div class="input-box">
         <input v-model="email" type="text" placeholder="이메일 입력" @keyup.enter="handleLogin" />
       </div>
       <div class="input-box">
         <input v-model="password" type="password" placeholder="비밀번호 입력" @keyup.enter="handleLogin" />
       </div>
-      <div class="link-row">
-        <router-link to="/reset-password">비번 재설정</router-link>
-      </div>
       <div class="input-box">
         <button class="login-btn" @click="handleLogin">로그인</button>
       </div>
       <div class="input-box">
         <button class="kakao-login-btn">카카오로 로그인하기</button>
+      </div>
+      <div class="link-group">
+        <div class="link-row">
+          <router-link to="/signup">회원가입</router-link>
+        </div>
+        <div class="link-row">
+          <router-link to="/reset-password">비밀번호 재설정</router-link>
+        </div>
       </div>
       <p class="error-message" v-if="error">{{ error }}</p>
     </div>
@@ -33,7 +35,7 @@
 import { ref } from 'vue';
 import { useRouter, useRoute, RouterLink } from 'vue-router';
 import { useUserStore } from '@/stores/userStore';
-import api from '@/lib/api';
+import { loginUser } from '@/features/user/api';
 import Header from '@/components/layout/Header.vue';
 
 const email = ref('');
@@ -45,24 +47,17 @@ const userStore = useUserStore();
 
 const handleLogin = async () => {
   try {
-    const res = await api.post('/auth/login', {
-      email: email.value,
-      password: password.value
+    const { data } = await loginUser({
+      email: email.value, password: password.value
     });
-
-    const userData = res.data.data;
-    console.log('[USER DATA]', userData);
-
+    const userData = data.data;
     userStore.setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
-    localStorage.setItem('accessToken', userData.accessToken);
 
     const redirectPath = route.query.redirect || '/';
     if (redirectPath !== router.currentRoute.value.fullPath) {
       await router.push(redirectPath);
     }
   } catch (err) {
-    console.error('[LOGIN ERROR]', err);
     error.value = '이메일 또는 비밀번호가 올바르지 않습니다.';
   }
 };
@@ -126,11 +121,23 @@ const handleLogin = async () => {
   background: #fee500;
   color: #3c1e1e;
 }
+.link-group {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 100px;
+  box-sizing: border-box;
+}
+
+.link-group a {
+  font-size: 14px;
+  color: #716aca;
+  text-decoration: none;
+}
+
 .link-row {
   display: flex;
-  justify-content: flex-end;
-  width: 100%;
-  margin-bottom: 12px;
+  margin: 10px;
 }
 .link-row a {
   font-size: 14px;
