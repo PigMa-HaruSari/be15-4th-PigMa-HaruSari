@@ -1,11 +1,11 @@
 <template>
   <div class="modal-overlay" @click.self="closeModal">
     <div class="modal-content">
-      <h3>카테고리 추가</h3>
+      <h3>{{ isEdit ? '카테고리 수정' : '카테고리 추가' }}</h3>
       <form @submit.prevent="submitCategory">
-        <input v-model="categoryName" placeholder="카테고리 이름" required />
+        <input type="text" v-model="categoryName" placeholder="카테고리를 입력하세요" required />
 
-        <!-- 대표 색상 선택 -->
+        <!-- 색상 선택 -->
         <div class="color-picker">
           <label>색상 선택</label>
           <div class="colors">
@@ -14,12 +14,19 @@
                 v-for="color in colors"
                 :key="color"
                 :style="{ backgroundColor: color }"
+                :class="{ selected: color === categoryColor }"
                 @click="categoryColor = color"
             ></div>
           </div>
         </div>
 
-        <button type="submit">등록</button>
+        <!-- 사용자 정의 색상 입력 -->
+        <div class="custom-color">
+          <label>직접 선택</label>
+          <input type="color" v-model="categoryColor" />
+        </div>
+
+        <button type="submit">{{ isEdit ? '수정하기' : '등록하기' }}</button>
         <button type="button" @click="$emit('close')">취소</button>
       </form>
     </div>
@@ -27,40 +34,58 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { createCategory } from '@/features/category/categoryApi.js'  // 새로 만든 createCategory 함수
+import { ref, watch } from 'vue'
+import { createCategory, updateCategory } from '@/features/category/categoryApi.js'
 
 const emit = defineEmits(['close', 'created'])
 
+const props = defineProps({
+  isEdit: Boolean,
+  editData: Object
+})
+
 const categoryName = ref('')
-const categoryColor = ref('#FFD8BE')  // 기본 색상
-const colors = ['#FFD8BE', '#CDB4DB', '#B5EAD7', '#FFF1A8']  // 대표 색상 목록
+const categoryColor = ref('#FFD8BE')
+const colors = ['#FFD8BE', '#CDB4DB', '#B5EAD7', '#FFF1A8', '#FF6B6B', '#33FF57', '#3357FF', '#888888']
+
+watch(() => props.editData, (newVal) => {
+  if (props.isEdit && newVal) {
+    categoryName.value = newVal.title
+    categoryColor.value = newVal.color
+  }
+}, { immediate: true })
 
 const submitCategory = async () => {
   try {
-    // 카테고리 생성 요청
-    const response = await createCategory({
-      categoryName: categoryName.value,
-      color: categoryColor.value,
-    });
-
-    if (response.status === 201) {
-      emit('created', {
-        title: categoryName.value,
+    if (props.isEdit) {
+      await updateCategory(props.editData.categoryId, {
+        categoryName: categoryName.value,
         color: categoryColor.value,
-        categoryId: response.data.data.categoryId,
-        completed: false, // 기본값
       });
+    } else {
+      const response = await createCategory({
+        categoryName: categoryName.value,
+        color: categoryColor.value,
+      });
+
+      if (response.status === 201) {
+        emit('created', {
+          title: categoryName.value,
+          color: categoryColor.value,
+          categoryId: response.data.data.categoryId,
+          completed: false,
+        });
+      }
     }
+
     categoryName.value = '';
-    categoryColor.value = '#FFD8BE';  // 초기 색상 리셋
+    categoryColor.value = '#FFD8BE';
     emit('close');
   } catch (error) {
-    console.error('카테고리 생성 오류:', error);
-    alert('카테고리 추가에 실패했습니다.');
+    console.error('카테고리 저장 오류:', error);
+    alert('카테고리 저장에 실패했습니다.');
   }
-};
-
+}
 </script>
 
 <style scoped>
@@ -98,11 +123,30 @@ form {
 }
 
 input[type="text"] {
-  padding: 0.6rem;
+  width: 100%;
+  padding: 0.8rem 1.2rem;
   font-size: 1rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  box-sizing: border-box; /* ✅ 너비 초과 방지 */
+  font-weight: 500;
+  border: none;
+  border-radius: 14px;
+  background-color: #f5f5f5;
+  color: #333;
+  transition: all 0.25s ease;
+  box-shadow: inset 0 0 0 1px #ddd;
 }
+
+input[type="text"]::placeholder {
+  color: #aaa;
+  font-weight: 400;
+}
+
+input[type="text"]:focus {
+  outline: none;
+  background-color: #fff;
+  box-shadow: 0 0 0 3px rgba(147, 129, 255, 0.3);
+}
+
 
 .color-picker {
   display: flex;
@@ -113,6 +157,7 @@ input[type="text"] {
   display: flex;
   gap: 1rem;
   justify-content: center;
+  flex-wrap: wrap;
 }
 
 .color-swatch {
@@ -121,10 +166,21 @@ input[type="text"] {
   border-radius: 50%;
   cursor: pointer;
   transition: transform 0.2s;
+  border: 2px solid transparent;
 }
 
 .color-swatch:hover {
   transform: scale(1.2);
+}
+
+.color-swatch.selected {
+  border: 3px solid #555;
+  box-shadow: 0 0 0 2px white, 0 0 6px rgba(0,0,0,0.4);
+}
+
+.custom-color {
+  margin-top: 1rem;
+  text-align: center;
 }
 
 button {
