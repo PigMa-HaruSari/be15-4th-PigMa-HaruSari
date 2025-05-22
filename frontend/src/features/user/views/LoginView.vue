@@ -59,7 +59,7 @@ const handleLogin = async () => {
 
     const redirectPath = route.query.redirect || '/';
     if (redirectPath !== router.currentRoute.value.fullPath) {
-      router.push(redirectPath);
+      await router.push(redirectPath);
     }
   } catch (err) {
     console.error('[LOGIN ERROR]', err);

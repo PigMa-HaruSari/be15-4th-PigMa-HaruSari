@@ -28,6 +28,8 @@ export const useUserStore = defineStore('user', {
 
             localStorage.removeItem('user');
             localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+
 
             clearTimeout(logoutTimer);
         }

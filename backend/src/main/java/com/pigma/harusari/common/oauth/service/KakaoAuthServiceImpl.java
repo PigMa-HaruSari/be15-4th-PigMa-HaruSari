@@ -163,12 +163,12 @@ public class KakaoAuthServiceImpl implements KakaoAuthService {
     /* JWT 토큰 생성하고 리프레스 토큰을 Redis에 저장 */
     LoginResponse issueJwtTokens(Member member) {
         try {
-            String userId = String.valueOf(member.getMemberId());
-            String accessToken = jwtTokenProvider.createToken(userId, member.getGender().name());
-            String refreshToken = jwtTokenProvider.createRefreshToken(userId, member.getGender().name());
+            Long memberId = member.getMemberId();
+            String accessToken = jwtTokenProvider.createToken(memberId, member.getGender().name());
+            String refreshToken = jwtTokenProvider.createRefreshToken(memberId, member.getGender().name());
 
             try {
-                redisTemplate.opsForValue().set(userId, refreshToken, Duration.ofDays(7));
+                redisTemplate.opsForValue().set(String.valueOf(memberId), refreshToken, Duration.ofDays(7));
             } catch (Exception e) {
                 throw new OAuthRedisSaveFailedException(OAuthExceptionErrorCode.OAUTH_REDIS_SAVE_FAILED);
             }

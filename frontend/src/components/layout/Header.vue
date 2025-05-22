@@ -18,6 +18,7 @@
         <router-link to="/mypage">
           <img src="@/assets/images/header-profile-white.svg" alt="마이페이지" />
         </router-link>
+        <button @click="logoutAndRedirect">로그아웃</button>
       </nav>
 
     </div>
@@ -26,6 +27,16 @@
 
 <script setup>
 
+import { useRouter } from 'vue-router';
+import { useUserStore } from '@/stores/userStore';
+
+const router = useRouter();
+const userStore = useUserStore();
+
+const logoutAndRedirect = () => {
+  userStore.logout();
+  router.push('/login');
+}
 </script>
 
 <style scoped>
