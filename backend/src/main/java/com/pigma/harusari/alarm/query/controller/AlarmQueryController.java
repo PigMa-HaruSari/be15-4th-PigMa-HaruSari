@@ -27,7 +27,6 @@ public class AlarmQueryController {
         Long memberId = userDetails.getMemberId();
 
         List<AlarmResponseDto> alarms = alarmQueryService.getUnreadAlarms(memberId);
-
         return ResponseEntity.ok(ApiResponse.success(alarms));
     }
 

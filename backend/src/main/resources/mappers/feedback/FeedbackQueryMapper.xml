@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.pigma.harusari.feedback.query.mapper.FeedbackQueryMapper">
+
+    <resultMap id="FeedbackSummaryResultMap" type="com.pigma.harusari.feedback.query.dto.FeedbackSummaryDto">
+        <result property="feedbackId" column="feedback_id"/>
+        <result property="date" column="feedback_date"/>
+    </resultMap>
+
+    <select id="findAllByMemberId" resultMap="FeedbackSummaryResultMap">
+        SELECT
+            feedback_id,
+            feedback_date
+        FROM feedback
+        WHERE member_id = #{memberId}
+        ORDER BY feedback_date DESC
+    </select>
+
+    <select id="findByIdAndMemberId" resultType="com.pigma.harusari.feedback.query.dto.FeedbackDetailDto">
+        SELECT
+            feedback_id AS feedbackId,
+            feedback_content AS content,
+            DATE(feedback_date) AS date
+        FROM feedback
+        WHERE feedback_id = #{feedbackId} AND member_id = #{memberId}
+    </select>
+
+</mapper>
