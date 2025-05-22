@@ -3,6 +3,7 @@ import {ref, onMounted, watch, nextTick, computed} from 'vue'
 import axios from 'axios'
 import {Chart} from 'chart.js'
 import {format} from 'date-fns'
+import api from "@/lib/api.js";
 
 const props = defineProps({date: Date})
 const chartRef = ref(null)
@@ -49,7 +50,8 @@ const drawChart = (rate) => {
 
 const loadData = async () => {
   const dateStr = format(props.date, 'yyyy-MM-dd')
-  const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/statistics/daily`, {params: {date: dateStr}})
+  // const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/statistics/daily`, {params: {date: dateStr}})
+  const res = await api.get(`${import.meta.env.VITE_API_BASE_URL}/statistics/daily`, {params: {date: dateStr}})
   const rate = res.data.data.achievementRate
   await nextTick()
   drawChart(rate)

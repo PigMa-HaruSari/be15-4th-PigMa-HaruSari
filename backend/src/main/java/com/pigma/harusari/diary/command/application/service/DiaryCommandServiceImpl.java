@@ -19,7 +19,7 @@ public class DiaryCommandServiceImpl implements DiaryCommandService {
 
     @Override
     @Transactional
-    public Long createDiary(DiaryCreateRequest request) {
+    public Long createDiary(Long memberId, DiaryCreateRequest request) {
         // 하루에 한 번만 작성 가능
         boolean alreadyExists = diaryRepository.existsByMemberIdAndCreatedAtBetween(
                 request.getMemberId(),

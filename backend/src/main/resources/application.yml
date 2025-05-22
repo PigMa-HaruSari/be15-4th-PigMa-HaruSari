@@ -36,6 +36,11 @@ spring:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
 
+kakao:
+  client-id: ${KAKAO_CLIENT_ID}
+  redirect-uri: ${KAKAO_REDIRECT_URI}
+  token-uri: ${KAKAO_TOKEN_URI}
+  user-info-uri: ${KAKAO_USER_INFO_URI}
 
 mybatis:
   configuration:
@@ -47,7 +52,7 @@ mybatis:
 jwt:
   secret: ${JWT_SECRET}
   expiration: ${JWT_EXPIRATION} # 30분
-  refresh-expiration : ${JWT_REFRESH_EXPIRATION} # 7일
+  refresh-expiration: ${JWT_REFRESH_EXPIRATION} # 7일
 
   rabbitmq:
     host: localhost

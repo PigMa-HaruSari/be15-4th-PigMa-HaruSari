@@ -3,11 +3,12 @@ import { statisticsRoutes } from '@/features/statistics/router.js';
 import { mainRoutes } from '@/features/main/router.js';
 import {loginRoutes} from "@/features/user/router.js";
 import {useUserStore} from "@/stores/userStore.js";
+import {categoryRoutes} from "@/features/category/router.js";
 import { easterEggRoutes } from "@/features/EasterEgg/router.js"
 
 const router = createRouter({
   history: createWebHistory(),
-  routes: [...statisticsRoutes, ...mainRoutes, ...loginRoutes,...easterEggRoutes],
+  routes: [...statisticsRoutes, ...mainRoutes, ...loginRoutes, ...categoryRoutes, ...easterEggRoutes],
 });
 
 
