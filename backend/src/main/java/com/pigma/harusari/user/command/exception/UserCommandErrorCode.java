@@ -4,6 +4,11 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 @Getter
 @RequiredArgsConstructor
 public enum UserCommandErrorCode {
@@ -18,12 +23,23 @@ public enum UserCommandErrorCode {
     NEW_PASSWORD_MISMATCH("10008", "새 비밀번호와 확인 값이 일치하지 않습니다.", HttpStatus.BAD_REQUEST),
     PASSWORD_LENGTH_INVALID("10009", "비밀번호는 10자 이상 20자 이하로 입력해야 합니다.", HttpStatus.BAD_REQUEST),
     ALREADY_SIGNED_OUT_MEMBER("10010", "이미 탈퇴한 회원입니다.", HttpStatus.BAD_REQUEST),
-    EMAIL_NOT_FOUND("10011", "이미 탈퇴한 회원입니다.", HttpStatus.BAD_REQUEST),
+    EMAIL_NOT_FOUND("10011", "등록되지 않은 회원입니다.", HttpStatus.BAD_REQUEST),
     INVALID_RESET_TOKEN("10012", "비밀번호 재설정 인증 토큰이 유효하지 않습니다.", HttpStatus.BAD_REQUEST),
     METHOD_ARG_NOT_VALID("10999", "@Valid 검증 오류입니다.", HttpStatus.BAD_REQUEST);
-
 
     private final String errorCode;
     private final String errorMessage;
     private final HttpStatus httpStatus;
+
+    private static final Map<String, UserCommandErrorCode> MESSAGE_TO_ENUM;
+
+    static {
+        MESSAGE_TO_ENUM = Arrays.stream(values())
+                .collect(Collectors.toMap(UserCommandErrorCode::getErrorMessage, e -> e));
+    }
+
+    public static Optional<UserCommandErrorCode> fromMessage(String message) {
+        return Optional.ofNullable(MESSAGE_TO_ENUM.get(message));
+    }
+
 }

@@ -2,11 +2,13 @@ package com.pigma.harusari.user.command.exception.handler;
 
 import com.pigma.harusari.common.dto.ApiResponse;
 import com.pigma.harusari.user.command.exception.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+@Slf4j
 @RestControllerAdvice
 public class UserCommandExceptionHandler {
 
@@ -89,11 +91,14 @@ public class UserCommandExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Void>> handleValidationException(MethodArgumentNotValidException ex) {
+        String errorMessage = ex.getBindingResult().getFieldError().getDefaultMessage();
+        log.info("errorMessage = {}", errorMessage);
 
-        ApiResponse<Void> response = ApiResponse.failure(
-                UserCommandErrorCode.METHOD_ARG_NOT_VALID.getErrorCode(),
-                UserCommandErrorCode.METHOD_ARG_NOT_VALID.getErrorMessage()
-        );
+        UserCommandErrorCode userCommandErrorCode = UserCommandErrorCode.fromMessage(errorMessage)
+                .orElse(UserCommandErrorCode.METHOD_ARG_NOT_VALID);
+        log.info("errorCode = {}", userCommandErrorCode.getErrorCode());
+
+        ApiResponse<Void> response = ApiResponse.failure(userCommandErrorCode.getErrorCode(), errorMessage);
 
         return ResponseEntity.badRequest().body(response);
     }
