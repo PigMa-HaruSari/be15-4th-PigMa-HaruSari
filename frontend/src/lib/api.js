@@ -22,7 +22,7 @@ const onTokenRefreshed = (token) => {
 
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem('accessToken');
-    console.log('[요청 인터셉터] accessToken:', token); // ✅ 추가
+    // console.log('[요청 인터셉터] accessToken:', token); // ✅ 추가
 
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;

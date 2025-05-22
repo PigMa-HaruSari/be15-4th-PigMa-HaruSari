@@ -22,7 +22,7 @@
 
         <!-- 사용자 정의 색상 입력 -->
         <div class="custom-color">
-          <label>직접 선택</label>
+          <label>직접 선택 </label>
           <input type="color" v-model="categoryColor" />
         </div>
 
@@ -48,8 +48,14 @@ const categoryName = ref('')
 const categoryColor = ref('#FFD8BE')
 const colors = ['#FFD8BE', '#CDB4DB', '#B5EAD7', '#FFF1A8', '#FF6B6B', '#33FF57', '#3357FF', '#888888']
 
+const closeModal = () => {
+  emit('close')
+}
+
+
 watch(() => props.editData, (newVal) => {
   if (props.isEdit && newVal) {
+    console.log('[DEBUG] editData:', newVal); // ✅ 이거 넣어보면 확실해져요
     categoryName.value = newVal.title
     categoryColor.value = newVal.color
   }
