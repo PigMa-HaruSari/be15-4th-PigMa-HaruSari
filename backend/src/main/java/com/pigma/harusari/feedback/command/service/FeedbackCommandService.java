@@ -35,8 +35,8 @@ public class FeedbackCommandService {
 
         for (Long memberId : memberIds) {
             var diaries = diaryQueryMapper.getLastMonthDiaries(memberId, start, end);
-            var schedules = scheduleQueryService.getLastMonthSchedules(memberId);
-            double achievementRate = scheduleQueryService.calculateAchievementRate(schedules);
+            var schedules = scheduleQueryMapper.getLastMonthSchedules(memberId);
+            double achievementRate = scheduleQueryMapper.calculateAchievementRate(schedules);
 
             String prompt = promptBuilder.buildPrompt(diaries, schedules, achievementRate);
             String content = geminiClient.generateFeedback(prompt);

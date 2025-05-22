@@ -2,11 +2,13 @@ package com.pigma.harusari.feedback.command.entity;
 
 import jakarta.persistence.*;
 import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
 @Entity
 @Table(name = "feedback")
+@NoArgsConstructor
 public class Feedback {
 
     @Id
