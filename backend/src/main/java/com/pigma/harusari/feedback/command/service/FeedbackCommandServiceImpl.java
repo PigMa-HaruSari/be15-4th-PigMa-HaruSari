@@ -9,6 +9,7 @@ import com.pigma.harusari.task.schedule.query.Mapper.TaskScheduleQueryMapper;
 import com.pigma.harusari.user.query.mapper.UserQueryMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -27,6 +28,7 @@ public class FeedbackCommandServiceImpl implements FeedbackCommandService {
     private final TaskScheduleQueryMapper scheduleQueryMapper;
 
     @Override
+    @Transactional
     public void generateMonthlyFeedbackForAllUsers() {
         List<Long> memberIds = userQueryMapper.getAllActiveUserIds();
 
@@ -53,6 +55,7 @@ public class FeedbackCommandServiceImpl implements FeedbackCommandService {
     }
 
     @Override
+    @Transactional
     public void generateMonthlyFeedbackForMember(Long memberId) {
         YearMonth lastMonth = YearMonth.now().minusMonths(1);
         LocalDate start = lastMonth.atDay(1);
