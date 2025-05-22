@@ -11,8 +11,6 @@
             b.category_name AS categoryName,
             a.schedule_content AS scheduleContent,
             a.schedule_date AS scheduleDate,
-            a.created_at AS createdAt,
-            a.modified_at AS modifiedAt,
             a.completion_status AS completionStatus
         FROM schedule a
         JOIN category b ON (a.category_id = b.category_id)
@@ -21,6 +19,9 @@
         <if test="categoryId != null">
             AND a.category_id = #{ categoryId }
         </if>
+            <if test="scheduleDate != null">
+                AND DATE(a.schedule_date) = #{scheduleDate}
+            </if>
         </where>
         ORDER BY a.schedule_id DESC
     </select>

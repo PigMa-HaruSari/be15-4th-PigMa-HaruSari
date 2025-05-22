@@ -4,7 +4,6 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Getter
 public class ScheduleDto {
@@ -14,14 +13,12 @@ public class ScheduleDto {
     private String categoryName;
     private String scheduleContent;
     private LocalDate scheduleDate;
-    private LocalDateTime createdAt;
-    private LocalDateTime modifiedAt;
     private Boolean completionStatus;
 
     @Builder
     public ScheduleDto(
-            Long scheduleId, Long automationScheduleId, Long categoryId, String categoryName, String scheduleContent,
-            LocalDate scheduleDate, LocalDateTime createdAt, LocalDateTime modifiedAt, Boolean completionStatus
+            Long scheduleId, Long automationScheduleId, Long categoryId, String categoryName,
+            String scheduleContent, LocalDate scheduleDate, Boolean completionStatus
     ) {
         this.scheduleId = scheduleId;
         this.automationScheduleId = automationScheduleId;
@@ -29,11 +26,7 @@ public class ScheduleDto {
         this.categoryName = categoryName;
         this.scheduleContent = scheduleContent;
         this.scheduleDate = scheduleDate;
-        this.createdAt = createdAt;
-        this.modifiedAt = modifiedAt;
         this.completionStatus = completionStatus;
     }
+
 }
-
-
-
