@@ -13,8 +13,8 @@
         FROM schedule s
         JOIN category c ON s.category_id = c.category_id
         WHERE c.member_id = #{memberId}
-        AND s.schedule_deadline <![CDATA[ >= ]]> #{startDateTime}
-        AND s.schedule_deadline <![CDATA[ < ]]> #{endDateTime}
+        AND s.schedule_date <![CDATA[ >= ]]> #{startDateTime}
+        AND s.schedule_date <![CDATA[ < ]]> #{endDateTime}
     </select>
 
     <select id="findStatisticsMonthlyRate" resultType="com.pigma.harusari.statistics.query.dto.response.StatisticsMonthlyRateResponse">
@@ -28,8 +28,8 @@
         FROM schedule s
         JOIN category c ON s.category_id = c.category_id
         WHERE c.member_id = #{memberId}
-        AND s.schedule_deadline <![CDATA[ >= ]]> #{startDateTime}
-        AND s.schedule_deadline <![CDATA[ < ]]> #{endDateTime}
+        AND s.schedule_date <![CDATA[ >= ]]> #{startDateTime}
+        AND s.schedule_date <![CDATA[ < ]]> #{endDateTime}
     </select>
 
     <select id="findStatisticsCategoryRate" resultType="com.pigma.harusari.statistics.query.dto.response.StatisticsCategoryRateResponse">
