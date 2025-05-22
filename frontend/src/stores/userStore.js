@@ -1,40 +1,50 @@
 /* Pinia 설정 */
 import { defineStore } from 'pinia';
+import api from '@/lib/axios.js';
 
 // 자동 로그아웃 기능을 위한 타이머 변수
 let logoutTimer = null;
 
 /* 'user'라는 이름의 Store 정의 */
 export const useUserStore = defineStore('user', {
-    // 로그인 한 유저 정보
     state: () => ({
         userId: null,
         email: '',
-        nickname: ''
+        nickname: '',
+        accessToken: null,
+        expiration: null
     }),
 
-    // 상태 변경 메소드 (로그인 성공, 로그아웃)
+    // 로그인 여부 검증을 위한 로직 추가
+    getters: {
+        isAuthenticated(state) {
+            return !!state.accessToken && Date.now() < (state.expiration || 0);
+        }
+    },
+
     actions: {
-        // 로그인 성공 시 사용자 정보를 localStorage에 저장
         setUser(userData) {
             this.userId = userData.userId;
             this.email = userData.email;
             this.nickname = userData.nickname;
+            this.accessToken = userData.accessToken;
+            this.expiration = userData.expiration;
 
             localStorage.setItem('user', JSON.stringify(userData));
             localStorage.setItem('accessToken', userData.accessToken);
         },
-        // 로그아웃 시 localStorage에서 사용자 정보를 삭제
+
         logout() {
+            api.post('/auth/logout').catch(() => {});
+
             this.userId = null;
             this.email = '';
             this.nickname = '';
+            this.accessToken = null;
+            this.expiration = null;
 
             localStorage.removeItem('user');
             localStorage.removeItem('accessToken');
-            localStorage.removeItem('refreshToken');
-
-            clearTimeout(logoutTimer); // TODO : 타이머 추가하기
         }
     }
 });

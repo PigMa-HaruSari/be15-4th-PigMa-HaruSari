@@ -19,7 +19,7 @@ const router = createRouter({
 // 비로그인 상태로 접근 시 차단하는 설정
 router.beforeEach((to) => {
   const userStore = useUserStore();
-  const isLoggedIn = !!userStore.userId;
+  const isLoggedIn = userStore.isAuthenticated;
 
   // 비회원도 접속 가능한 화면
   const publicPages = ['/login', '/signup', '/reset-password'];
