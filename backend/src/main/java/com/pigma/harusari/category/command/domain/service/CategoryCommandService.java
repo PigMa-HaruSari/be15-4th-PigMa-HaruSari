@@ -5,7 +5,7 @@ import com.pigma.harusari.category.command.application.dto.request.CategoryUpdat
 
 public interface CategoryCommandService {
 
-    Long createCategory(CategoryCreateRequest request);
+    Long createCategory(Long memberId, CategoryCreateRequest request);
 
     void updateCategory(Long categoryId, Long memberId, CategoryUpdateRequest request);
 

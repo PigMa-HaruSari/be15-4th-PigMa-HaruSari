@@ -71,9 +71,9 @@ class AuthServiceImplTest {
                 .willReturn(Optional.of(member));
         given(passwordEncoder.matches("password123", "encodedPassword"))
                 .willReturn(true);
-        given(jwtTokenProvider.createToken("1", "FEMALE"))
+        given(jwtTokenProvider.createToken(1L, "FEMALE"))
                 .willReturn("access-token");
-        given(jwtTokenProvider.createRefreshToken("1", "FEMALE"))
+        given(jwtTokenProvider.createRefreshToken(1L, "FEMALE"))
                 .willReturn("refresh-token");
         given(redisTemplate.opsForValue()).willReturn(valueOperations);
 

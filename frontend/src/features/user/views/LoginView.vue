@@ -1,11 +1,29 @@
-<!--
 <template>
-  <div class="login-container">
-    <div class="login-box">
-      <h2>하루살이 로그인</h2>
-      <input v-model="email" type="email" placeholder="이메일" />
-      <input v-model="password" type="password" placeholder="비밀번호" />
-      <button @click="handleLogin">로그인</button>
+  <Header />
+  <div class="main-wrapper">
+    <div class="signup-box">
+      <div class="logo-box">
+        <img src="@/assets/images/HARURAMENSARI.png" alt="하루살이 로고" />
+      </div>
+      <div class="subtitle">로그인을 위해 정보를 입력해주세요</div>
+      <div class="link-row">
+        <RouterLink to="/signup">회원가입</RouterLink>
+      </div>
+      <div class="input-box">
+        <input v-model="email" type="text" placeholder="이메일 입력" @keyup.enter="handleLogin" />
+      </div>
+      <div class="input-box">
+        <input v-model="password" type="password" placeholder="비밀번호 입력" @keyup.enter="handleLogin" />
+      </div>
+      <div class="link-row">
+        <RouterLink to="/reset-password">비번 재설정</RouterLink>
+      </div>
+      <div class="input-box">
+        <button class="login-btn" @click="handleLogin">로그인</button>
+      </div>
+      <div class="input-box">
+        <button class="kakao-login-btn">카카오로 로그인하기</button>
+      </div>
       <p class="error-message" v-if="error">{{ error }}</p>
     </div>
   </div>
@@ -13,134 +31,10 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute, RouterLink } from 'vue-router';
 import { useUserStore } from '@/stores/userStore';
 import api from '@/lib/api';
-import { useRoute } from 'vue-router';
-
-
-const email = ref('');
-const password = ref('');
-const error = ref('');
-const router = useRouter();
-const route = useRoute();
-const userStore = useUserStore();
-
-// const handleLogin = async () => {
-//   try {
-//     const res = await api.post('/auth/login', {
-//       email: email.value,
-//       password: password.value
-//     });
-//     userStore.setUser(res.data); // 로그인 성공 시 userStore에 저장
-//     router.push('/'); // 메인 페이지로 이동
-//   } catch (err) {
-//     error.value = '이메일 또는 비밀번호가 올바르지 않습니다.';
-//   }
-// };
-const handleLogin = async () => {
-  try {
-    const res = await api.post('/auth/login', {
-      email: email.value,
-      password: password.value
-    });
-
-    console.log(email.value, password.value);
-
-
-    const userData = res.data.data;
-    localStorage.setItem('user', JSON.stringify(userData));
-    userStore.setUser(userData);
-
-    // ✅ redirect 쿼리 파라미터가 있으면 해당 경로로 이동
-/*    const redirectPath = route.query.redirect || '/';
-    // router.push(redirectPath);
-    if (redirectPath !== router.currentRoute.value.fullPath) {
-      router.push(redirectPath);
-    }*/
-    const redirectPath = route.query.redirect;
-
-    console.log('[로그인 응답]', res);
-    console.log('[res.data]', res.data);
-    if (redirectPath) {
-      router.push(redirectPath);
-    } else {
-      router.push({ name: 'main' }); // 이름 기반으로 안전하게 이동
-    }
-  } catch (err) {
-
-    console.error('[LOGIN ERROR]', err); // ✅ 로그 확인용 추가
-
-    error.value = '이메일 또는 비밀번호가 올바르지 않습니다.';
-  }
-  console.log('[REDIRECT PATH]', route.query.redirect);
-
-};
-</script>
-
-<style scoped>
-.login-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background-color: #f0f0f5;
-}
-.login-box {
-  background: white;
-  padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  width: 300px;
-}
-.login-box h2 {
-  margin-bottom: 10px;
-  text-align: center;
-  color: #333;
-}
-.login-box input {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
-}
-.login-box button {
-  padding: 10px;
-  background-color: #9381FF;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 15px;
-}
-.login-box .error-message {
-  color: red;
-  font-size: 13px;
-  text-align: center;
-  margin-top: 8px;
-}
-</style>
--->
-<template>
-  <div class="login-container">
-    <div class="login-box">
-      <h2>하루살이 로그인</h2>
-      <input v-model="email" type="email" placeholder="이메일" @keyup.enter="handleLogin" />
-      <input v-model="password" type="password" placeholder="비밀번호" @keyup.enter="handleLogin" />
-      <button @click="handleLogin">로그인</button>
-      <p class="error-message" v-if="error">{{ error }}</p>
-    </div>
-  </div>
-</template>
-
-<script setup>
-import { ref } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import { useUserStore } from '@/stores/userStore';
-import api from '@/lib/api';
+import Header from '@/components/layout/Header.vue';
 
 const email = ref('');
 const password = ref('');
@@ -161,6 +55,7 @@ const handleLogin = async () => {
 
     userStore.setUser(userData);
     localStorage.setItem('user', JSON.stringify(userData));
+    localStorage.setItem('accessToken', userData.accessToken);
 
     const redirectPath = route.query.redirect || '/';
     if (redirectPath !== router.currentRoute.value.fullPath) {
@@ -174,44 +69,75 @@ const handleLogin = async () => {
 </script>
 
 <style scoped>
-.login-container {
+.main-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  background-color: #f0f0f5;
+  min-height: calc(100vh - 100px);
+  background: #f9f9f9;
 }
-.login-box {
-  background: white;
-  padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+.signup-box {
+  width: 400px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  width: 300px;
-}
-.login-box h2 {
-  margin-bottom: 10px;
+  align-items: center;
   text-align: center;
-  color: #333;
 }
-.login-box input {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+.logo-box img {
+  height: 80px;
+  margin-bottom: 16px;
+}
+.subtitle {
+  margin-bottom: 12px;
+  font-size: 16px;
+  color: #555;
+}
+.input-box {
+  width: 100%;
+  margin-bottom: 12px;
+}
+.input-box input {
+  width: 100%;
+  padding: 12px;
   font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-sizing: border-box;
 }
-.login-box button {
-  padding: 10px;
-  background-color: #9381FF;
-  color: white;
+.login-btn,
+.kakao-login-btn {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: bold;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 15px;
 }
-.login-box .error-message {
+.login-btn {
+  background: #f0f0f0;
+  transition: background 0.2s ease;
+  margin-bottom: 12px;
+}
+.login-btn:hover {
+  background: #e2e2e2;
+}
+.kakao-login-btn {
+  background: #fee500;
+  color: #3c1e1e;
+}
+.link-row {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  margin-bottom: 12px;
+}
+.link-row a {
+  font-size: 14px;
+  color: #716aca;
+  text-decoration: none;
+}
+.error-message {
   color: red;
   font-size: 13px;
   text-align: center;

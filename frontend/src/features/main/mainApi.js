@@ -1,10 +1,7 @@
 import api from "@/lib/api.js";
 
 export const fetchCategory = () => {
-    return api.get('/categories?memberId=${memberId}', {
-        params: {
-        },
-    });
+    return api.get("/categories"); // memberId 제거
 };
 
 

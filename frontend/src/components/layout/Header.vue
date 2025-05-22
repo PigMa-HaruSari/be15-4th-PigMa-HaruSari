@@ -1,15 +1,25 @@
 <template>
   <header class="header">
     <div class="header-inner">
-      <div class="logo">
+      <router-link to="/" class="logo">
         <img src="@/assets/images/HARURAMENSARI.png" alt="하루살이 로고" />
         HARUSARI
-      </div>
+      </router-link>
       <nav class="nav">
-        <button>카테고리</button>
-        <button>통계</button>
-        <button>마이페이지</button>
+        <router-link to="/category">
+          <img src="@/assets/images/header-bell-white.svg" alt="알림" />
+        </router-link>
+        <router-link to="/category">
+          <img src="@/assets/images/header-categories-white.svg" alt="카테고리" />
+        </router-link>
+        <router-link to="/statistics">
+          <img src="@/assets/images/header-statistics-white.svg" alt="통계" />
+        </router-link>
+        <router-link to="/mypage">
+          <img src="@/assets/images/header-profile-white.svg" alt="마이페이지" />
+        </router-link>
       </nav>
+
     </div>
   </header>
 </template>
@@ -41,6 +51,7 @@
   font-size: 30px;
   font-weight: bold;
   color: #ffffff;
+  text-decoration: none;
   display: flex;
   align-items: center;
   gap: 10px;
