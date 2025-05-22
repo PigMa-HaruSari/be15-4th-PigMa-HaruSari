@@ -65,5 +65,5 @@ server:
 
 gemini:
   api-key: ${AI_KEY}
-  base-url: https://generativelanguage.googleapis.com/v1
-  model: gemini-2.0-flash-lite
+  base-url: https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash-lite:generateContent
+

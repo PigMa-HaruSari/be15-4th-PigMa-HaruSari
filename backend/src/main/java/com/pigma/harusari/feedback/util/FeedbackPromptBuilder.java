@@ -1,6 +1,7 @@
 package com.pigma.harusari.feedback.util;
 
 import com.pigma.harusari.diary.command.domain.aggregate.Diary;
+import com.pigma.harusari.task.schedule.command.entity.Schedule;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -15,7 +16,7 @@ public class FeedbackPromptBuilder {
 
         String scheduleSummary = String.format("총 %d개 일정 중 %d개 완료",
                 schedules.size(),
-                schedules.stream().filter(s -> s.getCompletionStatus() == 1).count());
+                schedules.stream().filter(s -> Boolean.TRUE.equals(s.getCompletionStatus())).count());
 
         return String.format("""
 당신은 일정/회고 분석 전문가입니다.
