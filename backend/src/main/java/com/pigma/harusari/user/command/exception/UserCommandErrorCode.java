@@ -13,7 +13,14 @@ public enum UserCommandErrorCode {
     NICKNAME_REQUIRED("10003", "닉네임을 입력해야 합니다.", HttpStatus.BAD_REQUEST),
     CONSENT_REQUIRED("10004", "개인 정보 수집 동의는 필수입니다.", HttpStatus.BAD_REQUEST),
     CATEGORY_REQUIRED("10005", "1개 이상의 카테고리를 등록해야 합니다.", HttpStatus.BAD_REQUEST),
-    END_OF_ERROR("19999", "", HttpStatus.BAD_REQUEST);
+    EMPTY_UPDATE_REQUEST("10006", "수정할 정보가 없습니다.", HttpStatus.BAD_REQUEST),
+    PASSWORD_MISMATCH("10007", "기존 비밀번호가 일치하지 않습니다.", HttpStatus.BAD_REQUEST),
+    NEW_PASSWORD_MISMATCH("10008", "새 비밀번호와 확인 값이 일치하지 않습니다.", HttpStatus.BAD_REQUEST),
+    PASSWORD_LENGTH_INVALID("10009", "비밀번호는 10자 이상 20자 이하로 입력해야 합니다.", HttpStatus.BAD_REQUEST),
+    ALREADY_SIGNED_OUT_MEMBER("10010", "이미 탈퇴한 회원입니다.", HttpStatus.BAD_REQUEST),
+    EMAIL_NOT_FOUND("10011", "이미 탈퇴한 회원입니다.", HttpStatus.BAD_REQUEST),
+    INVALID_RESET_TOKEN("10012", "비밀번호 재설정 인증 토큰이 유효하지 않습니다.", HttpStatus.BAD_REQUEST),
+    METHOD_ARG_NOT_VALID("10999", "@Valid 검증 오류입니다.", HttpStatus.BAD_REQUEST);
 
 
     private final String errorCode;
