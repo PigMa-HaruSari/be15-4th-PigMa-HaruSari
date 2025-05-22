@@ -91,4 +91,64 @@ public class AlarmScheduler {
 
         log.info("📆 Monthly achievement alarms sent to {} users", stats.size());
     }
+
+
+    // 테스트용: 특정 사용자에게만 알림 보내기
+    public void sendDailyUncompletedTaskAlarm(Long memberId) {
+        Map<String, Object> result = scheduleQueryMapper.findIncompleteScheduleCountByMemberId(memberId);
+        if (result != null) {
+            int count = ((Number) result.get("count")).intValue();
+
+            AlarmCreateDto dto = AlarmCreateDto.builder()
+                    .memberId(memberId)
+                    .alarmMessage("아직 완료하지 않은 오늘 일정이 " + count + "개 있어요! 💡")
+                    .type("DAILY")
+                    .build();
+
+            var alarm = alarmService.createAlarm(dto);
+            rabbitTemplate.convertAndSend("alarm.exchange", "alarm.key", alarm);
+
+            log.info("✅ Daily alarm sent to userId: {}", memberId);
+        }
+    }
+
+    public void sendWeeklyAchievementAlarm(Long memberId) {
+        Map<String, Object> stat = scheduleQueryMapper.findWeeklyAchievementRateByMemberId(memberId);
+        if (stat != null) {
+            int total = ((Number) stat.get("total")).intValue();
+            int completed = ((Number) stat.get("completed")).intValue();
+            int percentage = (total == 0) ? 0 : (completed * 100 / total);
+
+            AlarmCreateDto dto = AlarmCreateDto.builder()
+                    .memberId(memberId)
+                    .alarmMessage("지난 주의 일정 달성률은 " + percentage + "% 입니다! 💪")
+                    .type("WEEKLY")
+                    .build();
+
+            var alarm = alarmService.createAlarm(dto);
+            rabbitTemplate.convertAndSend("alarm.exchange", "alarm.key", alarm);
+
+            log.info("✅ Weekly alarm sent to userId: {}", memberId);
+        }
+    }
+
+    public void sendMonthlyAchievementAlarm(Long memberId) {
+        Map<String, Object> stat = scheduleQueryMapper.findMonthlyAchievementRateByMemberId(memberId);
+        if (stat != null) {
+            int total = ((Number) stat.get("total")).intValue();
+            int completed = ((Number) stat.get("completed")).intValue();
+            int percentage = (total == 0) ? 0 : (completed * 100 / total);
+
+            AlarmCreateDto dto = AlarmCreateDto.builder()
+                    .memberId(memberId)
+                    .alarmMessage("지난 달의 일정 달성률은 " + percentage + "% 입니다! 🗓️")
+                    .type("MONTHLY")
+                    .build();
+
+            var alarm = alarmService.createAlarm(dto);
+            rabbitTemplate.convertAndSend("alarm.exchange", "alarm.key", alarm);
+
+            log.info("✅ Monthly alarm sent to userId: {}", memberId);
+        }
+    }
 }
