@@ -176,8 +176,8 @@ class AuthServiceImplTest {
         given(redisTemplate.opsForValue()).willReturn(valueOperations);
         given(valueOperations.get("1")).willReturn(RefreshToken.builder().token(oldToken).build());
         given(userCommandRepository.findById(1L)).willReturn(Optional.of(member));
-        given(jwtTokenProvider.createToken("1", "FEMALE")).willReturn("new-access-token");
-        given(jwtTokenProvider.createRefreshToken("1", "FEMALE")).willReturn("new-refresh-token");
+        given(jwtTokenProvider.createToken(1L, "FEMALE")).willReturn("new-access-token");
+        given(jwtTokenProvider.createRefreshToken(1L, "FEMALE")).willReturn("new-refresh-token");
 
         // when
         TokenResponse response = authService.refreshToken(oldToken);
