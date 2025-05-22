@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/feedbacks")
+@RequestMapping("/api/v1/feedbacks")
 public class FeedbackQueryController {
 
     private final FeedbackQueryService feedbackQueryService;
