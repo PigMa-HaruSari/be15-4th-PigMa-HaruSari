@@ -60,4 +60,16 @@ public class TestController {
         return "✅ Monthly achievement alarm triggered for userId: " + memberId;
     }
 
+
+    @PostMapping("/test/daily")
+    public String triggerDailyAlarm() {
+        alarmScheduler.sendDailyUncompletedTaskAlarm();
+        return "✅ Daily uncompleted task alarm triggered.";
+    }
+
+    @PostMapping("/test/weekly")
+    public String triggerWeeklyAlarm() {
+        alarmScheduler.sendWeeklyAchievementAlarm();
+        return "✅ Weekly achievement alarm triggered.";
+    }
 }

@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,7 @@ public class AlarmScheduler {
     private final RabbitTemplate rabbitTemplate;
 
     @Scheduled(cron = "0 0 22 * * *") // 매일 오후 10시
+    @Transactional
     public void sendDailyUncompletedTaskAlarm() {
         List<Map<String, Object>> counts = scheduleQueryMapper.findIncompleteScheduleCount();
 
@@ -45,6 +47,7 @@ public class AlarmScheduler {
     }
 
     @Scheduled(cron = "0 0 8 * * MON") // 매주 월요일 오전 8시
+    @Transactional
     public void sendWeeklyAchievementAlarm() {
         List<Map<String, Object>> stats = scheduleQueryMapper.findWeeklyAchievementRate();
 
@@ -69,6 +72,7 @@ public class AlarmScheduler {
     }
 
     @Scheduled(cron = "0 0 8 1 * *") // 매달 1일 오전 8시
+    @Transactional
     public void sendMonthlyAchievementAlarm() {
         List<Map<String, Object>> stats = scheduleQueryMapper.findMonthlyAchievementRate();
 
@@ -94,6 +98,7 @@ public class AlarmScheduler {
 
 
     // 테스트용: 특정 사용자에게만 알림 보내기
+    @Transactional
     public void sendDailyUncompletedTaskAlarm(Long memberId) {
         Map<String, Object> result = scheduleQueryMapper.findIncompleteScheduleCountByMemberId(memberId);
         if (result != null) {
@@ -112,6 +117,7 @@ public class AlarmScheduler {
         }
     }
 
+    @Transactional
     public void sendWeeklyAchievementAlarm(Long memberId) {
         Map<String, Object> stat = scheduleQueryMapper.findWeeklyAchievementRateByMemberId(memberId);
         if (stat != null) {
@@ -132,6 +138,7 @@ public class AlarmScheduler {
         }
     }
 
+    @Transactional
     public void sendMonthlyAchievementAlarm(Long memberId) {
         Map<String, Object> stat = scheduleQueryMapper.findMonthlyAchievementRateByMemberId(memberId);
         if (stat != null) {
