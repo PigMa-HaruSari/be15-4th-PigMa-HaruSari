@@ -5,7 +5,7 @@ import com.pigma.harusari.feedback.command.entity.Feedback;
 import com.pigma.harusari.feedback.command.repository.FeedbackRepository;
 import com.pigma.harusari.feedback.util.FeedbackPromptBuilder;
 import com.pigma.harusari.feedback.util.GeminiClient;
-import com.pigma.harusari.task.schedule.query.Mapper.TaskScheduleQueryMapper;
+import com.pigma.harusari.task.schedule.query.mapper.TaskScheduleQueryMapper;
 import com.pigma.harusari.user.query.mapper.UserQueryMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
