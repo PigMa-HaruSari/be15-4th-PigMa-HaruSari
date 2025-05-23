@@ -1,3 +1,4 @@
+import { nextTick } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import { useUserStore } from "@/stores/userStore.js";
 
@@ -16,9 +17,18 @@ const router = createRouter({
   ],
 });
 
-// 비로그인 상태로 접근 시 차단하는 설정
-router.beforeEach((to) => {
+router.beforeEach(async (to, from) => {
   const userStore = useUserStore();
+
+  // 아직 초기화되지 않았는데 라우터가 먼저 작동한 경우를 대비
+  if (!userStore.accessToken) {
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+      userStore.setUser(JSON.parse(savedUser));
+      await nextTick(); // 상태 반영 대기
+    }
+  }
+
   const isLoggedIn = userStore.isAuthenticated;
 
   // 회원만 접속 가능한 페이지이나 비로그인 상태 : 로그인 페이지로 이동
