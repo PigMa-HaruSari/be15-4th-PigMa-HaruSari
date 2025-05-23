@@ -31,12 +31,16 @@ public class Alarm {
     @Column(name = "created_at")
     private Date createdAt;
 
+    @Column(name = "is_sent")
+    private Boolean isSent = false;
+
     @Builder
-    public Alarm(Long memberId, String alarmMessage, String type, Boolean isRead, Date createdAt) {
+    public Alarm(Long memberId, String alarmMessage, String type, Boolean isRead, Date createdAt, Boolean isSent) {
         this.memberId = memberId;
         this.alarmMessage = alarmMessage;
         this.type = type;
         this.isRead = isRead;
         this.createdAt = createdAt;
+        this.isSent = isSent;
     }
 }

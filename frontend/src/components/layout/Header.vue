@@ -65,16 +65,20 @@ const logout = () => {
 </script>
 
 <style scoped>
-
-
 .header {
-  width: 100vw;
+  width: 100%;
   height: 100px;
   background-color: #b8b8ff;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  position: fixed;        /* 👉 항상 상단 고정 */
+  top: 0;
+  left: 0;
+  z-index: 100;
 }
+
+
 .header-inner {
   width: 100%;
   max-width: 1200px;

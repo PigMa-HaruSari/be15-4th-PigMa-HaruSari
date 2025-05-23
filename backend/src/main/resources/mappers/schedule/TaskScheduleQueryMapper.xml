@@ -2,14 +2,14 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.pigma.harusari.task.schedule.query.Mapper.TaskScheduleQueryMapper">
+<mapper namespace="com.pigma.harusari.task.schedule.query.mapper.TaskScheduleQueryMapper">
 
     <select id="getLastMonthSchedules" resultType="com.pigma.harusari.task.schedule.command.entity.Schedule">
         SELECT s.*
         FROM schedule s
                  JOIN category c ON s.category_id = c.category_id
         WHERE c.member_id = #{memberId}
-          AND s.schedule_deadline BETWEEN #{start} AND #{end}
+          AND s.schedule_date BETWEEN #{start} AND #{end}
     </select>
 
     <select id="countCompletedSchedules" resultType="int" parameterType="map">
@@ -17,7 +17,7 @@
         FROM schedule s
                  JOIN category c ON s.category_id = c.category_id
         WHERE c.member_id = #{memberId}
-          AND s.schedule_deadline BETWEEN #{start} AND #{end}
+          AND s.schedule_date BETWEEN #{start} AND #{end}
           AND s.completion_status = 1
     </select>
 

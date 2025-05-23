@@ -36,6 +36,12 @@ spring:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
 
+  rabbitmq:
+    host: ${RABBITMQ_HOST}
+    port: ${RABBITMQ_PORT}
+    username: ${RABBITMQ_DEFAULT_USER}
+    password: ${RABBITMQ_DEFAULT_PASS}
+
 kakao:
   client-id: ${KAKAO_CLIENT_ID}
   redirect-uri: ${KAKAO_REDIRECT_URI}
@@ -54,16 +60,9 @@ jwt:
   expiration: ${JWT_EXPIRATION} # 30분
   refresh-expiration: ${JWT_REFRESH_EXPIRATION} # 7일
 
-  rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
-
 server:
   port: ${SERVER_PORT}
 
 gemini:
   api-key: ${AI_KEY}
   base-url: https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash-lite:generateContent
-
