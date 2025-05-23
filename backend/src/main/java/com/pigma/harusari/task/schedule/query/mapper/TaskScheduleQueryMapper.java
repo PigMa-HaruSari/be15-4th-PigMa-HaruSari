@@ -1,4 +1,4 @@
-package com.pigma.harusari.task.schedule.query.Mapper;
+package com.pigma.harusari.task.schedule.query.mapper;
 
 import com.pigma.harusari.task.schedule.command.entity.Schedule;
 import org.apache.ibatis.annotations.Mapper;
