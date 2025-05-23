@@ -2,6 +2,7 @@
 import {ref, onMounted, nextTick} from 'vue'
 import {Chart} from 'chart.js/auto'
 import api from "@/lib/axios.js";
+import {fetchCategoryStatistics} from "@/features/statistics/statisticsApi.js";
 
 const chartRef = ref(null)
 let chartInstance = null
@@ -73,7 +74,7 @@ const drawChart = () => {
 
 const loadData = async () => {
   try {
-    const res = await api.get(`${import.meta.env.VITE_API_BASE_URL}/statistics/category`)
+    const res = await fetchCategoryStatistics()
     const list = res.data?.data?.categoryRates || []
     labels.value = list.map(item => item.categoryName)
     rates.value = list.map(item => item.achievementRate)
