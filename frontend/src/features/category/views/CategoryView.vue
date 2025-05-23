@@ -139,7 +139,7 @@ onMounted(loadCategories);
 .category-main {
   max-width: 1000px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 10rem;
   background-color: #F8F7FF;
 }
 
