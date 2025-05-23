@@ -24,6 +24,7 @@ public class AlarmServiceImpl implements AlarmService {
                 .type(dto.getType())
                 .isRead(false)
                 .createdAt(new Date())
+                .isSent(false)
                 .build();
         return alarmRepository.save(alarm);
     }

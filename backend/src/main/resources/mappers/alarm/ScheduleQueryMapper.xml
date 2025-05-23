@@ -37,4 +37,43 @@
         GROUP BY c.member_id
     </select>
 
+
+
+    <!-- 특정 사용자: 오늘 미완료 일정 수 -->
+    <select id="findIncompleteScheduleCountByMemberId" resultType="map">
+        SELECT c.member_id, COUNT(*) AS count
+        FROM schedule s
+            JOIN category c ON s.category_id = c.category_id
+        WHERE DATE(s.schedule_date) = CURRENT_DATE
+          AND s.completion_status = 0
+          AND c.member_id = #{memberId}
+        GROUP BY c.member_id
+    </select>
+
+    <!-- 특정 사용자: 주간 달성률 -->
+    <select id="findWeeklyAchievementRateByMemberId" resultType="map">
+        SELECT c.member_id,
+               COUNT(*) AS total,
+               SUM(CASE WHEN s.completion_status = 1 THEN 1 ELSE 0 END) AS completed
+        FROM schedule s
+                 JOIN category c ON s.category_id = c.category_id
+        WHERE s.schedule_date BETWEEN
+            DATE_SUB(CURRENT_DATE, INTERVAL (WEEKDAY(CURRENT_DATE) + 7) DAY)
+            AND DATE_SUB(CURRENT_DATE, INTERVAL (WEEKDAY(CURRENT_DATE) + 1) DAY)
+          AND c.member_id = #{memberId}
+        GROUP BY c.member_id
+    </select>
+
+    <!-- 특정 사용자: 월간 달성률 -->
+    <select id="findMonthlyAchievementRateByMemberId" resultType="map">
+        SELECT c.member_id,
+               COUNT(*) AS total,
+               SUM(CASE WHEN s.completion_status = 1 THEN 1 ELSE 0 END) AS completed
+        FROM schedule s
+                 JOIN category c ON s.category_id = c.category_id
+        WHERE s.schedule_date BETWEEN DATE_FORMAT(CURRENT_DATE - INTERVAL 1 MONTH, '%Y-%m-01')
+            AND LAST_DAY(CURRENT_DATE - INTERVAL 1 MONTH)
+          AND c.member_id = #{memberId}
+        GROUP BY c.member_id
+    </select>
 </mapper>
