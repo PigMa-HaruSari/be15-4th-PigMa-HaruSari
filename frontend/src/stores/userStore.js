@@ -1,5 +1,6 @@
 /* Pinia 설정 */
 import { defineStore } from 'pinia';
+import { jwtDecode } from 'jwt-decode';
 import api from '@/lib/axios.js';
 
 // 자동 로그아웃 기능을 위한 타이머 변수
@@ -24,11 +25,22 @@ export const useUserStore = defineStore('user', {
 
     actions: {
         setUser(userData) {
+            // accessToken에서 exp 추출
+            let expiration = null;
+            if (userData.accessToken) {
+                try {
+                    const decoded = jwtDecode(userData.accessToken);
+                    expiration = decoded.exp * 1000; // 초 → 밀리초
+                    console.log('🕒 decoded.expiration:', expiration);
+                } catch (e) {
+                    console.error('❌ JWT 디코딩 실패:', e);
+                }
+            }
             this.userId = userData.userId;
             this.email = userData.email;
             this.nickname = userData.nickname;
             this.accessToken = userData.accessToken;
-            this.expiration = userData.expiration;
+            this.expiration = expiration;
 
             localStorage.setItem('user', JSON.stringify(userData));
             localStorage.setItem('accessToken', userData.accessToken);
