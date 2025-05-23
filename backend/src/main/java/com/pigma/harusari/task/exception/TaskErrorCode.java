@@ -27,11 +27,16 @@ public enum TaskErrorCode {
 
     INVALID_MEMBER_INFO("20005", "회원 정보가 올바르지 않습니다.", HttpStatus.BAD_REQUEST),
 
+    CANNOT_SET_PAST_CREATED_AT("20006", "생성일자를 과거로 변경할 수 없습니다.", HttpStatus.BAD_REQUEST),
+
+    CANNOT_COMPLETE_NON_TODAY_SCHEDULE("20007", "오늘 일정만 완료 처리할 수 있습니다.", HttpStatus.BAD_REQUEST),
+
+    CANNOT_UPDATE_PAST_SCHEDULE("20008", "과거 일정은 수정할 수 없습니다.", HttpStatus.BAD_REQUEST),
+
     INVALID_REQUEST("20998", "잘못된 요청입니다.", HttpStatus.BAD_REQUEST),
 
     ILLEGAL_ARGUMENT("20997", "잘못된 인자입니다.", HttpStatus.BAD_REQUEST),
 
-    CANNOT_COMPLETE_NON_TODAY_SCHEDULE("20007", "오늘 일정만 완료 처리할 수 있습니다.", HttpStatus.BAD_REQUEST),
 
     // 일정 자동화 관련 오류
     AUTOMATION_SCHEDULE_NOT_FOUND("21001", "자동화 일정을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),

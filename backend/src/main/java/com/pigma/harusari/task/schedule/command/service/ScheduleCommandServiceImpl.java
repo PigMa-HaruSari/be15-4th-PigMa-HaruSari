@@ -145,7 +145,14 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
             throw new ScheduleAlreadyCompletedException(TaskErrorCode.SCHEDULE_ALREADY_COMPLETED);
         }
 
-        // 4. 카테고리 변경 요청이 있을 경우, 새 카테고리 존재 및 소유자 검증
+        // 4. 과거 일정은 수정 불가
+        LocalDate today = LocalDate.now();
+        LocalDate scheduleDate = schedule.getScheduleDate();
+        if (scheduleDate.isBefore(today)) {
+            throw new InvalidScheduleDateException(TaskErrorCode.CANNOT_UPDATE_PAST_SCHEDULE);
+        }
+
+        // 5. 카테고리 변경 요청이 있을 경우, 새 카테고리 존재 및 소유자 검증
         if (request.getCategoryId() != null && !request.getCategoryId().equals(schedule.getCategory().getCategoryId())) {
             Category newCategory = categoryCommandRepository.findById(request.getCategoryId())
                     .orElseThrow(() -> new CategoryNotFoundException(TaskErrorCode.CATEGORY_NOT_FOUND));
@@ -155,18 +162,22 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
             schedule.setCategory(newCategory);
         }
 
-        // 5. 일정 정보 수정
+        // 6. 일정 정보 수정
         if (request.getScheduleContent() != null) {
             schedule.setScheduleContent(request.getScheduleContent());
         }
         if (request.getScheduleDate() != null) {
+            // 입력받은 날짜가 오늘보다 과거면 예외 발생
+            if (request.getScheduleDate().isBefore(today)) {
+                throw new InvalidScheduleDateException(TaskErrorCode.INVALID_SCHEDULE_DATE);
+            }
             schedule.setScheduleDate(request.getScheduleDate());
         }
 
-        // 6. 저장
+        // 7. 저장
         Schedule updated = scheduleRepository.save(schedule);
 
-        // 7. 응답 반환
+        // 8. 응답 반환
         ScheduleCommandResponse.builder()
                 .scheduleId(updated.getScheduleId())
                 .categoryId(updated.getCategory().getCategoryId())
