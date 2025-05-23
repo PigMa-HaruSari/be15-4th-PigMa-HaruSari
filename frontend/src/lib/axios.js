@@ -39,7 +39,7 @@ api.interceptors.response.use(
     (response) => {
         /* 1. 성공 알림 토스트 출력(GET이 아닐 때) */
         if (response.config.method !== 'get') {
-            showSuccessToast(response.data.message);
+            // showSuccessToast(response.data.message);
         }
         return response;
     },
