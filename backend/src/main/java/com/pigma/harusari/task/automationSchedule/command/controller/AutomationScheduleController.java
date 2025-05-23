@@ -17,7 +17,7 @@ public class AutomationScheduleController {
 
     private final AutomationScheduleServiceImpl automationScheduleService;
 
-    @PostMapping("/automationSchedules")
+    @PostMapping("/task/automationschedules")
     public ResponseEntity<ApiResponse<Long>> createAutomationSchedule(
             @RequestBody @Valid AutomationScheduleCreateRequest request,
             @AuthenticationPrincipal CustomUserDetails userDetails
@@ -27,7 +27,7 @@ public class AutomationScheduleController {
         return ResponseEntity.ok(ApiResponse.success(id));
     }
 
-    @PutMapping("/automationSchedules/{id}")
+    @PutMapping("/task/automationschedules/{id}")
     public ResponseEntity<ApiResponse<Void>> updateSchedule(
             @PathVariable("id") Long scheduleId,
             @RequestBody @Valid AutomationScheduleCreateRequest request,
@@ -38,7 +38,7 @@ public class AutomationScheduleController {
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 
-    @DeleteMapping("/automationSchedules/{id}")
+    @DeleteMapping("/task/automationschedules/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteSchedulesAfter(
             @PathVariable("id") Long scheduleId,
             @AuthenticationPrincipal CustomUserDetails userDetails

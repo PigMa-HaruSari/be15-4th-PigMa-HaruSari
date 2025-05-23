@@ -12,11 +12,11 @@ import java.time.LocalDate;
 public class ScheduleUpdateRequest {
 
     @NotNull
-    private final Long categoryId;
+    private Long categoryId;
 
     @NotBlank
-    private final String scheduleContent;
+    private String scheduleContent;
 
     @NotNull
-    private final LocalDate scheduleDate;
+    private LocalDate scheduleDate;
 }

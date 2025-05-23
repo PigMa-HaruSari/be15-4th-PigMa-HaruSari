@@ -22,8 +22,7 @@ public class ScheduleCommandController {
 
     private final ScheduleCommandService scheduleCommandService;
 
-
-    @PostMapping("/schedule")
+    @PostMapping("/task/schedule")
     public ResponseEntity<ApiResponse<Long>> createSchedule(
             @RequestBody @Valid ScheduleCreateRequest scheduleCreateRequest,
             @AuthenticationPrincipal CustomUserDetails userDetails
@@ -34,7 +33,7 @@ public class ScheduleCommandController {
         return ResponseEntity.ok(ApiResponse.success(id));
     }
 
-    @PutMapping("/schedule/{scheduleId}")
+    @PutMapping("/task/schedule/{scheduleId}")
     public ResponseEntity<ApiResponse<Long>> updateSchedule(
             @PathVariable Long scheduleId,
             @RequestBody @Valid ScheduleUpdateRequest scheduleUpdateRequest,
@@ -53,7 +52,7 @@ public class ScheduleCommandController {
         return ResponseEntity.ok(ApiResponse.success(updatedId));
     }
 
-    @DeleteMapping("/schedule/{scheduleId}")
+    @DeleteMapping("/task/schedule/{scheduleId}")
     public ResponseEntity<ApiResponse<Void>> deleteSchedule(
             @PathVariable Long scheduleId,
             @AuthenticationPrincipal CustomUserDetails userDetails
@@ -70,8 +69,7 @@ public class ScheduleCommandController {
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 
-
-    @PutMapping("/schedule/{scheduleId}/completionStatus")
+    @PutMapping("/task/schedule/{scheduleId}/completionstatus")
     public ResponseEntity<ApiResponse<ScheduleCommandResponse>> updateCompletionStatus(
             @PathVariable Long scheduleId,
             @RequestBody @Valid CompletionStatusUpdateRequest request,

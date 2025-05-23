@@ -7,13 +7,13 @@ import java.time.LocalDate;
 
 @Getter
 public class ScheduleDto {
-    private Long scheduleId;
-    private Long automationScheduleId;
-    private Long categoryId;
-    private String categoryName;
-    private String scheduleContent;
-    private LocalDate scheduleDate;
-    private Boolean completionStatus;
+    private final Long scheduleId;
+    private final Long automationScheduleId;
+    private final Long categoryId;
+    private final String categoryName;
+    private final String scheduleContent;
+    private final LocalDate scheduleDate;
+    private final Boolean completionStatus;
 
     @Builder
     public ScheduleDto(
