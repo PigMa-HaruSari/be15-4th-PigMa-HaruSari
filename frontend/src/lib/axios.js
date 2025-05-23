@@ -26,7 +26,7 @@ const onTokenRefreshed = (token) => {
 /* 요청 인터셉터: accessToken을 Authorization 헤더에 자동 삽입*/
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem('accessToken');
-    console.log('[요청 인터셉터] accessToken:', token); // ✅ 추가
+    // console.log('[요청 인터셉터] accessToken:', token); // ✅ 추가
 
     // 비로그인 상태에서 수행하는 로직인 경우는 삽입 X
     if (token) {
@@ -43,7 +43,7 @@ api.interceptors.response.use(
     (response) => {
         /* 1. 성공 알림 토스트 출력(GET이 아닐 때) */
         if (response.config.method !== 'get') {
-            showSuccessToast(response.data.message);
+            // showSuccessToast(response.data.message);
         }
         return response;
     },
