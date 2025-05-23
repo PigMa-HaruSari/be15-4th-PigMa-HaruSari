@@ -21,9 +21,8 @@
             <!-- 카테고리별 할 일 리스트 -->
             <div
                 class="category"
-                v-for="(category, index) in categories"
+                v-for="(category, index) in filteredCategories"
                 :key="index"
-                v-if="category.tasks.length > 0"
             >
               <div class="category-title">
                 <span class="category-tag" :style="{ backgroundColor: category.color }"></span>
@@ -57,7 +56,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import Header from '@/components/layout/Header.vue'
 import { Calendar } from '@fullcalendar/core'
 import dayGridPlugin from '@fullcalendar/daygrid'
@@ -69,6 +68,16 @@ const categories = ref([])
 const calendarRef = ref(null)
 const selectedDate = ref(new Date())
 const selectedMonth = ref(new Date())
+
+// ✅ 여기로 이동 (setup 상단)
+const filteredCategories = computed(() =>
+    categories.value.filter(
+        (category) =>
+            category &&
+            Array.isArray(category.tasks) &&
+            category.tasks.length > 0
+    )
+)
 
 function saveReview() {
   alert('회고가 저장되었습니다.')
@@ -146,6 +155,7 @@ onMounted(async () => {
   await loadTasksByDate()
 })
 </script>
+
 
 <style scoped>
 .main-wrapper {
