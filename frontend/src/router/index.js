@@ -1,3 +1,4 @@
+import { nextTick } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import { useUserStore } from "@/stores/userStore.js";
 
@@ -16,22 +17,27 @@ const router = createRouter({
   ],
 });
 
-// 비로그인 상태로 접근 시 차단하는 설정
-router.beforeEach((to) => {
+router.beforeEach(async (to, from) => {
   const userStore = useUserStore();
+
+  // 아직 초기화되지 않았는데 라우터가 먼저 작동한 경우를 대비
+  if (!userStore.accessToken) {
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+      userStore.setUser(JSON.parse(savedUser));
+      await nextTick(); // 상태 반영 대기
+    }
+  }
+
   const isLoggedIn = userStore.isAuthenticated;
 
-  // 비회원도 접속 가능한 화면
-  const publicPages = ['/login', '/signup', '/reset-password'];
-  const authRequired = !publicPages.includes(to.path);
-
   // 회원만 접속 가능한 페이지이나 비로그인 상태 : 로그인 페이지로 이동
-  if (authRequired && !isLoggedIn) {
+  if (to.meta.requiresAuth && !isLoggedIn) {
     return { name: 'login', query: { redirect: to.fullPath } };
   }
 
   // 이미 로그인 된 상황에서 로그인 페이지에 접근하면 메인으로 이동
-  if (to.name === 'login' && isLoggedIn) {
+  if (to.meta.requiresGuest && isLoggedIn) {
     return { name: 'main' };
   }
 });

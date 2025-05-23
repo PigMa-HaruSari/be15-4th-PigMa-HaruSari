@@ -23,7 +23,7 @@
           <router-link to="/signup">회원가입</router-link>
         </div>
         <div class="link-row">
-          <router-link to="/reset-password">비밀번호 재설정</router-link>
+          비밀번호 재설정
         </div>
       </div>
       <p class="error-message" v-if="error">{{ error }}</p>
@@ -32,7 +32,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, nextTick } from 'vue';
 import { useRouter, useRoute, RouterLink } from 'vue-router';
 import { useUserStore } from '@/stores/userStore';
 import { loginUser } from '@/features/user/api';
@@ -53,9 +53,20 @@ const handleLogin = async () => {
     const userData = data.data;
     userStore.setUser(userData);
 
+    // nextTick을 사용해 상태 반영 이후 라우터 실행
+    await nextTick();
+
     const redirectPath = route.query.redirect || '/';
-    if (redirectPath !== router.currentRoute.value.fullPath) {
-      await router.push(redirectPath);
+    const matchedRoute = router.resolve(redirectPath);
+
+    if (!matchedRoute.matched.length) {
+      console.warn('유효하지 않은 redirectPath:', redirectPath);
+      await router.push('/');
+    } else if (redirectPath !== router.currentRoute.value.fullPath) {
+      console.log("라우터 이동:", redirectPath);
+      setTimeout(() => {
+        router.push(redirectPath);
+      }, 0); // 이벤트 루프 한 틱 뒤에 실행
     }
   } catch (err) {
     error.value = '이메일 또는 비밀번호가 올바르지 않습니다.';
