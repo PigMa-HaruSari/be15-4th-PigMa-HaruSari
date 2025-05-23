@@ -52,7 +52,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import Header from '@/components/layout/Header.vue';
 import { useSignupStore } from '@/stores/signupStore';
-import { registerUser } from '@/features/user/api';
+import { registerKakaoUser, registerUser } from '@/features/user/api';
 import { showErrorToast, showSuccessToast } from '@/utill/toast';
 
 const router = useRouter();
@@ -103,7 +103,14 @@ const submit = async () => {
 
   try {
     const payload = signupStore.getSignupPayload();
-    await registerUser(payload);
+    console.log("  >> payload : ", payload)
+
+    if (signupStore.provider === 'KAKAO') {
+      await registerKakaoUser(payload);
+    } else {
+      await registerUser(payload);
+    }
+
     showSuccessToast('회원가입이 완료되었습니다!');
     await router.push('/login');
   } catch (e) {

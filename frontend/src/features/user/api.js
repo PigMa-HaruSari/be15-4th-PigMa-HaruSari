@@ -5,7 +5,6 @@ export function loginUser(data) {
 }
 
 export function sendEmailCode(email) {
-  console.log("*** sendEmailCode 실행 ***")
   console.log(email)
   return api.post('/auth/email/send', { email });
 }
@@ -18,4 +17,8 @@ export function verifyEmailCode(email, code) {
 
 export function registerUser(payload) {
   return api.post('/auth/signup', payload);
+}
+
+export function registerKakaoUser(payload) {
+  return api.post('/auth/social/signup/kakao', payload);
 }

@@ -14,6 +14,12 @@ export const useSignupStore = defineStore('signup', () => {
     password.value = passwordValue;
   }
 
+  function setKakaoInfo({ emailValue, nicknameValue }) {
+    email.value = emailValue;
+    nickname.value = nicknameValue;
+    password.value = ''; // 카카오는 비밀번호 없음
+  }
+
   function setFinalInfo({ nicknameValue, genderValue, consent, categories }) {
     nickname.value = nicknameValue;
     gender.value = genderValue;
@@ -40,6 +46,7 @@ export const useSignupStore = defineStore('signup', () => {
     consentPersonalInfo,
     categoryList,
     setBasicInfo,
+    setKakaoInfo,
     setFinalInfo,
     getSignupPayload
   };
