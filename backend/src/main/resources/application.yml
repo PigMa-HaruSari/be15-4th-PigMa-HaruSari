@@ -37,10 +37,10 @@ spring:
       mail.smtp.starttls.enable: true
 
   rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
+    host: ${RABBITMQ_HOST}
+    port: ${RABBITMQ_PORT}
+    username: ${RABBITMQ_DEFAULT_USER}
+    password: ${RABBITMQ_DEFAULT_PASS}
 
 kakao:
   client-id: ${KAKAO_CLIENT_ID}
@@ -66,4 +66,3 @@ server:
 gemini:
   api-key: ${AI_KEY}
   base-url: https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash-lite:generateContent
-
