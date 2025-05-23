@@ -28,7 +28,7 @@ public class FeedbackPromptBuilder {
 
 [달성률]\n%.1f%%
 
-위 데이터를 기반으로 잘한 점과 개선할 점을 친절한 피드백 형식으로 작성해주세요.
+위 데이터를 기반으로 잘한 점과 개선할 점을 친절한 피드백 형식으로 작성해주세요. 마지막은 조언이나 격려로 마무리 해주세요.
 """, diaryText, scheduleSummary, rate * 100);
     }
 }
