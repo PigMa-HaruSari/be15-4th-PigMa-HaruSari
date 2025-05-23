@@ -3,6 +3,8 @@ package com.pigma.harusari.feedback.command.service;
 import com.pigma.harusari.diary.query.mapper.DiaryQueryMapper;
 import com.pigma.harusari.feedback.command.entity.Feedback;
 import com.pigma.harusari.feedback.command.repository.FeedbackRepository;
+import com.pigma.harusari.feedback.exception.FeedbackErrorCode;
+import com.pigma.harusari.feedback.exception.FeedbackException;
 import com.pigma.harusari.feedback.util.FeedbackPromptBuilder;
 import com.pigma.harusari.feedback.util.GeminiClient;
 import com.pigma.harusari.task.schedule.query.mapper.TaskScheduleQueryMapper;
@@ -40,11 +42,24 @@ public class FeedbackCommandServiceImpl implements FeedbackCommandService {
             var diaries = diaryQueryMapper.getLastMonthDiaries(memberId, start, end);
             var schedules = scheduleQueryMapper.getLastMonthSchedules(memberId, start, end);
 
+            // 일기나 스케줄이 각각 5개 이상이어야 피드백 생성
+            if ((diaries == null || diaries.size() < 5) && (schedules == null || schedules.size() < 5)) {
+                System.out.printf("회원 ID %d: 피드백을 생성할 수 없습니다 - 일기와 스케줄이 5개 미만%n", memberId);
+                continue;
+            }
+
             int completed = scheduleQueryMapper.countCompletedSchedules(memberId, start, end);
             double achievementRate = schedules.isEmpty() ? 0 : (double) completed / schedules.size();
 
             String prompt = promptBuilder.buildPrompt(diaries, schedules, achievementRate);
-            String content = geminiClient.generateFeedback(prompt);
+            String content;
+
+            try {
+                content = geminiClient.generateFeedback(prompt);
+            } catch (Exception e) {
+                System.err.printf("회원 ID %d: Gemini 응답 실패 - %s%n", memberId, e.getMessage());
+                throw new FeedbackException(FeedbackErrorCode.GEMINI_API_ERROR);
+            }
 
             feedbackRepository.save(Feedback.builder()
                     .memberId(memberId)
@@ -64,11 +79,21 @@ public class FeedbackCommandServiceImpl implements FeedbackCommandService {
         var diaries = diaryQueryMapper.getLastMonthDiaries(memberId, start, end);
         var schedules = scheduleQueryMapper.getLastMonthSchedules(memberId, start, end);
 
+        if ((diaries == null || diaries.size() < 5) && (schedules == null || schedules.size() < 5)) {
+            throw new FeedbackException(FeedbackErrorCode.INSUFFICIENT_DATA);
+        }
+
         int completed = scheduleQueryMapper.countCompletedSchedules(memberId, start, end);
         double achievementRate = schedules.isEmpty() ? 0 : (double) completed / schedules.size();
 
         String prompt = promptBuilder.buildPrompt(diaries, schedules, achievementRate);
-        String content = geminiClient.generateFeedback(prompt);
+        String content;
+
+        try {
+            content = geminiClient.generateFeedback(prompt);
+        } catch (Exception e) {
+            throw new FeedbackException(FeedbackErrorCode.GEMINI_API_ERROR);
+        }
 
         feedbackRepository.save(Feedback.builder()
                 .memberId(memberId)
