@@ -9,7 +9,7 @@
         FROM schedule s
                  JOIN category c ON s.category_id = c.category_id
         WHERE c.member_id = #{memberId}
-          AND s.schedule_deadline BETWEEN #{start} AND #{end}
+          AND s.schedule_date BETWEEN #{start} AND #{end}
     </select>
 
     <select id="countCompletedSchedules" resultType="int" parameterType="map">
@@ -17,7 +17,7 @@
         FROM schedule s
                  JOIN category c ON s.category_id = c.category_id
         WHERE c.member_id = #{memberId}
-          AND s.schedule_deadline BETWEEN #{start} AND #{end}
+          AND s.schedule_date BETWEEN #{start} AND #{end}
           AND s.completion_status = 1
     </select>
 

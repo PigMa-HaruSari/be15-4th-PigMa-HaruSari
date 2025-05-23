@@ -36,6 +36,12 @@ spring:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
 
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
 kakao:
   client-id: ${KAKAO_CLIENT_ID}
   redirect-uri: ${KAKAO_REDIRECT_URI}
@@ -53,12 +59,6 @@ jwt:
   secret: ${JWT_SECRET}
   expiration: ${JWT_EXPIRATION} # 30분
   refresh-expiration: ${JWT_REFRESH_EXPIRATION} # 7일
-
-  rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
 
 server:
   port: ${SERVER_PORT}
