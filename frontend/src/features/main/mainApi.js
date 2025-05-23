@@ -18,8 +18,12 @@ export const fetchTasks = (categoryId, date) => {
         },
     });
 };
+export const createTask = (data) => {
+    return api.post('/schedule', data)
+}
 
 export default {
     fetchCategory,
-    fetchTasks
+    fetchTasks,
+    createTask
 };

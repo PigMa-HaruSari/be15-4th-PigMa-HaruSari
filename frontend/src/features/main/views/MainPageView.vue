@@ -15,7 +15,8 @@
           <div class="today-task-box">
             <div class="today-task-header">
               <h4>오늘 할 일</h4>
-              <button class="add-task-btn">할 일 추가</button>
+<!--              <button class="add-task-btn">할 일 추가</button>-->
+              <button class="add-task-btn" @click="showAddTaskModal = true">할 일 추가</button>
             </div>
 
             <!-- 카테고리별 할 일 리스트 -->
@@ -50,6 +51,13 @@
             </div>
           </div>
         </div>
+        <AddTaskModal
+            v-if="showAddTaskModal"
+            :categories="categories"
+            :defaultDate="formatDate(selectedDate)"
+            @close="showAddTaskModal = false"
+            @submitted="loadTasksByDate"
+        />
       </div>
     </div>
   </div>
@@ -62,6 +70,7 @@ import { Calendar } from '@fullcalendar/core'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import { fetchCategory, fetchTasks } from '@/features/main/mainApi'
+import AddTaskModal from '@/features/main/components/AddTaskModal.vue'
 
 const reviewText = ref('')
 const categories = ref([])
@@ -78,6 +87,9 @@ const filteredCategories = computed(() =>
             category.tasks.length > 0
     )
 )
+
+const showAddTaskModal = ref(false)
+
 
 function saveReview() {
   alert('회고가 저장되었습니다.')
@@ -131,6 +143,7 @@ onMounted(async () => {
     categoryId: category.categoryId,
     title: category.categoryName,
     color: category.color,
+    completed: category.completed,
     tasks: []
   }))
 
