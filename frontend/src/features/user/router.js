@@ -23,4 +23,10 @@ export const userRoutes = [
         component: () => import('@/features/user/views/SignupInfoView.vue'),
         meta: { requiresGuest: true }
     },
+    {
+        path: '/signup/register',
+        name: 'SignupRegister',
+        component: () => import('@/features/user/views/SignupRegisterView.vue'),
+        meta: { requiresGuest: true }
+    },
 ]
