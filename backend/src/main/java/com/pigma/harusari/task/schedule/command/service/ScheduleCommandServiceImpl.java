@@ -202,13 +202,23 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
             throw new UnauthorizedModificationException(TaskErrorCode.UNAUTHORIZED_MODIFICATION);
         }
 
-        // 3. 상태 변경
+        // 3. 당일 일정만 완료 처리 가능하도록 검증
+        if (completionStatus != null && completionStatus) {
+            LocalDate today = LocalDate.now();
+            LocalDate scheduleDate = schedule.getScheduleDate();
+
+            if (!scheduleDate.equals(today)) {
+                throw new InvalidScheduleDateException(TaskErrorCode.CANNOT_COMPLETE_NON_TODAY_SCHEDULE);
+            }
+        }
+
+        // 4. 상태 변경
         schedule.setCompletionStatus(completionStatus);
 
-        // 4. 저장
+        // 5. 저장
         Schedule updated = scheduleRepository.save(schedule);
 
-        // 5. 응답 반환
+        // 6. 응답 반환
         return ScheduleCommandResponse.builder()
                 .scheduleId(updated.getScheduleId())
                 .categoryId(updated.getCategory().getCategoryId())

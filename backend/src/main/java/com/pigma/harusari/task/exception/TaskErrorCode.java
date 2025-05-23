@@ -31,6 +31,8 @@ public enum TaskErrorCode {
 
     ILLEGAL_ARGUMENT("20997", "잘못된 인자입니다.", HttpStatus.BAD_REQUEST),
 
+    CANNOT_COMPLETE_NON_TODAY_SCHEDULE("20007", "오늘 일정만 완료 처리할 수 있습니다.", HttpStatus.BAD_REQUEST),
+
     // 일정 자동화 관련 오류
     AUTOMATION_SCHEDULE_NOT_FOUND("21001", "자동화 일정을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
 
