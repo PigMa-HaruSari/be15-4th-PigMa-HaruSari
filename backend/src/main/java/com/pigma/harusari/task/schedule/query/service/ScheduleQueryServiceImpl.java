@@ -17,6 +17,7 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
     private final ScheduleMapper scheduleMapper;
 
     @Transactional(readOnly = true)
+    @Override
     public ScheduleListResponse getScheduleList(Long categoryId, LocalDate scheduleDate, Long memberId) {
         List<ScheduleDto> schedules = scheduleMapper.selectScheduleByMemberId(categoryId, scheduleDate, memberId);
         return ScheduleListResponse.builder()

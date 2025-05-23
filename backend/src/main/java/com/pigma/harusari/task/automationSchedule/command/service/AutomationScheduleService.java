@@ -1,6 +1,10 @@
 package com.pigma.harusari.task.automationSchedule.command.service;
 
 import com.pigma.harusari.task.automationSchedule.command.dto.request.AutomationScheduleCreateRequest;
+import com.pigma.harusari.task.automationSchedule.command.dto.response.AutomationScheduleResponse;
+import com.pigma.harusari.task.automationSchedule.command.entity.AutomationSchedule;
+
+import java.time.LocalDate;
 
 public interface AutomationScheduleService {
 
@@ -9,5 +13,9 @@ public interface AutomationScheduleService {
     void updateAutomationSchedule(Long scheduleId, AutomationScheduleCreateRequest request, Long memberId);
 
     void deleteSchedulesAfter(Long automationScheduleId, Long memberId);
+
+    void generateSchedulesForAutomation(AutomationSchedule automationSchedule, LocalDate startDate);
+
+    AutomationScheduleResponse getAutomationSchedule(Long automationScheduleId, Long memberId);
 
 }

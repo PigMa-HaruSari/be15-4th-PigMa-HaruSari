@@ -2,10 +2,10 @@ package com.pigma.harusari.task.automationSchedule.query.controller;
 
 import com.pigma.harusari.common.auth.model.CustomUserDetails;
 import com.pigma.harusari.task.automationSchedule.command.dto.response.AutomationScheduleResponse;
-import com.pigma.harusari.task.automationSchedule.command.service.AutomationScheduleServiceImpl;
+import com.pigma.harusari.task.automationSchedule.command.service.AutomationScheduleService;
 import com.pigma.harusari.task.automationSchedule.query.dto.request.AutomationScheduleRequest;
 import com.pigma.harusari.task.automationSchedule.query.dto.response.AutomationScheduleDto;
-import com.pigma.harusari.task.automationSchedule.query.service.AutomationScheduleQueryServiceImpl;
+import com.pigma.harusari.task.automationSchedule.query.service.AutomationScheduleQueryService;
 import com.pigma.harusari.task.schedule.command.entity.Schedule;
 import com.pigma.harusari.task.schedule.command.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +24,8 @@ import java.util.Map;
 @RequestMapping("/api/v1")
 public class AutomationScheduleQueryController {
 
-    private final AutomationScheduleQueryServiceImpl automationScheduleQueryService;
-    private final AutomationScheduleServiceImpl automationScheduleService;
+    private final AutomationScheduleQueryService automationScheduleQueryService;
+    private final AutomationScheduleService automationScheduleService;
     private final ScheduleRepository scheduleRepository;
 
     @GetMapping("/task/automationschedules")

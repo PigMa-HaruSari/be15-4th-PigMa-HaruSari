@@ -6,7 +6,7 @@ import com.pigma.harusari.task.exception.InvalidRepeatTypeException;
 import com.pigma.harusari.task.exception.NeedLoginException;
 import com.pigma.harusari.task.exception.TaskErrorCode;
 import com.pigma.harusari.task.schedule.query.dto.response.ScheduleListResponse;
-import com.pigma.harusari.task.schedule.query.service.ScheduleQueryServiceImpl;
+import com.pigma.harusari.task.schedule.query.service.ScheduleQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +19,7 @@ import java.time.LocalDate;
 @RequestMapping("/api/v1")
 public class ScheduleQueryController {
 
-    private final ScheduleQueryServiceImpl scheduleQueryService;
+    private final ScheduleQueryService scheduleQueryService;
 
     @GetMapping("/task/schedule")
     public ResponseEntity<ApiResponse<ScheduleListResponse>> getScheduleList(
