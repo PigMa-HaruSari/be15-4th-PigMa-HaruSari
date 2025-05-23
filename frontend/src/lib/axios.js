@@ -28,9 +28,13 @@ api.interceptors.request.use((config) => {
     const token = localStorage.getItem('accessToken');
     console.log('[요청 인터셉터] accessToken:', token); // ✅ 추가
 
+    // 비로그인 상태에서 수행하는 로직인 경우는 삽입 X
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
+    } else {
+        delete config.headers.Authorization;
     }
+
     return config;
 });
 
