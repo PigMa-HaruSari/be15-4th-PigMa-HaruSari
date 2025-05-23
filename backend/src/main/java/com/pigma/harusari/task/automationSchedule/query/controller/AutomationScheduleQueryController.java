@@ -1,12 +1,11 @@
 package com.pigma.harusari.task.automationSchedule.query.controller;
 
 import com.pigma.harusari.common.auth.model.CustomUserDetails;
-import com.pigma.harusari.common.dto.ApiResponse;
 import com.pigma.harusari.task.automationSchedule.command.dto.response.AutomationScheduleResponse;
 import com.pigma.harusari.task.automationSchedule.command.service.AutomationScheduleServiceImpl;
 import com.pigma.harusari.task.automationSchedule.query.dto.request.AutomationScheduleRequest;
 import com.pigma.harusari.task.automationSchedule.query.dto.response.AutomationScheduleDto;
-import com.pigma.harusari.task.automationSchedule.query.service.AutomationScheduleQueryService;
+import com.pigma.harusari.task.automationSchedule.query.service.AutomationScheduleQueryServiceImpl;
 import com.pigma.harusari.task.schedule.command.entity.Schedule;
 import com.pigma.harusari.task.schedule.command.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,12 +24,11 @@ import java.util.Map;
 @RequestMapping("/api/v1")
 public class AutomationScheduleQueryController {
 
-    private final AutomationScheduleQueryService automationScheduleQueryService;
+    private final AutomationScheduleQueryServiceImpl automationScheduleQueryService;
     private final AutomationScheduleServiceImpl automationScheduleService;
     private final ScheduleRepository scheduleRepository;
 
-
-    @GetMapping("/automationSchedules")
+    @GetMapping("/task/automationschedules")
     public ResponseEntity<List<AutomationScheduleDto>> getAutomationSchedules(
             AutomationScheduleRequest request,
             @AuthenticationPrincipal CustomUserDetails userDetails
@@ -40,7 +38,7 @@ public class AutomationScheduleQueryController {
         return ResponseEntity.ok(schedules);
     }
 
-    @GetMapping("/automationSchedules/nearest")
+    @GetMapping("/task/automationschedules/nearest")
     public ResponseEntity<Map<String, Object>> getNearestSchedule(
             @RequestParam("automationScheduleId") Long automationScheduleId,
             @RequestParam("baseDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate baseDate,

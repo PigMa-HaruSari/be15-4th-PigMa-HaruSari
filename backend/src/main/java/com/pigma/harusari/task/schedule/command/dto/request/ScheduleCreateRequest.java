@@ -6,15 +6,13 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
 @Getter
-@NoArgsConstructor
 public class ScheduleCreateRequest {
 
-    private Long automationScheduleId;
+    private final Long automationScheduleId;
 
     @NotNull(message = "카테고리를 선택해 주세요.")
     private Long categoryId;
@@ -36,7 +34,5 @@ public class ScheduleCreateRequest {
         this.scheduleContent = scheduleContent;
         this.scheduleDate = scheduleDate;
     }
-
-
 
 }

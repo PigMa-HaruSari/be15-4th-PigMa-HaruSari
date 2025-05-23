@@ -23,32 +23,4 @@
         </where>
     </select>
 
-    <select id="findAll" resultType="AutomationScheduleDto">
-        SELECT
-        s.automation_schedule_id,
-        s.automation_schedule_content,
-        s.repeat_type,
-        s.category_id,
-        c.category_name
-        FROM automation_schedule s
-        JOIN category c ON s.category_id = c.category_id
-        WHERE c.member_id = #{memberId}
-        <if test="categoryId != null">
-            AND s.category_id = #{categoryId}
-        </if>
-    </select>
-
-    <select id="findById" resultType="AutomationScheduleDto">
-        SELECT
-        s.automation_schedule_id,
-        s.automation_schedule_content,
-        s.repeat_type,
-        s.category_id,
-        c.category_name
-        FROM automation_schedule s
-        JOIN category c ON s.category_id = c.category_id
-        WHERE s.automation_schedule_id = #{scheduleId}
-    </select>
-
-
 </mapper>

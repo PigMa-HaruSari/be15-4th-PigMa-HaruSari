@@ -2,8 +2,6 @@ package com.pigma.harusari.task.automationSchedule.command.service;
 
 import com.pigma.harusari.task.automationSchedule.command.dto.request.AutomationScheduleCreateRequest;
 
-import java.time.LocalDate;
-
 public interface AutomationScheduleService {
 
     Long createAutomationSchedule(AutomationScheduleCreateRequest request, Long memberId);

@@ -4,8 +4,7 @@ import com.pigma.harusari.category.command.domain.aggregate.Category;
 import com.pigma.harusari.category.command.domain.repository.CategoryCommandRepository;
 import com.pigma.harusari.task.automationSchedule.command.entity.AutomationSchedule;
 import com.pigma.harusari.task.automationSchedule.command.repository.AutomationScheduleRepository;
-import com.pigma.harusari.task.exception.TaskErrorCode;
-import com.pigma.harusari.task.exception.TaskException;
+import com.pigma.harusari.task.exception.*;
 import com.pigma.harusari.task.infrastructure.repository.JpaScheduleRepository;
 import com.pigma.harusari.task.schedule.command.dto.request.ScheduleCreateRequest;
 import com.pigma.harusari.task.schedule.command.dto.request.ScheduleUpdateRequest;
@@ -33,29 +32,29 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
 
     @Transactional
     @Override
-    public ScheduleCommandResponse createSchedule(
+    public void createSchedule(
             ScheduleCreateRequest scheduleCreateRequest
     ) {
         LocalDate scheduleDate = scheduleCreateRequest.getScheduleDate();
 
         if (scheduleDate == null) {
-            throw new TaskException(TaskErrorCode.MISSING_SCHEDULE_DATE);
+            throw new TaskInvalidDateFormatException(TaskErrorCode.MISSING_SCHEDULE_DATE);
         }
 
         // 과거 날짜 검증
         if (scheduleDate.isBefore(LocalDate.now())) {
-            throw new TaskException(TaskErrorCode.INVALID_SCHEDULE_DATE);
+            throw new InvalidScheduleDateException(TaskErrorCode.INVALID_SCHEDULE_DATE);
         }
 
         Category category = categoryCommandRepository.findById(scheduleCreateRequest.getCategoryId())
-                .orElseThrow(() -> new TaskException(TaskErrorCode.CATEGORY_NOT_FOUND));
+                .orElseThrow(() -> new CategoryNotFoundException(TaskErrorCode.CATEGORY_NOT_FOUND));
 
         AutomationSchedule automationSchedule = null;
         Long automationScheduleId = scheduleCreateRequest.getAutomationScheduleId();
 
         if (automationScheduleId != null) {
             automationSchedule = automationScheduleRepository.findById(automationScheduleId)
-                    .orElseThrow(() -> new TaskException(TaskErrorCode.AUTOMATION_SCHEDULE_NOT_FOUND));
+                    .orElseThrow(() -> new AutomationScheduleNotFoundException(TaskErrorCode.AUTOMATION_SCHEDULE_NOT_FOUND));
         }
 
         Schedule newSchedule = modelMapper.map(scheduleCreateRequest, Schedule.class);
@@ -64,7 +63,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
 
         Schedule schedule = scheduleRepository.save(newSchedule);
 
-        return ScheduleCommandResponse.builder()
+        ScheduleCommandResponse.builder()
                 .scheduleId(schedule.getScheduleId())
                 .automationScheduleId(
                         schedule.getAutomationSchedule() != null ? schedule.getAutomationSchedule().getAutomationScheduleId() : null
@@ -101,7 +100,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
     public Long createSchedule(ScheduleCreateRequest request, Long memberId) {
         // 1. 카테고리 존재 및 소유자 검증
         Category category = categoryCommandRepository.findById(request.getCategoryId())
-                .orElseThrow(() -> new TaskException(TaskErrorCode.CATEGORY_NOT_FOUND));
+                .orElseThrow(() -> new CategoryNotFoundException(TaskErrorCode.CATEGORY_NOT_FOUND));
 
         if (!category.getMemberId().equals(memberId)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized to create schedule for this category");
@@ -111,7 +110,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
         AutomationSchedule automationSchedule = null;
         if (request.getAutomationScheduleId() != null) {
             automationSchedule = automationScheduleRepository.findById(request.getAutomationScheduleId())
-                    .orElseThrow(() -> new TaskException(TaskErrorCode.AUTOMATION_SCHEDULE_NOT_FOUND));
+                    .orElseThrow(() -> new AutomationScheduleNotFoundException(TaskErrorCode.AUTOMATION_SCHEDULE_NOT_FOUND));
         }
 
         // 3. Schedule 엔티티 생성
@@ -120,7 +119,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
                 .automationSchedule(automationSchedule)
                 .scheduleContent(request.getScheduleContent())
                 .scheduleDate(request.getScheduleDate())
-                .completionStatus(false) // 기본값 예시, 필요에 따라 수정
+                .completionStatus(false)
                 .build();
 
         // 4. 저장 및 PK 반환
@@ -131,10 +130,10 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
 
     @Transactional
     @Override
-    public ScheduleCommandResponse updateSchedule(Long scheduleId, ScheduleUpdateRequest request, Long memberId) {
+    public void updateSchedule(Long scheduleId, ScheduleUpdateRequest request, Long memberId) {
         // 1. 일정 조회
         Schedule schedule = scheduleRepository.findByScheduleId(scheduleId)
-                .orElseThrow(() -> new TaskException(TaskErrorCode.SCHEDULE_NOT_FOUND));
+                .orElseThrow(() -> new ScheduleNotFoundException(TaskErrorCode.SCHEDULE_NOT_FOUND));
 
         // 2. 소유자(memberId) 검증 - 가장 먼저!
         if (!schedule.getCategory().getMemberId().equals(memberId)) {
@@ -143,13 +142,13 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
 
         // 3. 완료된 일정은 수정 불가
         if (schedule.getCompletionStatus()) {
-            throw new TaskException(TaskErrorCode.SCHEDULE_ALREADY_COMPLETED);
+            throw new ScheduleAlreadyCompletedException(TaskErrorCode.SCHEDULE_ALREADY_COMPLETED);
         }
 
         // 4. 카테고리 변경 요청이 있을 경우, 새 카테고리 존재 및 소유자 검증
         if (request.getCategoryId() != null && !request.getCategoryId().equals(schedule.getCategory().getCategoryId())) {
             Category newCategory = categoryCommandRepository.findById(request.getCategoryId())
-                    .orElseThrow(() -> new TaskException(TaskErrorCode.CATEGORY_NOT_FOUND));
+                    .orElseThrow(() -> new CategoryNotFoundException(TaskErrorCode.CATEGORY_NOT_FOUND));
             if (!newCategory.getMemberId().equals(memberId)) {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "해당 카테고리에 대한 권한이 없습니다.");
             }
@@ -168,7 +167,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
         Schedule updated = scheduleRepository.save(schedule);
 
         // 7. 응답 반환
-        return ScheduleCommandResponse.builder()
+        ScheduleCommandResponse.builder()
                 .scheduleId(updated.getScheduleId())
                 .categoryId(updated.getCategory().getCategoryId())
                 .scheduleContent(updated.getScheduleContent())
@@ -181,7 +180,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
     public void deleteSchedule(Long scheduleId, Long memberId) {
         // 1. 일정 조회
         Schedule schedule = scheduleRepository.findByScheduleId(scheduleId)
-                .orElseThrow(() -> new TaskException(TaskErrorCode.SCHEDULE_NOT_FOUND));
+                .orElseThrow(() -> new ScheduleNotFoundException(TaskErrorCode.SCHEDULE_NOT_FOUND));
 
         // 2. 소유자 검증
         if (!schedule.getCategory().getMemberId().equals(memberId)) {
@@ -196,11 +195,11 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
     public ScheduleCommandResponse updateCompletionStatus(Long scheduleId, Boolean completionStatus, Long memberId) {
         // 1. 일정 조회
         Schedule schedule = scheduleRepository.findByScheduleId(scheduleId)
-                .orElseThrow(() -> new TaskException(TaskErrorCode.SCHEDULE_NOT_FOUND));
+                .orElseThrow(() -> new ScheduleNotFoundException(TaskErrorCode.SCHEDULE_NOT_FOUND));
 
         // 2. 소유자 검증
         if (!schedule.getCategory().getMemberId().equals(memberId)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "수정 권한이 없습니다.");
+            throw new UnauthorizedModificationException(TaskErrorCode.UNAUTHORIZED_MODIFICATION);
         }
 
         // 3. 상태 변경

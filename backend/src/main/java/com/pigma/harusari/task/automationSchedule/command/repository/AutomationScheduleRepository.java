@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface AutomationScheduleRepository extends JpaRepository<AutomationSchedule, Long> {
-        List<AutomationSchedule> findByEndDateAfter(LocalDate date);
 
+        List<AutomationSchedule> findByEndDateAfter(LocalDate date);
 
 }
