@@ -119,7 +119,7 @@ const updatePassword = async () => {
     await updateUserPassword({
       currentPassword: currentPassword.value,
       newPassword: newPassword.value,
-      newPasswordCheck: newPasswordCheck.value
+      confirmPassword: newPasswordCheck.value
     });
     showSuccessToast('비밀번호가 성공적으로 변경되었습니다.');
     currentPassword.value = '';
