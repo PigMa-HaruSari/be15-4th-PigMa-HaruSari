@@ -29,4 +29,11 @@ export const userRoutes = [
         component: () => import('@/features/user/views/SignupRegisterView.vue'),
         meta: { requiresGuest: true }
     },
+    {
+        path: '/signup/kakao/callback',
+        name: 'KakaoRedirect',
+        component: () => import('@/features/user/views/KakaoRedirectView.vue'),
+        meta: { requiresGuest: true }
+    }
+
 ]

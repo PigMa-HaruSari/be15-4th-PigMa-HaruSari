@@ -15,6 +15,10 @@ export function verifyEmailCode(email, code) {
   });
 }
 
+export function getKakaoUserInfo(code) {
+  return api.get(`/auth/social/info/kakao?code=${code}`);
+}
+
 export function registerUser(payload) {
   return api.post('/auth/signup', payload);
 }
