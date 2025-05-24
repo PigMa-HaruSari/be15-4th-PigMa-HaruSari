@@ -4,6 +4,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @NoArgsConstructor
 @Getter
 public class AutomationScheduleDto {
@@ -18,14 +20,17 @@ public class AutomationScheduleDto {
 
     private String categoryName;
 
+    private LocalDate scheduleDate;
+
 
     @Builder
     public AutomationScheduleDto(
-            Long automationScheduleId, String automationScheduleContent, String repeatType,
+            Long automationScheduleId, String automationScheduleContent, LocalDate scheduleDate, String repeatType,
             Long categoryId, String categoryName
     ) {
         this.automationScheduleId = automationScheduleId;
         this.automationScheduleContent = automationScheduleContent;
+        this.scheduleDate = scheduleDate;
         this.repeatType = repeatType;
         this.categoryId = categoryId;
         this.categoryName = categoryName;

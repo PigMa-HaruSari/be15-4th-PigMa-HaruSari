@@ -12,4 +12,12 @@
           AND created_at BETWEEN #{start} AND #{end}
     </select>
 
+    <select id="findDiaryByMemberIdAndDate" resultType="com.pigma.harusari.diary.query.dto.DiaryResponseDto">
+        SELECT
+            d.diary_title AS diaryTitle,
+            d.diary_content AS diaryContent
+        FROM diary d
+        WHERE d.member_id = #{memberId}
+          AND DATE(d.created_at) = #{date}
+    </select>
 </mapper>

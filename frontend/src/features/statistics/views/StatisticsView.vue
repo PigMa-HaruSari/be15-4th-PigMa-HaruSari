@@ -73,6 +73,7 @@ onMounted(() => {
   display: flex;
   max-width: 1200px;
   margin: 0 auto;
+  padding-top: 10rem;
   gap: 40px;
   align-items: flex-start;
 }

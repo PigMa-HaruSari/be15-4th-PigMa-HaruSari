@@ -8,11 +8,11 @@ import java.time.LocalDate;
 
 public interface ScheduleCommandService {
 
-    ScheduleCommandResponse createSchedule(ScheduleCreateRequest scheduleCreateRequest);
+    void createSchedule(ScheduleCreateRequest scheduleCreateRequest);
 
     Long createSchedule(ScheduleCreateRequest request, Long memberId);
 
-    ScheduleCommandResponse updateSchedule(Long scheduleId, ScheduleUpdateRequest request, Long memberId);
+    void updateSchedule(Long scheduleId, ScheduleUpdateRequest request, Long memberId);
 
     void deleteSchedule(Long scheduleId, Long memberId);
 

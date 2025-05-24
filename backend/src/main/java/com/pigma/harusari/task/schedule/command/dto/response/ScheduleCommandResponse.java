@@ -9,12 +9,13 @@ import java.time.LocalDate;
 @Builder(toBuilder = true)
 public class ScheduleCommandResponse {
 
-
     private Long scheduleId;
 
     private Long automationScheduleId;
 
     private Long categoryId;
+
+    private String categoryName;
 
     private String scheduleContent;
 
