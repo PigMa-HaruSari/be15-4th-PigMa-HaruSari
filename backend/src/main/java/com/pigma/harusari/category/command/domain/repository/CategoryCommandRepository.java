@@ -14,7 +14,5 @@ public interface CategoryCommandRepository extends JpaRepository<Category, Long>
     // 본인 카테고리만 삭제 가능
     Optional<Category> findByCategoryIdAndMemberId(Long categoryId, Long memberId);
 
-    List<Category> findByMemberId(Long memberId);
-
     Optional<Category> findById(Long categoryId);
 }
