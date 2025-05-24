@@ -8,16 +8,19 @@ export const useSignupStore = defineStore('signup', () => {
   const gender = ref('NONE');
   const consentPersonalInfo = ref(false);
   const categoryList = ref([]);
+  const provider = ref('LOCAL');
 
   function setBasicInfo({ emailValue, passwordValue }) {
     email.value = emailValue;
     password.value = passwordValue;
+    provider.value = 'LOCAL';
   }
 
   function setKakaoInfo({ emailValue, nicknameValue }) {
     email.value = emailValue;
     nickname.value = nicknameValue;
     password.value = ''; // 카카오는 비밀번호 없음
+    provider.value = 'KAKAO';
   }
 
   function setFinalInfo({ nicknameValue, genderValue, consent, categories }) {
@@ -45,6 +48,7 @@ export const useSignupStore = defineStore('signup', () => {
     gender,
     consentPersonalInfo,
     categoryList,
+    provider,
     setBasicInfo,
     setKakaoInfo,
     setFinalInfo,

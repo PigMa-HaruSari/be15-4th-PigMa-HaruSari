@@ -67,9 +67,12 @@ const categories = ref(['']);
 const maxCategory = 5;
 
 onMounted(() => {
-  if (!email.value || !password.value) {
+  console.log("email.value : ", email.value)
+  console.log("signupStore.provider : ", signupStore.provider)
+  console.log("password.value : ", password.value)
+  if (!email.value || (signupStore.provider === 'LOCAL' && !password.value)) {
     showErrorToast('올바른 가입 절차를 따라야 합니다.');
-    router.replace('/signup');
+    // router.replace('/signup');
   }
 });
 
