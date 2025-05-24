@@ -34,6 +34,12 @@ export const userRoutes = [
         name: 'KakaoRedirect',
         component: () => import('@/features/user/views/KakaoRedirectView.vue'),
         meta: { requiresGuest: true }
+    },
+    {
+        path: '/login/kakao/callback',
+        name: 'KakaoLoginRedirect',
+        component: () => import('@/features/user/views/KakaoLoginRedirectView.vue'),
+        meta: { requiresGuest: true }
     }
 
 ]

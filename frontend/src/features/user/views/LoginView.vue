@@ -16,7 +16,7 @@
         <button class="login-btn" @click="handleLogin">로그인</button>
       </div>
       <div class="input-box">
-        <button class="kakao-login-btn">카카오로 로그인하기</button>
+        <button class="kakao-login-btn" @click="goToKakaoLogin">카카오로 로그인하기</button>
       </div>
       <div class="link-group">
         <div class="link-row">
@@ -71,6 +71,14 @@ const handleLogin = async () => {
   } catch (err) {
     error.value = '이메일 또는 비밀번호가 올바르지 않습니다.';
   }
+};
+
+const goToKakaoLogin = () => {
+  const KAKAO_CLIENT_ID = import.meta.env.VITE_KAKAO_CLIENT_ID;
+  const KAKAO_REDIRECT_URI = import.meta.env.VITE_KAKAO_LOGIN_REDIRECT_URI;
+
+  const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${KAKAO_CLIENT_ID}&redirect_uri=${KAKAO_REDIRECT_URI}`;
+  window.location.href = kakaoAuthUrl;
 };
 </script>
 
