@@ -40,6 +40,13 @@ export const userRoutes = [
         name: 'KakaoLoginRedirect',
         component: () => import('@/features/user/views/KakaoLoginRedirectView.vue'),
         meta: { requiresGuest: true }
+    },
+    {
+        path: '/mypage',
+        name: 'MyPage',
+        component: () => import('@/features/user/views/MyPageView.vue'),
+        meta: { requiresAuth: true }
     }
+
 
 ]

@@ -26,3 +26,15 @@ export function registerUser(payload) {
 export function registerKakaoUser(payload) {
   return api.post('/auth/social/signup/kakao', payload);
 }
+
+export function fetchMyPageProfile() {
+  return api.get('/users/mypage');
+}
+
+export function updateUserProfile(data) {
+  return api.put('/users/mypage', data);
+}
+
+export function updateUserPassword(data) {
+  return api.put('/users/password', data);
+}
