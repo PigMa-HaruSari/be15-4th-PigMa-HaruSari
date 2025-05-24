@@ -44,7 +44,8 @@ spring:
 
 kakao:
   client-id: ${KAKAO_CLIENT_ID}
-  redirect-uri: ${KAKAO_REDIRECT_URI}
+  signup-redirect-uri: ${KAKAO_SIGNUP_REDIRECT_URI}
+  login-redirect-uri: ${KAKAO_LOGIN_REDIRECT_URI}
   token-uri: ${KAKAO_TOKEN_URI}
   user-info-uri: ${KAKAO_USER_INFO_URI}
 

@@ -37,8 +37,11 @@ public class KakaoAuthServiceImpl implements KakaoAuthService {
     @Value("${kakao.client-id}")
     private String clientId;
 
-    @Value("${kakao.redirect-uri}")
-    private String redirectUri;
+    @Value("${kakao.signup-redirect-uri}")
+    private String signupRedirectUri;
+
+    @Value("${kakao.login-redirect-uri}")
+    private String loginRedirectUri;
 
     @Value("${kakao.token-uri}")
     private String tokenUri;
@@ -49,7 +52,7 @@ public class KakaoAuthServiceImpl implements KakaoAuthService {
     /* 카카오 회원가입 - 사용자 정보만 조회(실제 가입은 X) */
     @Override
     public KakaoUserBasicInfo getUserInfo(String code) {
-        String accessToken = requestAccessToken(code).getAccessToken();
+        String accessToken = requestAccessToken(code, signupRedirectUri).getAccessToken();
         KakaoUserInfo kakaoUser = requestUserInfo(accessToken);
 
         String email = kakaoUser.getKakao_account().getEmail();
@@ -115,7 +118,7 @@ public class KakaoAuthServiceImpl implements KakaoAuthService {
     /* 카카오 로그인 */
     @Override
     public LoginResponse login(String code) {
-        String accessToken = requestAccessToken(code).getAccessToken();
+        String accessToken = requestAccessToken(code, loginRedirectUri).getAccessToken();
         KakaoUserInfo kakaoUser = requestUserInfo(accessToken);
 
         String email = kakaoUser.getKakao_account().getEmail();
@@ -126,7 +129,7 @@ public class KakaoAuthServiceImpl implements KakaoAuthService {
     }
 
     /* 카카오 인가 코드 기반으로 토큰 요청 */
-    KakaoTokenResponse requestAccessToken(String code) {
+    KakaoTokenResponse requestAccessToken(String code, String redirectUri) {
         try {
             return webClient.post()
                     .uri(tokenUri)
