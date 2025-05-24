@@ -2,35 +2,37 @@ package com.pigma.harusari.task.automationSchedule.query.controller;
 
 import com.pigma.harusari.common.auth.model.CustomUserDetails;
 import com.pigma.harusari.common.dto.ApiResponse;
-import com.pigma.harusari.task.automationSchedule.command.dto.response.AutomationScheduleResponse;
-import com.pigma.harusari.task.automationSchedule.command.service.AutomationScheduleServiceImpl;
 import com.pigma.harusari.task.automationSchedule.query.dto.request.AutomationScheduleRequest;
 import com.pigma.harusari.task.automationSchedule.query.dto.response.AutomationScheduleDto;
 import com.pigma.harusari.task.automationSchedule.query.service.AutomationScheduleQueryService;
-import com.pigma.harusari.task.schedule.command.entity.Schedule;
-import com.pigma.harusari.task.schedule.command.repository.ScheduleRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
+@Tag(name = "자동화 일정 조회 API", description = "자동화 일정의 카테고리, 반복 주기, 그리고 검색일 이후 가장 가까운 일정을 조회하는 API")
 public class AutomationScheduleQueryController {
 
     private final AutomationScheduleQueryService automationScheduleQueryService;
-    private final AutomationScheduleServiceImpl automationScheduleService;
-    private final ScheduleRepository scheduleRepository;
 
-
-    @GetMapping("/automationSchedules")
+    @GetMapping("/task/automationschedules")
+    @Operation(
+            summary = "자동화 일정 목록 조회", description = "검색 조건(예: 카테고리, 반복 주기)에 따라 자동화 일정 목록을 조회한다."
+    )
+    @Parameters({
+            @Parameter(name = "categoryId", description = "조회할 카테고리 ID", example = "1"),
+            @Parameter(name = "repeatType", description = "조회할 반복 주기", example = "MONTHLY")
+    })
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "자동화 일정 목록을 반환한다.")
     public ResponseEntity<List<AutomationScheduleDto>> getAutomationSchedules(
             AutomationScheduleRequest request,
             @AuthenticationPrincipal CustomUserDetails userDetails
@@ -40,28 +42,19 @@ public class AutomationScheduleQueryController {
         return ResponseEntity.ok(schedules);
     }
 
-    @GetMapping("/automationSchedules/nearest")
-    public ResponseEntity<Map<String, Object>> getNearestSchedule(
+    @GetMapping("/task/automationschedules/nearest")
+    @Operation(
+            summary = "가장 가까운 자동화 일정 조회", description = "지정한 자동화 일정 ID를 기준으로, 오늘 이후 가장 가까운 일정을 반환한다."
+    )
+    @Parameter(name = "automationScheduleId", description = "조회할 자동화 일정 ID", example = "1")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "가장 가까운 자동화 일정 정보 반환")
+    public ResponseEntity<ApiResponse<AutomationScheduleDto>> getNearestSchedule(
             @RequestParam("automationScheduleId") Long automationScheduleId,
-            @RequestParam("baseDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate baseDate,
             @AuthenticationPrincipal CustomUserDetails userDetails
-    ){
+    ) {
         Long memberId = userDetails.getMemberId();
-
-        // 1. 기존 자동화 일정 조회 (memberId로 소유자 검증 등)
-        AutomationScheduleResponse scheduleDto = automationScheduleService.getAutomationSchedule(automationScheduleId, memberId);
-
-        // 2. 가장 가까운 일정 조회
-        Schedule nearest = scheduleRepository
-                .findFirstByAutomationSchedule_AutomationScheduleIdAndScheduleDateGreaterThanEqualOrderByScheduleDateAsc(automationScheduleId, baseDate)
-                .orElse(null);
-
-        // 3. Map에 담아 반환
-        Map<String, Object> result = new HashMap<>();
-        result.put("automationSchedule", scheduleDto);
-        result.put("nearestSchedule", nearest);
-
-        return ResponseEntity.ok(result);
+        AutomationScheduleDto dto = automationScheduleQueryService.getNearestAutomationSchedule(automationScheduleId, memberId);
+        return ResponseEntity.ok(ApiResponse.success(dto));
     }
 
 }

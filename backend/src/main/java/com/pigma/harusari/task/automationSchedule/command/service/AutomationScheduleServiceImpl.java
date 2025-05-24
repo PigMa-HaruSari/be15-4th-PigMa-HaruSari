@@ -7,8 +7,7 @@ import com.pigma.harusari.task.automationSchedule.command.dto.response.Automatio
 import com.pigma.harusari.task.automationSchedule.command.entity.AutomationSchedule;
 import com.pigma.harusari.task.automationSchedule.command.entity.RepeatType;
 import com.pigma.harusari.task.automationSchedule.command.repository.AutomationScheduleRepository;
-import com.pigma.harusari.task.exception.TaskErrorCode;
-import com.pigma.harusari.task.exception.TaskException;
+import com.pigma.harusari.task.exception.*;
 import com.pigma.harusari.task.schedule.command.dto.request.ScheduleCreateRequest;
 import com.pigma.harusari.task.schedule.command.repository.ScheduleRepository;
 import com.pigma.harusari.task.schedule.command.service.ScheduleCommandService;
@@ -29,7 +28,7 @@ import java.util.Locale;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class AutomationScheduleServiceImpl {
+public class AutomationScheduleServiceImpl implements AutomationScheduleService {
 
     private final AutomationScheduleRepository automationScheduleRepository;
     private final ScheduleCommandService scheduleCommandService;
@@ -40,7 +39,7 @@ public class AutomationScheduleServiceImpl {
     @Transactional
     public Long createAutomationSchedule(AutomationScheduleCreateRequest request, Long memberId) {
         Category category = categoryCommandRepository.findById(request.getCategoryId())
-                .orElseThrow(() -> new TaskException(TaskErrorCode.CATEGORY_NOT_FOUND));
+                .orElseThrow(() -> new CategoryNotFoundException(TaskErrorCode.CATEGORY_NOT_FOUND));
 
         if (!category.getMemberId().equals(memberId)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized to create schedule for this category");
@@ -108,18 +107,18 @@ public class AutomationScheduleServiceImpl {
             case MONTHLY:
                 Integer targetDay = automation.getRepeatMonthday();
                 if (targetDay == null || targetDay < 1 || targetDay > 31) {
-                    throw new TaskException(TaskErrorCode.INVALID_REPEAT_MONTHDAY);
+                    throw new InvalidRepeatTypeException(TaskErrorCode.INVALID_REPEAT_MONTHDAY);
                 }
                 LocalDate nextMonth = current.plusMonths(1);
                 return adjustMonthday(nextMonth, targetDay);
             default:
-                throw new TaskException(TaskErrorCode.INVALID_REPEAT_TYPE);
+                throw new InvalidRepeatTypeException(TaskErrorCode.INVALID_REPEAT_TYPE);
         }
     }
 
     private void validateWeekdays(String weekdays) {
         if (weekdays == null || weekdays.isBlank()) {
-            throw new TaskException(TaskErrorCode.INVALID_REPEAT_WEEKDAYS);
+            throw new InvalidRepeatTypeException(TaskErrorCode.INVALID_REPEAT_WEEKDAYS);
         }
     }
 
@@ -181,11 +180,11 @@ public class AutomationScheduleServiceImpl {
     public void deleteSchedulesAfter(Long automationScheduleId, Long memberId) {
         // 1. 자동화 일정 조회
         AutomationSchedule automationSchedule = automationScheduleRepository.findById(automationScheduleId)
-                .orElseThrow(() -> new TaskException(TaskErrorCode.SCHEDULE_NOT_FOUND));
+                .orElseThrow(() -> new ScheduleNotFoundException(TaskErrorCode.SCHEDULE_NOT_FOUND));
 
         // 2. 카테고리 조회 및 소유자(memberId) 검증
         Category category = categoryCommandRepository.findById(automationSchedule.getCategoryId())
-                .orElseThrow(() -> new TaskException(TaskErrorCode.CATEGORY_NOT_FOUND));
+                .orElseThrow(() -> new CategoryNotFoundException(TaskErrorCode.CATEGORY_NOT_FOUND));
 
         if (!category.getMemberId().equals(memberId)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "해당 일정을 삭제할 권한이 없습니다.");
@@ -198,12 +197,12 @@ public class AutomationScheduleServiceImpl {
 
     public AutomationScheduleResponse getAutomationSchedule(Long automationScheduleId, Long memberId) {
         AutomationSchedule automationSchedule = automationScheduleRepository.findById(automationScheduleId)
-                .orElseThrow(() -> new TaskException(TaskErrorCode.AUTOMATION_SCHEDULE_NOT_FOUND));
+                .orElseThrow(() -> new AutomationScheduleNotFoundException(TaskErrorCode.AUTOMATION_SCHEDULE_NOT_FOUND));
 
         // 소유자 검증
         if (automationScheduleId != null) {
             automationSchedule = automationScheduleRepository.findById(automationScheduleId)
-                    .orElseThrow(() -> new TaskException(TaskErrorCode.AUTOMATION_SCHEDULE_NOT_FOUND));
+                    .orElseThrow(() -> new AutomationScheduleNotFoundException(TaskErrorCode.AUTOMATION_SCHEDULE_NOT_FOUND));
         }
 
         return AutomationScheduleResponse.builder()
