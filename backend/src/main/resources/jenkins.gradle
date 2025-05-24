@@ -1,0 +1,74 @@
+pipeline {
+    agent any
+
+    tools {
+        gradle 'gradle'
+        jdk 'openJDK17'
+    }
+
+    environment {
+        GITHUB_URL = 'https://github.com/PigMa-HaruSari/be15-4th-PigMa-HaruSari.git'
+    }
+
+    stages {
+        stage('Preparation') {
+            steps {
+                bat 'docker --version'
+            }
+        }
+
+        stage('Checkout and Inject ENV') {
+            steps {
+                withCredentials([file(credentialsId: 'PIGMA_ENV', variable: 'ENV_FILE_PATH')]) {
+                    // 코드 체크아웃
+                    git branch: 'main', url: "${env.GITHUB_URL}"
+
+                    dir('backend') {
+                        // 환경 변수 로딩 및 Gradle 빌드
+                        bat """
+                            rem 환경 파일 출력 (확인용)
+                            type %ENV_FILE_PATH%
+
+                            rem 환경변수 로딩
+                            for /f "usebackq tokens=1,* delims==" %%i in ("%ENV_FILE_PATH%") do (
+                                set "%%i=%%j"
+                                call set "%%i=%%j"
+                            )
+
+                            rem 환경변수 적용 테스트 출력 (예시)
+                            echo DB_URL=%%DB_URL%%
+
+                            rem Gradle 빌드 실행
+                            gradlew.bat clean test
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Container Build and Push') {
+            steps {
+                dir('backend') {
+                    withCredentials([usernamePassword(credentialsId: 'DOCKERHUB_PASSWORD', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                        bat "docker login -u %DOCKER_USER% -p %DOCKER_PASS%"
+                        bat "docker build -t %DOCKER_USER%/test-pipe:latest ."
+                        bat "docker push %DOCKER_USER%/test-pipe:latest"
+                    }
+                }
+            }
+        }
+    }
+}
+
+post {
+    always {
+        bat 'docker logout'
+    }
+    success {
+        echo 'Pipeline succeeded!'
+    }
+    failure {
+        echo 'Pipeline failed!'
+    }
+}
+
