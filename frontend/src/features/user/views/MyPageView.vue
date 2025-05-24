@@ -60,6 +60,25 @@
           <button class="submit-btn" @click="updatePassword">비밀번호 변경</button>
         </div>
       </div>
+
+      <div class="link-group">
+        <div class="link-row">
+          <button class="withdraw-btn" @click="showModal = true">회원 탈퇴</button>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="showModal" class="modal-overlay">
+      <div class="modal-content">
+        <p class="modal-title">비밀번호를 입력해 탈퇴를 진행해주세요</p>
+        <div class="input-box">
+          <input type="password" v-model="withdrawPassword" placeholder="비밀번호 입력" />
+        </div>
+        <div class="modal-buttons">
+          <button class="modal-btn" @click="confirmSignOut">탈퇴하기</button>
+          <button class="modal-btn" @click="showModal = false">취소</button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -67,9 +86,11 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import Header from '@/components/layout/Header.vue';
-import { fetchMyPageProfile, updateUserProfile, updateUserPassword } from '@/features/user/api';
+import { fetchMyPageProfile, updateUserProfile, updateUserPassword, signOutUser } from '@/features/user/api';
 import { showErrorToast, showSuccessToast } from '@/utill/toast';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 const email = ref('');
 const nickname = ref('');
 const gender = ref('NONE');
@@ -78,6 +99,9 @@ const agreeAlarm = ref(false);
 const currentPassword = ref('');
 const newPassword = ref('');
 const newPasswordCheck = ref('');
+
+const showModal = ref(false);
+const withdrawPassword = ref('');
 
 onMounted(async () => {
   try {
@@ -130,6 +154,19 @@ const updatePassword = async () => {
     showErrorToast(msg);
   }
 };
+
+const confirmSignOut = async () => {
+  if (!withdrawPassword.value) return showErrorToast('비밀번호를 입력해주세요.');
+  try {
+    await signOutUser({ password: withdrawPassword.value });
+    showSuccessToast('회원 탈퇴가 완료되었습니다.');
+    router.push('/');
+  } catch (err) {
+    const msg = err.response?.data?.message || '회원 탈퇴에 실패했습니다.';
+    showErrorToast(msg);
+  }
+  showModal.value = false;
+}
 </script>
 
 <style scoped>
@@ -195,5 +232,73 @@ const updatePassword = async () => {
   align-items: center;
   justify-content: flex-start;
   gap: 10px;
+}
+.link-group {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 24px;
+}
+.link-row {
+  margin: 10px;
+}
+.withdraw-btn {
+  background: none;
+  border: none;
+  font-size: 14px;
+  color: #716aca;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  width: 300px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.modal-title {
+  font-size: 16px;
+  margin-bottom: 12px;
+}
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
+}
+.modal-buttons button {
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
+}
+.modal-btn {
+  width: 48%;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #f0f0f0;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.modal-btn:hover {
+  background: #e2e2e2;
 }
 </style>

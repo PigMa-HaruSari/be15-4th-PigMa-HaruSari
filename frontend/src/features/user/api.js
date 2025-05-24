@@ -38,3 +38,7 @@ export function updateUserProfile(data) {
 export function updateUserPassword(data) {
   return api.put('/users/password', data);
 }
+
+export function signOutUser(data) {
+  return api.put('/users/signout', data);
+}
