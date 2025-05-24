@@ -35,7 +35,11 @@
                   :key="i"
                   :style="getTaskStyle(category.color, task.completed)"
               >
-                <input type="checkbox" v-model="task.completed" />
+                <input
+                    type="checkbox"
+                    v-model="task.completed"
+                    @change="toggleTaskCompletion(task)"
+                />
                 {{ task.text }}
               </div>
             </div>
@@ -69,7 +73,7 @@ import Header from '@/components/layout/Header.vue'
 import { Calendar } from '@fullcalendar/core'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
-import { fetchCategory, fetchTasks } from '@/features/main/mainApi'
+import {fetchCategory, fetchTasks, updateTaskCompletion} from '@/features/main/mainApi'
 import AddTaskModal from '@/features/main/components/AddTaskModal.vue'
 
 const reviewText = ref('')
@@ -125,6 +129,7 @@ const loadTasksByDate = async () => {
       const res = await fetchTasks(category.categoryId, scheduleDate)
       const taskList = Array.isArray(res.data.data.schedule) ? res.data.data.schedule : []
       category.tasks = taskList.map(task => ({
+        scheduleId: task.scheduleId, //
         text: task.scheduleContent,
         completed: task.completionStatus
       }))
@@ -132,6 +137,16 @@ const loadTasksByDate = async () => {
       console.error(`❌ 카테고리 ${category.title}의 할 일 조회 실패`, error)
       category.tasks = []
     }
+  }
+}
+
+const toggleTaskCompletion = async (task) => {
+  try {
+    await updateTaskCompletion(task.scheduleId, task.completed)
+    console.log(`✅ ${task.text} 상태 업데이트 완료`)
+  } catch (e) {
+    console.error('❌ 상태 업데이트 실패', e)
+    task.completed = !task.completed // 실패 시 롤백
   }
 }
 

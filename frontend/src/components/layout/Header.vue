@@ -35,6 +35,7 @@ import { ref, onMounted, onBeforeUnmount } from 'vue';
 
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/userStore';
+import {closeSSE} from "@/utill/connectSSE.js";
 
 const showDropdown = ref(false);
 const toggleDropdown = () => {
@@ -59,6 +60,7 @@ const userStore = useUserStore();
 const router = useRouter();
 
 const logout = () => {
+  closeSSE();              // ✅ SSE 연결 종료
   userStore.logout();
   router.push('/login');
 };

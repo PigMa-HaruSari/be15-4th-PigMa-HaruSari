@@ -37,6 +37,7 @@ import { useRouter, useRoute, RouterLink } from 'vue-router';
 import { useUserStore } from '@/stores/userStore';
 import { loginUser } from '@/features/user/api';
 import Header from '@/components/layout/Header.vue';
+import {connectSSE} from "@/utill/connectSSE.js";
 
 const email = ref('');
 const password = ref('');
@@ -52,6 +53,9 @@ const handleLogin = async () => {
     });
     const userData = data.data;
     userStore.setUser(userData);
+
+    // ✅ SSE 연결 지점
+    connectSSE();
 
     // nextTick을 사용해 상태 반영 이후 라우터 실행
     await nextTick();

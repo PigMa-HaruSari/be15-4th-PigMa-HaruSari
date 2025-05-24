@@ -22,6 +22,10 @@ export const createTask = (data) => {
     return api.post('/schedule', data)
 }
 
+export const updateTaskCompletion = (scheduleId, completionStatus) => {
+    return api.put(`/schedule/${scheduleId}/completionStatus`, { completionStatus });
+};
+
 export default {
     fetchCategory,
     fetchTasks,
