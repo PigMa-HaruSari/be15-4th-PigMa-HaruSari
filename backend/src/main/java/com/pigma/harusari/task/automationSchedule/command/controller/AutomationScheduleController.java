@@ -7,6 +7,7 @@ import com.pigma.harusari.task.automationSchedule.command.service.AutomationSche
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,7 @@ public class AutomationScheduleController {
             summary = "자동화 일정 추가",
             description = "카테고리ID, 자동화 내용, 종료 일시, 반복 주기, 반복 요일, 반복 일을 입력하면 자동화 일정이 추가된다."
     )
-    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "자동화 일정 추가 요청 정보")
+    @RequestBody(description = "자동화 일정 추가 요청 정보")
     @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "자동화 일정이 성공적으로 추가된다.")
     public ResponseEntity<ApiResponse<Long>> createAutomationSchedule(
             @RequestBody @Valid AutomationScheduleCreateRequest request,
@@ -40,7 +41,7 @@ public class AutomationScheduleController {
     @PutMapping("/task/automationschedules/{id}")
     @Operation(summary = "자동화 일정 수정", description = "자동화 일정 ID와 수정할 내용을 입력하면 수정일 이후 자동화 일정이 수정된다.")
     @Parameter(name = "id", description = "수정할 자동화 일정의 ID", example = "123")
-    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "자동화 일정 수정 요청 정보")
+    @RequestBody(description = "자동화 일정 수정 요청 정보")
     @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "자동화 일정이 성공적으로 수정된다.")
     public ResponseEntity<ApiResponse<Void>> updateSchedule(
             @PathVariable("id") Long scheduleId,
