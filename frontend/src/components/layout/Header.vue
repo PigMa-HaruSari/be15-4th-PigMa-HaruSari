@@ -6,9 +6,7 @@
         HARUSARI
       </router-link>
       <nav class="nav">
-        <router-link to="/category">
-          <img src="@/assets/images/header-bell-white.svg" alt="알림" />
-        </router-link>
+        <NotificationDropdown />
         <router-link to="/category">
           <img src="@/assets/images/header-categories-white.svg" alt="카테고리" />
         </router-link>
@@ -25,24 +23,22 @@
           </div>
         </div>
       </nav>
-
     </div>
   </header>
 </template>
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue';
-
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/userStore';
-import {closeSSE} from "@/utill/connectSSE.js";
+import { closeSSE } from '@/utill/connectSSE.js';
+import NotificationDropdown from '@/features/alarm/NotificationDropDown.vue';
 
 const showDropdown = ref(false);
 const toggleDropdown = () => {
   showDropdown.value = !showDropdown.value;
 };
 
-// 드롭다운 닫을 때 외부 클릭해도 닫히는 설정
 onMounted(() => {
   const handleClickOutside = (e) => {
     if (!e.target.closest('.profile-dropdown')) {
@@ -60,7 +56,7 @@ const userStore = useUserStore();
 const router = useRouter();
 
 const logout = () => {
-  closeSSE();              // ✅ SSE 연결 종료
+  closeSSE();
   userStore.logout();
   router.push('/login');
 };
@@ -74,12 +70,11 @@ const logout = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  position: fixed;        /* 👉 항상 상단 고정 */
+  position: fixed;
   top: 0;
   left: 0;
   z-index: 100;
 }
-
 
 .header-inner {
   width: 100%;
@@ -87,7 +82,7 @@ const logout = () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0; /* padding 제거 */
+  padding: 0;
 }
 .logo {
   font-size: 30px;
@@ -115,7 +110,6 @@ const logout = () => {
 .profile-dropdown {
   position: relative;
 }
-
 .profile-icon {
   cursor: pointer;
   width: 36px;
@@ -126,7 +120,6 @@ const logout = () => {
 .profile-icon:hover {
   transform: scale(1.05);
 }
-
 .dropdown-menu {
   position: absolute;
   top: 120%;
@@ -138,27 +131,25 @@ const logout = () => {
   border-radius: 12px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
   z-index: 1000;
-  box-sizing: border-box;  /* ✅ padding 포함한 총 너비 보장 */
-  overflow: hidden;        /* ✅ 삐져나오는 것 잘라냄 */
+  box-sizing: border-box;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   font-family: 'Segoe UI', sans-serif;
   font-size: 0.95rem;
 }
-
 .dropdown-menu a,
 .dropdown-menu button {
   padding: 0.65rem 1.2rem;
-  width: 100%;             /* ✅ 부모 너비에 딱 맞춤 */
+  width: 100%;
   text-align: left;
   background: none;
   border: none;
   cursor: pointer;
   color: inherit;
-  overflow: hidden;        /* ✅ hover 시 배경 넘침 방지 */
+  overflow: hidden;
   transition: background 0.2s;
 }
-
 .dropdown-menu a:hover,
 .dropdown-menu button:hover {
   background-color: #f0f0ff;

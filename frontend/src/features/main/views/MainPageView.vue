@@ -93,6 +93,14 @@
               @close="showAddTaskModal = false"
               @submitted="loadTasksByDate"
           />
+          <!-- ✅ 커스텀 확인 모달 -->
+          <ConfirmModal
+              v-if="showConfirmModal"
+              title="회고를 삭제할까요?"
+              message="기존에 작성한 회고 내용은 모두 삭제됩니다."
+              @close="showConfirmModal = false"
+              @confirm="handleConfirmDelete"
+          />
         </div>
       </div>
     </div>
@@ -118,6 +126,7 @@ import {
 import AddTaskModal from '@/features/main/components/AddTaskModal.vue'
 import { useToast } from 'vue-toastification'
 import {useUserStore} from "@/stores/userStore.js";
+import ConfirmModal from "@/components/common/ConfirmModal.vue";
 
 const toast = useToast()
 const reviewText = ref('')
@@ -126,6 +135,8 @@ const categories = ref([])
 const calendarRef = ref(null)
 const selectedDate = ref(new Date())
 const selectedMonth = ref(new Date())
+const showConfirmModal = ref(false)
+
 
 const filteredCategories = computed(() =>
     categories.value.filter(
@@ -166,14 +177,23 @@ const updateExistingDiary = async () => {
   }
 }
 
-const deleteExistingDiary = async () => {
+
+// 회고 삭제 클릭 → 모달 띄우기
+const deleteExistingDiary = () => {
+  showConfirmModal.value = true
+}
+
+// 회고 삭제 확정 처리
+const handleConfirmDelete = async () => {
   try {
     await deleteDiary(diary.value.diaryId)
-    toast.success('회고 삭제 완료!')
     diary.value = null
     reviewText.value = ''
+    toast.success('회고 삭제 완료!')
   } catch (e) {
     toast.error('회고 삭제 실패')
+  } finally {
+    showConfirmModal.value = false
   }
 }
 
@@ -184,8 +204,10 @@ const loadDiary = async () => {
     const dateStr = formatDate(selectedDate.value)
     const res = await fetchDiaryByDate(dateStr)
     diary.value = res.data.data
+    reviewText.value = diary.value?.diaryContent || ''  // ✅ 이 줄 추가
   } catch (e) {
     diary.value = null
+    reviewText.value = ''  // ✅ 실패한 경우도 초기화
   }
 }
 
