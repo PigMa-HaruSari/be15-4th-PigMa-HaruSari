@@ -2,6 +2,7 @@ package com.pigma.harusari.user.infrastructure.email.controller;
 
 import com.pigma.harusari.common.dto.ApiResponse;
 import com.pigma.harusari.user.infrastructure.email.dto.PasswordResetRequest;
+import com.pigma.harusari.user.infrastructure.email.dto.ResetTokenVerifyRequest;
 import com.pigma.harusari.user.infrastructure.email.service.PasswordResetService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,12 @@ public class PasswordResetController {
             @RequestBody @Valid PasswordResetRequest request
     ) {
         passwordResetService.sendResetLink(request.getEmail());
+        return ResponseEntity.ok(ApiResponse.success(null));
+    }
+
+    @PostMapping("/verify")
+    public ResponseEntity<ApiResponse<Void>> verifyResetToken(@RequestBody @Valid ResetTokenVerifyRequest request) {
+        passwordResetService.verifyToken(request.getEmail(), request.getToken());
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 
