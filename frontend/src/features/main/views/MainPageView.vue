@@ -15,7 +15,6 @@
           <div class="today-task-box">
             <div class="today-task-header">
               <h4>오늘 할 일</h4>
-<!--              <button class="add-task-btn">할 일 추가</button>-->
               <button class="add-task-btn" @click="showAddTaskModal = true">할 일 추가</button>
             </div>
 
@@ -29,6 +28,7 @@
                 <span class="category-tag" :style="{ backgroundColor: category.color }"></span>
                 {{ category.title }}
               </div>
+
               <div
                   class="category-task"
                   v-for="(task, i) in category.tasks"
@@ -40,28 +40,60 @@
                     v-model="task.completed"
                     @change="toggleTaskCompletion(task)"
                 />
-                {{ task.text }}
+                <span class="task-text">{{ task.text }}</span>
+
+                <div class="task-actions">
+                  <button class="btn edit-btn" @click="openEditTaskModal(task)">수정</button>
+                  <button class="btn delete-btn" @click="handleDeleteTask(task.scheduleId)">삭제</button>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- 회고 영역 -->
           <div class="review-box">
             <h4>회고</h4>
-            <textarea v-model="reviewText" placeholder="오늘의 회고를 작성해보세요..."></textarea>
-            <div class="review-actions">
-              <button @click="reviewText = ''">회고 삭제</button>
-              <button @click="saveReview">회고 저장</button>
+
+            <!-- 회고 존재하면서 오늘 작성 && 수정 중일 때 -->
+            <div v-if="diary && isToday(diary.createdAt) && isEditing">
+              <textarea v-model="reviewText" />
+              <div class="review-actions">
+                <button @click="isEditing = false">취소</button>
+                <button @click="updateExistingDiary">수정 완료</button>
+              </div>
+            </div>
+
+            <!-- 회고 존재하면서 오늘 작성 && 수정 중 아님 -->
+            <div v-else-if="diary && isToday(diary.createdAt)">
+              <div class="readonly-diary">{{ diary.diaryContent }}</div>
+              <div class="review-actions">
+                <button @click="editDiary">수정</button>
+                <button @click="deleteExistingDiary">삭제</button>
+              </div>
+            </div>
+
+            <!-- 회고 존재하지만 오늘 아님 -->
+            <div v-else-if="diary">
+              <div class="readonly-diary">{{ diary.diaryContent }}</div>
+            </div>
+
+            <!-- 회고 없음 -->
+            <div v-else>
+              <textarea v-model="reviewText" placeholder="오늘의 회고를 작성해보세요..." />
+              <div class="review-actions">
+                <button @click="reviewText = ''">회고 삭제</button>
+                <button @click="saveDiary">회고 저장</button>
+              </div>
             </div>
           </div>
+
+          <AddTaskModal
+              v-if="showAddTaskModal"
+              :categories="categories"
+              :defaultDate="formatDate(selectedDate)"
+              @close="showAddTaskModal = false"
+              @submitted="loadTasksByDate"
+          />
         </div>
-        <AddTaskModal
-            v-if="showAddTaskModal"
-            :categories="categories"
-            :defaultDate="formatDate(selectedDate)"
-            @close="showAddTaskModal = false"
-            @submitted="loadTasksByDate"
-        />
       </div>
     </div>
   </div>
@@ -73,16 +105,28 @@ import Header from '@/components/layout/Header.vue'
 import { Calendar } from '@fullcalendar/core'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
-import {fetchCategory, fetchTasks, updateTaskCompletion} from '@/features/main/mainApi'
+import {
+  deleteTask,
+  fetchCategory,
+  fetchTasks,
+  updateTask,
+  updateTaskCompletion,
+  fetchDiaryByDate,
+  createDiary,
+  updateDiary, deleteDiary
+} from '@/features/main/mainApi'
 import AddTaskModal from '@/features/main/components/AddTaskModal.vue'
+import { useToast } from 'vue-toastification'
+import {useUserStore} from "@/stores/userStore.js";
 
+const toast = useToast()
 const reviewText = ref('')
+const diary = ref(null)
 const categories = ref([])
 const calendarRef = ref(null)
 const selectedDate = ref(new Date())
 const selectedMonth = ref(new Date())
 
-// ✅ 여기로 이동 (setup 상단)
 const filteredCategories = computed(() =>
     categories.value.filter(
         (category) =>
@@ -94,12 +138,72 @@ const filteredCategories = computed(() =>
 
 const showAddTaskModal = ref(false)
 
+const isEditing = ref(false)
 
-function saveReview() {
-  alert('회고가 저장되었습니다.')
+const isToday = (createdAt) => {
+  if (!createdAt) return false
+  const today = new Date()
+  const created = new Date(createdAt)
+  return created.toDateString() === today.toDateString()
+}
+
+const editDiary = () => {
+  isEditing.value = true
+  reviewText.value = diary.value.diaryContent
+}
+
+const updateExistingDiary = async () => {
+  try {
+    await updateDiary(diary.value.diaryId, {
+      diaryTitle: '회고',
+      diaryContent: reviewText.value,
+    })
+    toast.success('회고 수정 완료!')
+    isEditing.value = false
+    await loadDiary()
+  } catch (e) {
+    toast.error('회고 수정 실패')
+  }
+}
+
+const deleteExistingDiary = async () => {
+  try {
+    await deleteDiary(diary.value.diaryId)
+    toast.success('회고 삭제 완료!')
+    diary.value = null
+    reviewText.value = ''
+  } catch (e) {
+    toast.error('회고 삭제 실패')
+  }
 }
 
 const formatDate = (date) => date.toISOString().split('T')[0]
+
+const loadDiary = async () => {
+  try {
+    const dateStr = formatDate(selectedDate.value)
+    const res = await fetchDiaryByDate(dateStr)
+    diary.value = res.data.data
+  } catch (e) {
+    diary.value = null
+  }
+}
+
+const saveDiary = async () => {
+  try {
+    const userStore = useUserStore()
+    await createDiary({
+      memberId: userStore.userId, // ✅ 필수
+      diaryTitle: '회고',
+      diaryContent: reviewText.value,
+    })
+    toast.success('회고가 저장되었습니다!')
+    await loadDiary()
+  } catch (e) {
+    toast.error('회고 저장에 실패했어요.')
+  }
+}
+
 
 const isDarkColor = (hex) => {
   if (!hex) return false
@@ -120,6 +224,24 @@ const getTaskStyle = (color, completed) => {
   }
 }
 
+const handleUpdateTask = async (taskId, updatedData) => {
+  try {
+    await updateTask(taskId, updatedData)
+    await fetchTasks()
+  } catch (error) {
+    console.error('수정 오류:', error)
+  }
+}
+
+const handleDeleteTask = async (scheduleId) => {
+  try {
+    await deleteTask(scheduleId)
+    await fetchTasks()
+  } catch (error) {
+    console.error('삭제 오류:', error)
+  }
+}
+
 const loadTasksByDate = async () => {
   if (!selectedDate.value) return
   const scheduleDate = formatDate(selectedDate.value)
@@ -129,7 +251,7 @@ const loadTasksByDate = async () => {
       const res = await fetchTasks(category.categoryId, scheduleDate)
       const taskList = Array.isArray(res.data.data.schedule) ? res.data.data.schedule : []
       category.tasks = taskList.map(task => ({
-        scheduleId: task.scheduleId, //
+        scheduleId: task.scheduleId,
         text: task.scheduleContent,
         completed: task.completionStatus
       }))
@@ -146,11 +268,15 @@ const toggleTaskCompletion = async (task) => {
     console.log(`✅ ${task.text} 상태 업데이트 완료`)
   } catch (e) {
     console.error('❌ 상태 업데이트 실패', e)
-    task.completed = !task.completed // 실패 시 롤백
+    task.completed = !task.completed
   }
 }
 
-watch(selectedDate, loadTasksByDate)
+watch(selectedDate, async () => {
+  await loadTasksByDate()
+  await loadDiary()
+  console.log('📘 diary:', diary.value)
+}, { immediate: true })
 
 onMounted(async () => {
   const response = await fetchCategory()
@@ -181,8 +307,11 @@ onMounted(async () => {
   calendar.render()
   selectedMonth.value = calendar.getDate()
   await loadTasksByDate()
+  await loadDiary()
 })
 </script>
+
+
 
 
 <style scoped>
@@ -284,16 +413,58 @@ onMounted(async () => {
 .category-task {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   font-size: 16px;
   padding: 8px 0;
   border-bottom: 1px solid #ccc;
 }
-.category-task:last-child {
-  border-bottom: none;
+.readonly-diary {
+  white-space: pre-line;
+  background-color: #f4f4f4;
+  padding: 16px;
+  border-radius: 8px;
+  color: #333;
+  font-size: 15px;
 }
-.category-task input[type='checkbox'] {
-  margin-right: 10px;
+
+.task-text {
+  flex-grow: 1;
+  margin-left: 10px;
+  color: #333;
 }
+.task-actions {
+  display: flex;
+  gap: 8px;
+}
+.task-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn {
+  font-size: 14px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  color: #fff;
+}
+
+.edit-btn {
+  background-color: #4D96FF;
+}
+.edit-btn:hover {
+  background-color: #2F6FE4;
+}
+
+.delete-btn {
+  background-color: #FF6B6B;
+}
+.delete-btn:hover {
+  background-color: #E04848;
+}
+
 .review-box textarea {
   width: 100%;
   height: 120px;

@@ -19,15 +19,46 @@ export const fetchTasks = (categoryId, date) => {
     });
 };
 export const createTask = (data) => {
-    return api.post('/schedule', data)
+    return api.post('/task/schedule', data)
 }
 
-export const updateTaskCompletion = (scheduleId, completionStatus) => {
-    return api.put(`/schedule/${scheduleId}/completionStatus`, { completionStatus });
+export const updateTask = (scheduleId) => {
+    return api.put(`/task/schedule/${scheduleId}`)
+}
+
+export const deleteTask = (scheduleId) => {
+    return api.delete(`/task/schedule/${scheduleId}`);
 };
+
+export const updateTaskCompletion = (scheduleId, completionStatus) => {
+    return api.put(`/task/schedule/${scheduleId}/completionStatus`, { completionStatus });
+};
+
+export const fetchDiaryByDate = async (date) => {
+    return await api.get(`/diary`, { params: { date } });
+};
+
+export const createDiary = async (payload) => {
+    return await api.post(`/diary/create`, payload);
+};
+
+export const updateDiary = async (diaryId, payload) => {
+    return await api.put(`/diary/${diaryId}`, payload)
+}
+
+export const deleteDiary = async (diaryId) => {
+    return await api.delete(`/diary/${diaryId}`)
+}
+
 
 export default {
     fetchCategory,
     fetchTasks,
-    createTask
+    createTask,
+    updateTask,
+    deleteTask,
+    fetchDiaryByDate,
+    createDiary,
+    updateDiary,
+    deleteDiary
 };
