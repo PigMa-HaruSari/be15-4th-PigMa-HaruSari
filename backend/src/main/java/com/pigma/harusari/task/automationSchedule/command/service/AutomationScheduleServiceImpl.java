@@ -48,7 +48,7 @@ public class AutomationScheduleServiceImpl implements AutomationScheduleService 
         AutomationSchedule automationSchedule = AutomationSchedule.builder()
                 .categoryId(request.getCategoryId())
                 .automationScheduleContent(request.getAutomationScheduleContent())
-                .endDate(LocalDate.parse(request.getEndDate()))
+                .endDate(request.getEndDate())
                 .repeatType(RepeatType.valueOf(request.getRepeatType()))
                 .repeatWeekdays(request.getRepeatWeekdays())
                 .repeatMonthday(request.getRepeatMonthday())
@@ -161,7 +161,7 @@ public class AutomationScheduleServiceImpl implements AutomationScheduleService 
         // 필드 업데이트
         schedule.updateCategoryId(request.getCategoryId());
         schedule.updateContent(request.getAutomationScheduleContent());
-        schedule.updateEndDate(LocalDate.parse(request.getEndDate()));
+        schedule.updateEndDate(request.getEndDate());
         schedule.updateRepeatType(RepeatType.valueOf(request.getRepeatType()));
         schedule.updateRepeatWeekdays(request.getRepeatWeekdays());
         schedule.updateRepeatMonthday(request.getRepeatMonthday());
