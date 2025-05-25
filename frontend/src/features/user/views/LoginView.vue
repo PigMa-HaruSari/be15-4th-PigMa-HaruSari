@@ -50,8 +50,16 @@ const handleLogin = async () => {
     const { data } = await loginUser({
       email: email.value, password: password.value
     });
+
     const userData = data.data;
     userStore.setUser(userData);
+
+    // 탈퇴한 회원일 경우 즉시 로그아웃 + 메시지 출력
+    if (userStore.userDeletedAt) {
+      userStore.logout();
+      error.value = '이미 탈퇴한 회원입니다.';
+      return;
+    }
 
     // nextTick을 사용해 상태 반영 이후 라우터 실행
     await nextTick();
