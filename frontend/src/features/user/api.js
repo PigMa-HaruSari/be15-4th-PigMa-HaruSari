@@ -42,3 +42,15 @@ export function updateUserPassword(data) {
 export function signOutUser(data) {
   return api.put('/users/signout', data);
 }
+
+export function sendResetEmailCode(email) {
+  return api.post('/users/reset-password/request', {email});
+}
+
+export function verifyResetToken(email, token) {
+  return api.post('/users/reset-password/verify', { email, token });
+}
+
+export function resetPasswordRequest(payload) {
+  return api.post('/users/reset-password', payload);
+}

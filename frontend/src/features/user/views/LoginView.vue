@@ -23,7 +23,7 @@
           <router-link to="/signup">회원가입</router-link>
         </div>
         <div class="link-row">
-          비밀번호 재설정
+          <router-link to="/reset-password">비밀번호 재설정</router-link>
         </div>
       </div>
       <p class="error-message" v-if="error">{{ error }}</p>

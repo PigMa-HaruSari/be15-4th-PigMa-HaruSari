@@ -46,7 +46,12 @@ export const userRoutes = [
         name: 'MyPage',
         component: () => import('@/features/user/views/MyPageView.vue'),
         meta: { requiresAuth: true }
+    },
+    {
+        path: '/reset-password',
+        name: 'ResetPassword',
+        component: () => import('@/features/user/views/ResetPasswordView.vue'),
+        meta: { requiresGuest: true }
     }
-
 
 ]
