@@ -38,7 +38,7 @@ public class CategoryCommandServiceImpl implements CategoryCommandService {
         Category saved = categoryCommandRepository.save(category);
 
         if (saved == null || saved.getCategoryId() == null) {
-            throw new IllegalStateException("카테고리 저장에 실패했습니다.");
+            throw new CategoryException(CategoryErrorCode.FAILED_TO_SAVE_CATEGORY);
         }
 
         return saved.getCategoryId();
