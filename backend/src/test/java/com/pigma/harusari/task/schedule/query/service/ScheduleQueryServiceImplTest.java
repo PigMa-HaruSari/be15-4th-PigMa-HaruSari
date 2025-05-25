@@ -3,7 +3,6 @@ package com.pigma.harusari.task.schedule.query.service;
 import com.pigma.harusari.task.schedule.query.dto.response.ScheduleDto;
 import com.pigma.harusari.task.schedule.query.dto.response.ScheduleListResponse;
 import com.pigma.harusari.task.schedule.query.mapper.ScheduleMapper;
-import com.pigma.harusari.task.schedule.query.service.ScheduleQueryServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,7 +15,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @DisplayName("[자동화 일정] ScheduleQueryServiceImpl 테스트")

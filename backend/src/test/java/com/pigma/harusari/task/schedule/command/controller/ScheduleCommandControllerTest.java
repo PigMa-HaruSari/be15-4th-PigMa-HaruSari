@@ -2,7 +2,6 @@ package com.pigma.harusari.task.schedule.command.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pigma.harusari.common.auth.model.CustomUserDetails;
-import com.pigma.harusari.task.automationSchedule.command.controller.AutomationScheduleController;
 import com.pigma.harusari.task.schedule.command.dto.request.CompletionStatusUpdateRequest;
 import com.pigma.harusari.task.schedule.command.dto.request.ScheduleCreateRequest;
 import com.pigma.harusari.task.schedule.command.dto.request.ScheduleUpdateRequest;

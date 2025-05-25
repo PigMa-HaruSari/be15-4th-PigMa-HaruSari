@@ -2,7 +2,6 @@ package com.pigma.harusari.task.schedule.query.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pigma.harusari.common.auth.model.CustomUserDetails;
-import com.pigma.harusari.common.dto.ApiResponse;
 import com.pigma.harusari.task.schedule.query.dto.response.ScheduleListResponse;
 import com.pigma.harusari.task.schedule.query.service.ScheduleQueryService;
 import org.junit.jupiter.api.DisplayName;

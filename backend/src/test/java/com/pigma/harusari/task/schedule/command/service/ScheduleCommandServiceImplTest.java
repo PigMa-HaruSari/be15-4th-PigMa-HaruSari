@@ -10,7 +10,6 @@ import com.pigma.harusari.task.schedule.command.dto.request.ScheduleCreateReques
 import com.pigma.harusari.task.schedule.command.dto.request.ScheduleUpdateRequest;
 import com.pigma.harusari.task.schedule.command.dto.response.ScheduleCommandResponse;
 import com.pigma.harusari.task.schedule.command.entity.Schedule;
-import com.pigma.harusari.task.schedule.command.service.ScheduleCommandServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

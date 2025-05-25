@@ -2,7 +2,6 @@ package com.pigma.harusari.task.automationSchedule.command.service;
 
 import com.pigma.harusari.category.command.domain.aggregate.Category;
 import com.pigma.harusari.category.command.domain.repository.CategoryCommandRepository;
-import com.pigma.harusari.task.automationSchedule.command.controller.AutomationScheduleController;
 import com.pigma.harusari.task.automationSchedule.command.dto.request.AutomationScheduleCreateRequest;
 import com.pigma.harusari.task.automationSchedule.command.entity.AutomationSchedule;
 import com.pigma.harusari.task.automationSchedule.command.entity.RepeatType;
@@ -12,13 +11,10 @@ import com.pigma.harusari.task.exception.ScheduleNotFoundException;
 import com.pigma.harusari.task.schedule.command.dto.request.ScheduleCreateRequest;
 import com.pigma.harusari.task.schedule.command.repository.ScheduleRepository;
 import com.pigma.harusari.task.schedule.command.service.ScheduleCommandService;
-import com.pigma.harusari.task.exception.CategoryNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.lang.reflect.Field;

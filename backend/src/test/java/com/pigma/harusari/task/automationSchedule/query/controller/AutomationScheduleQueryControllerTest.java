@@ -2,7 +2,6 @@ package com.pigma.harusari.task.automationSchedule.query.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pigma.harusari.common.auth.model.CustomUserDetails;
-import com.pigma.harusari.task.automationSchedule.command.controller.AutomationScheduleController;
 import com.pigma.harusari.task.automationSchedule.query.dto.request.AutomationScheduleRequest;
 import com.pigma.harusari.task.automationSchedule.query.dto.response.AutomationScheduleDto;
 import com.pigma.harusari.task.automationSchedule.query.service.AutomationScheduleQueryService;
@@ -17,7 +16,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
