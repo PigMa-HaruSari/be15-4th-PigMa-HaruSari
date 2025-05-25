@@ -12,7 +12,6 @@ import com.pigma.harusari.task.schedule.command.dto.response.ScheduleCommandResp
 import com.pigma.harusari.task.schedule.command.service.ScheduleCommandService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +29,7 @@ public class ScheduleCommandController {
 
     @PostMapping("/task/schedule")
     @Operation(summary = "일정 생성", description = "일정 생성 요청 정보를 입력받아 새로운 일정을 등록한다.")
-    @RequestBody(description = "일정 생성 요청 정보")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "일정 생성 요청 정보")
     @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "생성된 일정의 ID를 반환합니다.")
     public ResponseEntity<ApiResponse<Long>> createSchedule(
             @RequestBody @Valid ScheduleCreateRequest scheduleCreateRequest,
@@ -45,7 +44,7 @@ public class ScheduleCommandController {
     @PutMapping("/task/schedule/{scheduleId}")
     @Operation(summary = "일정 수정", description = "일정 ID와 수정 요청 정보를 입력받아 일정을 수정한다.")
     @Parameter(name = "scheduleId", description = "수정할 일정의 ID", example = "123")
-    @RequestBody(description = "일정 수정 요청 정보")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "일정 수정 요청 정보")
     @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "일정이 성공적으로 수정된다.")
     public ResponseEntity<ApiResponse<Long>> updateSchedule(
             @PathVariable Long scheduleId,
@@ -88,7 +87,7 @@ public class ScheduleCommandController {
     @PutMapping("/task/schedule/{scheduleId}/completionstatus")
     @Operation(summary = "일정 완료 상태 수정", description = "일정 ID와 완료 상태 값을 입력받아 해당 일정의 완료 상태를 수정한다.")
     @Parameter(name = "scheduleId", description = "완료 상태를 수정할 일정의 ID", example = "123")
-    @RequestBody(description = "완료 상태 수정 요청 정보 (completionStatus: true/false)")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "완료 상태 수정 요청 정보 (completionStatus: true/false)")
     @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "수정된 일정의 정보를 반환한다.")
     public ResponseEntity<ApiResponse<ScheduleCommandResponse>> updateCompletionStatus(
             @PathVariable Long scheduleId,

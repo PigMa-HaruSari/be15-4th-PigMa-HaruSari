@@ -5,9 +5,13 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class AutomationScheduleCreateRequest {
 
     @NotNull(message = "카테고리를 선택해 주세요.")
@@ -16,8 +20,8 @@ public class AutomationScheduleCreateRequest {
     @NotBlank(message = "내용을 입력해 주세요.")
     private String automationScheduleContent;
 
-    @NotBlank(message = "종료일을 입력해 주세요.")
-    private String endDate;
+    @NotNull(message = "종료일을 입력해 주세요.")
+    private LocalDate endDate;
 
     @NotBlank(message = "반복 유형을 입력해 주세요.")
     private String repeatType;
@@ -28,6 +32,7 @@ public class AutomationScheduleCreateRequest {
 
     @AssertTrue(message = "WEEKLY일 때는 repeatWeekdays만, MONTHLY일 때는 repeatMonthday만 입력해야 합니다.")
     public boolean isValidRepeatFields() {
+        if (repeatType == null) return true;
         if ("WEEKLY".equalsIgnoreCase(repeatType)) {
             return repeatWeekdays != null && !repeatWeekdays.isBlank() && repeatMonthday == null;
         }
@@ -37,5 +42,4 @@ public class AutomationScheduleCreateRequest {
         // DAILY 등 다른 타입은 둘 다 없어야 함
         return (repeatWeekdays == null || repeatWeekdays.isBlank()) && repeatMonthday == null;
     }
-
 }
