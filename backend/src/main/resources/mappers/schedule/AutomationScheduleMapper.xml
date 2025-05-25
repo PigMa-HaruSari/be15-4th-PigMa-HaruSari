@@ -9,9 +9,12 @@
         a.repeat_type AS repeatType,
         c.category_id AS categoryId,
         c.category_name AS categoryName,
-        a.automation_schedule_content AS automationScheduleContent
+        a.automation_schedule_content AS automationScheduleContent,
+        s.schedule_date AS scheduleDate
         FROM automation_schedule a
         JOIN category c ON a.category_id = c.category_id
+        JOIN
+        schedule s ON a.automation_schedule_id = s.automation_schedule_id
         <where>
             c.member_id = #{memberId}
             <if test="request.repeatType != null">

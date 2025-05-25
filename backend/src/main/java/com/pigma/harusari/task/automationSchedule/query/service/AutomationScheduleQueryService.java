@@ -9,4 +9,5 @@ public interface AutomationScheduleQueryService {
 
     List<AutomationScheduleDto> getAutomationScheduleList(AutomationScheduleRequest request, Long memberId);
 
+    AutomationScheduleDto getNearestAutomationSchedule(Long automationScheduleId, Long memberId);
 }

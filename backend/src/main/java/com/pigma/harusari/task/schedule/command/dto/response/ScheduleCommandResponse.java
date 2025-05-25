@@ -15,6 +15,8 @@ public class ScheduleCommandResponse {
 
     private Long categoryId;
 
+    private String categoryName;
+
     private String scheduleContent;
 
     private LocalDate scheduleDate;

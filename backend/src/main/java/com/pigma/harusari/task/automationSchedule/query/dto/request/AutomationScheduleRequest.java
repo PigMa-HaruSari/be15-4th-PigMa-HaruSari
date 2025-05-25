@@ -8,11 +8,11 @@ public class AutomationScheduleRequest {
 
     private final Long categoryId;
 
-    private String repeatType;
+    private final String repeatType;
 
     private final Long automationScheduleId;
 
-    private String automationScheduleContent;
+    private final String automationScheduleContent;
 
     private final String categoryName;
 
@@ -27,6 +27,5 @@ public class AutomationScheduleRequest {
         this.automationScheduleContent = automationScheduleContent;
         this.categoryName = categoryName;
     }
-
 
 }
