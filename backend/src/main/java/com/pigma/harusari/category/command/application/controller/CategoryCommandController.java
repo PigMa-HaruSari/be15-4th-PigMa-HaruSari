@@ -23,7 +23,7 @@ public class CategoryCommandController {
 
     private final CategoryCommandService categoryCommandService;
 
-    @PostMapping("/create")
+    @PostMapping
     @Operation(summary = "카테고리 생성", description = "사용자 인증 후 카테고리를 생성한다.")
     @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "카테고리 생성 성공")
     public ResponseEntity<ApiResponse<CategoryCommandResponse>> createCategory(
