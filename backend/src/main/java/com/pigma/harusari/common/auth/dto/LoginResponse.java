@@ -11,5 +11,6 @@ public class LoginResponse {
     private String refreshToken;
     private String nickname;
     private Long userId;
+    private boolean userDeletedAt;
 
 }
