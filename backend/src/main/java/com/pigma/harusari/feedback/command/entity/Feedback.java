@@ -3,6 +3,7 @@ package com.pigma.harusari.feedback.command.entity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
@@ -10,6 +11,7 @@ import java.util.Date;
 @Entity
 @Table(name = "feedback")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class Feedback {
 
     @Id

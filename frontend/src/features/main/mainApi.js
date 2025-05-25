@@ -31,7 +31,7 @@ export const deleteTask = (scheduleId) => {
 };
 
 export const updateTaskCompletion = (scheduleId, completionStatus) => {
-    return api.put(`/task/schedule/${scheduleId}/completionStatus`, { completionStatus });
+    return api.put(`/task/schedule/${scheduleId}/completionstatus`, { completionStatus });
 };
 
 export const fetchDiaryByDate = async (date) => {

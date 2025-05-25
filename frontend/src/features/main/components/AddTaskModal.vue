@@ -151,7 +151,12 @@ const submit = async () => {
           automationScheduleId: null
         })
     );
-    console.log("✅ 전송할 payload 목록:", debugPayloads);
+    console.log("✅ 전송할 payload 목록:", trimmedContents.map(content => ({
+      categoryId: form.value.categoryId,
+      scheduleContent: content,
+      scheduleDate: form.value.scheduleDate,
+      automationScheduleId: 0
+    })));
 
     await Promise.all(promises);
     toast.success("할 일들이 등록되었습니다!");
