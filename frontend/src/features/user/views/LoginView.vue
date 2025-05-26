@@ -37,6 +37,7 @@ import { useRouter, useRoute, RouterLink } from 'vue-router';
 import { useUserStore } from '@/stores/userStore';
 import { loginUser } from '@/features/user/api';
 import Header from '@/components/layout/Header.vue';
+import {connectSSE} from "@/utill/connectSSE.js";
 
 const email = ref('');
 const password = ref('');
