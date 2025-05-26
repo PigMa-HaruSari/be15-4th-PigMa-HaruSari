@@ -195,25 +195,4 @@ public class AutomationScheduleServiceImpl implements AutomationScheduleService 
         scheduleRepository.deleteByAutomationSchedule_AutomationScheduleIdAndScheduleDateAfter(automationScheduleId, LocalDate.now());
     }
 
-    public AutomationScheduleResponse getAutomationSchedule(Long automationScheduleId, Long memberId) {
-        AutomationSchedule automationSchedule = automationScheduleRepository.findById(automationScheduleId)
-                .orElseThrow(() -> new AutomationScheduleNotFoundException(TaskErrorCode.AUTOMATION_SCHEDULE_NOT_FOUND));
-
-        // 소유자 검증
-        if (automationScheduleId != null) {
-            automationSchedule = automationScheduleRepository.findById(automationScheduleId)
-                    .orElseThrow(() -> new AutomationScheduleNotFoundException(TaskErrorCode.AUTOMATION_SCHEDULE_NOT_FOUND));
-        }
-
-        return AutomationScheduleResponse.builder()
-                .automationScheduleId(automationSchedule.getAutomationScheduleId())
-                .categoryId(automationSchedule.getCategoryId())
-                .automationScheduleContent(automationSchedule.getAutomationScheduleContent())
-                .endDate(automationSchedule.getEndDate())
-                .repeatType(automationSchedule.getRepeatType())
-                .repeatWeekdays(automationSchedule.getRepeatWeekdays())
-                .repeatMonthday(automationSchedule.getRepeatMonthday())
-                .build();
-    }
-
 }

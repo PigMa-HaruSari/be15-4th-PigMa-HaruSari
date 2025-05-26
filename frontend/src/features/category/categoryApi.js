@@ -17,7 +17,7 @@ export const completeCategory = (categoryId) => {
 };
 
 // 삭제
-export const deleteCategory = (categoryId, confirmText = "카테고리를 삭제하겠습니다.", hasSchedules = false) => {
+export const deleteCategory = (categoryId, confirmText = "카테고리를 삭제하겠습니다", hasSchedules = false) => {
     return api.delete(`/categories/${categoryId}`, {
         params: {
             confirmText,

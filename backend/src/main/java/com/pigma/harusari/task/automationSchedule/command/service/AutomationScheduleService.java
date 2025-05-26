@@ -16,6 +16,4 @@ public interface AutomationScheduleService {
 
     void generateSchedulesForAutomation(AutomationSchedule automationSchedule, LocalDate startDate);
 
-    AutomationScheduleResponse getAutomationSchedule(Long automationScheduleId, Long memberId);
-
 }

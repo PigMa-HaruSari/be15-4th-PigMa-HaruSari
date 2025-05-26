@@ -109,7 +109,7 @@ class CategoryCommandServiceImplTest {
     void testDeleteCategorySuccess() {
         when(categoryCommandRepository.findByCategoryIdAndMemberId(categoryId, memberId)).thenReturn(Optional.of(category));
 
-        categoryCommandService.deleteCategory(categoryId, memberId, "카테고리를 삭제하겠습니다.", false);
+        categoryCommandService.deleteCategory(categoryId, memberId, "카테고리를 삭제하겠습니다", false);
 
         verify(categoryCommandRepository).delete(category);
     }
@@ -127,7 +127,7 @@ class CategoryCommandServiceImplTest {
     void testDeleteCategoryWithSchedules() {
         when(categoryCommandRepository.findByCategoryIdAndMemberId(categoryId, memberId)).thenReturn(Optional.of(category));
 
-        assertThatThrownBy(() -> categoryCommandService.deleteCategory(categoryId, memberId, "카테고리를 삭제하겠습니다.", true))
+        assertThatThrownBy(() -> categoryCommandService.deleteCategory(categoryId, memberId, "카테고리를 삭제하겠습니다", true))
                 .isInstanceOf(CategoryException.class)
                 .hasMessageContaining(CategoryErrorCode.CANNOT_DELETE_CATEGORY_WITH_SCHEDULES.getErrorMessage());
     }

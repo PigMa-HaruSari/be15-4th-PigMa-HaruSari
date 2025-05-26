@@ -24,6 +24,7 @@ public class SseService {
     public SseEmitter subscribe(Long memberId) {
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
         emitters.put(memberId, emitter);
+        System.out.println("📡 [Emitter 등록됨] memberId: " + memberId + ", emitter: " + emitter.hashCode());
 
         emitter.onCompletion(() -> emitters.remove(memberId));
         emitter.onTimeout(() -> emitters.remove(memberId));

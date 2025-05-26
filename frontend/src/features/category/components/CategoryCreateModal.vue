@@ -68,6 +68,7 @@ const submitCategory = async () => {
         categoryName: categoryName.value,
         color: categoryColor.value,
       });
+      emit('updated')  // ✅ 수정 완료 후 emit 추가!
     } else {
       const response = await createCategory({
         categoryName: categoryName.value,
@@ -82,7 +83,10 @@ const submitCategory = async () => {
           completed: false,
         });
       }
+
+      emit('updated')  // ✅ 등록 후도 목록 갱신
     }
+
 
     categoryName.value = '';
     categoryColor.value = '#FFD8BE';
