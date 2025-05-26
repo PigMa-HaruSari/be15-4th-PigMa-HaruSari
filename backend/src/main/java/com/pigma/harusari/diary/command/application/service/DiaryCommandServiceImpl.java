@@ -1,10 +1,11 @@
 package com.pigma.harusari.diary.command.application.service;
 
-
 import com.pigma.harusari.diary.command.application.dto.request.DiaryCreateRequest;
 import com.pigma.harusari.diary.command.application.dto.request.DiaryUpdateRequest;
 import com.pigma.harusari.diary.command.domain.aggregate.Diary;
 import com.pigma.harusari.diary.command.domain.repository.DiaryRepository;
+import com.pigma.harusari.diary.exception.DiaryErrorCode;
+import com.pigma.harusari.diary.exception.DiaryException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,7 @@ public class DiaryCommandServiceImpl implements DiaryCommandService {
         );
 
         if (alreadyExists) {
-            throw new IllegalStateException("오늘은 이미 회고를 작성하셨습니다.");
+            throw new DiaryException(DiaryErrorCode.DUPLICATE_DIARY);
         }
 
         Diary diary = Diary.builder()
@@ -44,11 +45,11 @@ public class DiaryCommandServiceImpl implements DiaryCommandService {
     @Transactional
     public void updateDiary(Long diaryId, Long memberId, DiaryUpdateRequest request) {
         Diary diary = diaryRepository.findByDiaryIdAndMemberId(diaryId, memberId)
-                .orElseThrow(() -> new IllegalArgumentException("회고를 찾을 수 없습니다."));
+                .orElseThrow(() -> new DiaryException(DiaryErrorCode.DIARY_NOT_FOUND));
 
         // 작성 당일만 수정 가능
         if (!diary.getCreatedAt().toLocalDate().isEqual(LocalDate.now())) {
-            throw new IllegalStateException("작성 당일에만 수정할 수 있습니다.");
+            throw new DiaryException(DiaryErrorCode.INVALID_MODIFICATION);
         }
 
         diary.update(request.getDiaryTitle(), request.getDiaryContent());
@@ -58,10 +59,11 @@ public class DiaryCommandServiceImpl implements DiaryCommandService {
     @Transactional
     public void deleteDiary(Long diaryId, Long memberId) {
         Diary diary = diaryRepository.findByDiaryIdAndMemberId(diaryId, memberId)
-                .orElseThrow(() -> new IllegalArgumentException("회고를 찾을 수 없습니다."));
+                .orElseThrow(() -> new DiaryException(DiaryErrorCode.DIARY_NOT_FOUND));
 
+        // 작성 당일만 삭제 가능
         if (!diary.getCreatedAt().toLocalDate().isEqual(LocalDate.now())) {
-            throw new IllegalStateException("작성 당일에만 삭제할 수 있습니다.");
+            throw new DiaryException(DiaryErrorCode.INVALID_DELETION);
         }
 
         diaryRepository.delete(diary);
