@@ -10,11 +10,11 @@ import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class DiaryQueryServiceImpl implements DiaryQueryService {
 
     private final DiaryQueryMapper diaryQueryMapper;
 
-    @Transactional
     @Override
     public DiaryResponseDto getDiaryByDate(Long memberId, LocalDate date) {
         return diaryQueryMapper.findDiaryByMemberIdAndDate(memberId, date);

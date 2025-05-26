@@ -189,6 +189,8 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
 
     @Transactional
     public void deleteSchedule(Long scheduleId, Long memberId) {
+        System.out.println("💠 service 메소드 실행");
+
         // 1. 일정 조회
         Schedule schedule = scheduleRepository.findByScheduleId(scheduleId)
                 .orElseThrow(() -> new ScheduleNotFoundException(TaskErrorCode.SCHEDULE_NOT_FOUND));
