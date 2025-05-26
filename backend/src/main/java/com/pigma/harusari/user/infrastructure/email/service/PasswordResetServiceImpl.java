@@ -4,6 +4,8 @@ import com.pigma.harusari.user.command.entity.Member;
 import com.pigma.harusari.user.command.exception.EmailNotFoundException;
 import com.pigma.harusari.user.command.exception.UserCommandErrorCode;
 import com.pigma.harusari.user.command.repository.UserCommandRepository;
+import com.pigma.harusari.user.infrastructure.email.exception.EmailErrorCode;
+import com.pigma.harusari.user.infrastructure.email.exception.ResetEmailCodeInvalidException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -26,9 +28,11 @@ public class PasswordResetServiceImpl implements PasswordResetService {
     private final RedisTemplate<String, String> redisTemplate;
     private final JavaMailSender mailSender;
 
+    @Override
     public void sendResetLink(String email) {
         // 1. 사용자 검증
-        Optional<Member> optional = userRepository.findByEmail(email);
+        Optional<Member> optional = userRepository.findByEmail(email)
+                .filter(member -> Boolean.FALSE.equals(member.getUserDeletedAt()));
         if (optional.isEmpty()) {
             throw new EmailNotFoundException(UserCommandErrorCode.EMAIL_NOT_FOUND);
         }
@@ -47,6 +51,15 @@ public class PasswordResetServiceImpl implements PasswordResetService {
 
         mailSender.send(message);
     }
+
+    @Override
+    public void verifyToken(String email, String token) {
+        String storedEmail = redisTemplate.opsForValue().get("RESET_TOKEN:" + token);
+        if (storedEmail == null || !storedEmail.equals(email)) {
+            throw new ResetEmailCodeInvalidException(EmailErrorCode.RESET_EMAIL_CODE_INVALID);
+        }
+    }
+
 
     private String generateRandomCode() {
         int code = new Random().nextInt(900000) + 100000; // 100000 ~ 999999

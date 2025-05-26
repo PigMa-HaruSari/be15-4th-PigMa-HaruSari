@@ -51,6 +51,7 @@ class KakaoAuthServiceImplTest {
     private final String fakeAccessToken = "access-token";
     private final String email = "kakao@example.com";
     private final String nickname = "카카오사용자";
+    private final String redirectUri = "http://localhost:3000";
 
     private Member member;
     private LoginResponse loginResponse;
@@ -88,21 +89,25 @@ class KakaoAuthServiceImplTest {
                 .build();
 
         ReflectionTestUtils.setField(member, "memberId", 1L);
+        ReflectionTestUtils.setField(kakaoAuthServiceImpl, "signupRedirectUri", redirectUri);
+        ReflectionTestUtils.setField(kakaoAuthServiceImpl, "loginRedirectUri", redirectUri);
     }
 
     @Test
     @DisplayName("[카카오 회원가입 - 사용자 조회] 정상 정보 반환")
     void testGetUserInfoSuccess() {
+
         KakaoTokenResponse tokenResponse = KakaoTokenResponse.builder().accessToken(fakeAccessToken).build();
         KakaoUserInfo kakaoUserInfo = KakaoUserInfo.builder()
                 .id(123L)
                 .kakao_account(KakaoUserInfo.KakaoAccount.builder()
                         .email(email)
                         .profile(KakaoUserInfo.KakaoAccount.Profile.builder().nickname(nickname).build())
+
                         .build())
                 .build();
 
-        doReturn(tokenResponse).when(kakaoAuthServiceImpl).requestAccessToken(fakeCode);
+        doReturn(tokenResponse).when(kakaoAuthServiceImpl).requestAccessToken(fakeCode, redirectUri);
         doReturn(kakaoUserInfo).when(kakaoAuthServiceImpl).requestUserInfo(fakeAccessToken);
 
         KakaoUserBasicInfo info = kakaoAuthServiceImpl.getUserInfo(fakeCode);
@@ -123,7 +128,7 @@ class KakaoAuthServiceImplTest {
                         .build())
                 .build();
 
-        doReturn(tokenResponse).when(kakaoAuthServiceImpl).requestAccessToken(fakeCode);
+        doReturn(tokenResponse).when(kakaoAuthServiceImpl).requestAccessToken(fakeCode, redirectUri);
         doReturn(kakaoUserInfo).when(kakaoAuthServiceImpl).requestUserInfo(fakeAccessToken);
 
         assertThatThrownBy(() -> kakaoAuthServiceImpl.getUserInfo(fakeCode))
@@ -212,7 +217,7 @@ class KakaoAuthServiceImplTest {
                 .nickname(nickname)
                 .build();
 
-        doReturn(tokenResponse).when(kakaoAuthServiceImpl).requestAccessToken(fakeCode);
+        doReturn(tokenResponse).when(kakaoAuthServiceImpl).requestAccessToken(fakeCode, redirectUri);
         doReturn(kakaoUserInfo).when(kakaoAuthServiceImpl).requestUserInfo(fakeAccessToken);
         doReturn(expectedResponse).when(kakaoAuthServiceImpl).issueJwtTokens(member);
         given(memberRepository.findByEmail(email)).willReturn(Optional.of(member));
@@ -243,7 +248,7 @@ class KakaoAuthServiceImplTest {
                         .build())
                 .build();
 
-        doReturn(tokenResponse).when(kakaoAuthServiceImpl).requestAccessToken(fakeCode);
+        doReturn(tokenResponse).when(kakaoAuthServiceImpl).requestAccessToken(fakeCode, redirectUri);
         doReturn(kakaoUserInfo).when(kakaoAuthServiceImpl).requestUserInfo(fakeAccessToken);
         given(memberRepository.findByEmail(email)).willReturn(Optional.empty());
 

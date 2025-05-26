@@ -1,5 +1,7 @@
 package com.pigma.harusari.user.infrastructure.email.service;
 
+import com.pigma.harusari.user.infrastructure.email.exception.EmailErrorCode;
+import com.pigma.harusari.user.infrastructure.email.exception.SignupEmailCodeInvalidException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.SimpleMailMessage;
@@ -38,7 +40,7 @@ public class EmailAuthServiceImpl implements EmailAuthService {
 
         // 인증코드 검증
         if (stored == null || !stored.equals(code)) {
-            throw new IllegalArgumentException("잘못된 인증 코드입니다.");
+            throw new SignupEmailCodeInvalidException(EmailErrorCode.SIGNUP_EMAIL_CODE_INVALID);
         }
 
         // redis에 저장된 인증코드 삭제 및 검증 완료 여부 저장

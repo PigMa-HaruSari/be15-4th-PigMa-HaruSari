@@ -19,24 +19,25 @@ import java.time.LocalDateTime;
 @RestController
 @RequestMapping("/test")
 @RequiredArgsConstructor
-public class TestController {
+public class    TestController {
 
     private final AlarmService alarmService;
     private final RabbitTemplate rabbitTemplate;
     private final AlarmScheduler alarmScheduler;
 
     @GetMapping("/send")
-    public String sendTestMessage() {
+    public String sendTestMessage(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        Long memberId = userDetails.getMemberId(); // 또는 getUserId() 메서드 사용
         AlarmCreateDto dto = AlarmCreateDto.builder()
-                .memberId(1L)
-                .alarmMessage("DB 포함 Test Alarm")
+                .memberId(memberId)
+                .alarmMessage("🔥 실 사용자에게 알림")
                 .type("TEST")
                 .build();
 
-        Alarm alarm = alarmService.createAlarm(dto);  // 👉 DB 저장
-        rabbitTemplate.convertAndSend("alarm.exchange", "alarm.key", alarm); // 👉 MQ 전송
+        Alarm alarm = alarmService.createAlarm(dto);
+        rabbitTemplate.convertAndSend("alarm.exchange", "alarm.key", alarm);
 
-        return "Sent with DB!";
+        return "로그인 사용자에게 알림 전송 완료";
     }
 
     @PostMapping("/daily")

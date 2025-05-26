@@ -54,10 +54,7 @@ const codeVerified = ref(false);
 
 const sendCode = async () => {
   try {
-    console.log("===== email.value =====")
-    console.log(email.value);
     await sendEmailCode(email.value);
-    console.log("await 종료?")
     codeSent.value = true;
     showSuccessToast('인증번호가 전송되었습니다.');
   } catch (e) {
@@ -92,65 +89,12 @@ const goNextStep = () => {
     showErrorToast('비밀번호가 일치하지 않습니다.');
     return;
   }
-  signupStore.setBasicInfo({ email: email.value, password: password.value });
+  signupStore.setBasicInfo({ emailValue: email.value, passwordValue: password.value });
   router.push('/signup/register');
 };
 </script>
 
 <style scoped>
-:root {
-  --header: #b8b8ff;
-  --background: #f8f7ff;
-  --button-add: #9381ff;
-  --button-save: #ffd8be;
-  --button-delete: #ffeeddd;
-  --card-bg: #ffffff;
-  --tag-purple: #cdb4db;
-  --tag-green: #b5ead7;
-  --tag-yellow: #fff1a8;
-}
-body {
-  margin: 0;
-  padding: 0;
-  background: var(--background);
-  font-family: 'Segoe UI', sans-serif;
-}
-
-header {
-  width: 100%;
-  background: var(--header);
-  height: 85px;
-  display: flex;
-  align-items: center;
-}
-.header-inner {
-  width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.logo {
-  font-size: 30px;
-  font-weight: bold;
-  color: #ffffff;
-  display: flex;
-  align-items: center;
-}
-.logo img {
-  height: 60px;
-  vertical-align: middle;
-  margin-right: 10px;
-}
-nav {
-  display: flex;
-  gap: 20px;
-}
-nav img {
-  height: 24px;
-  cursor: pointer;
-}
-
 .main-wrapper {
   display: flex;
   justify-content: center;

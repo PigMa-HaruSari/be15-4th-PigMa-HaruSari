@@ -14,8 +14,10 @@
 
     <select id="findDiaryByMemberIdAndDate" resultType="com.pigma.harusari.diary.query.dto.DiaryResponseDto">
         SELECT
+            d.diary_id AS diaryId,
             d.diary_title AS diaryTitle,
-            d.diary_content AS diaryContent
+            d.diary_content AS diaryContent,
+            d.created_at AS createdAt
         FROM diary d
         WHERE d.member_id = #{memberId}
           AND DATE(d.created_at) = #{date}

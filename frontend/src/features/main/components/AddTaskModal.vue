@@ -97,7 +97,7 @@ const removeTask = (index) => {
 }
 
 const close = () => emit('close')
-
+/*
 const submit = async () => {
   try {
     const promises = form.value.scheduleContents
@@ -117,7 +117,57 @@ const submit = async () => {
   } catch (e) {
     toast.error('등록 중 오류가 발생했어요.')
   }
-}
+}*/
+const submit = async () => {
+  const trimmedContents = form.value.scheduleContents.map(c => c.trim()).filter(Boolean);
+
+  if (!form.value.categoryId || form.value.categoryId === "") {
+    toast.error("카테고리를 선택해 주세요.");
+    return;
+  }
+
+  if (!form.value.scheduleDate) {
+    toast.error("일정 날짜를 선택해 주세요.");
+    return;
+  }
+
+  if (trimmedContents.length === 0) {
+    toast.error("할 일을 한 개 이상 입력해 주세요.");
+    return;
+  }
+
+  console.log("🔥 등록 데이터:", {
+    categoryId: form.value.categoryId,
+    scheduleDate: form.value.scheduleDate,
+    scheduleContents: trimmedContents
+  });
+
+  try {
+    const promises = trimmedContents.map(content =>
+        createTask({
+          categoryId: form.value.categoryId,
+          scheduleContent: content,
+          scheduleDate: form.value.scheduleDate,
+          automationScheduleId: null
+        })
+    );
+    console.log("✅ 전송할 payload 목록:", trimmedContents.map(content => ({
+      categoryId: form.value.categoryId,
+      scheduleContent: content,
+      scheduleDate: form.value.scheduleDate,
+      automationScheduleId: 0
+    })));
+
+    await Promise.all(promises);
+    toast.success("할 일들이 등록되었습니다!");
+    emit("submitted");
+    close();
+  } catch (e) {
+    console.error("❌ 등록 오류:", e);
+    toast.error("등록 중 오류가 발생했어요.");
+  }
+};
+
 </script>
 
 <style scoped>

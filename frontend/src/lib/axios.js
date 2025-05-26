@@ -26,7 +26,6 @@ const onTokenRefreshed = (token) => {
 /* 요청 인터셉터: accessToken을 Authorization 헤더에 자동 삽입*/
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem('accessToken');
-    // console.log('[요청 인터셉터] accessToken:', token); // ✅ 추가
 
     // 비로그인 상태에서 수행하는 로직인 경우는 삽입 X
     if (token) {
@@ -64,6 +63,15 @@ api.interceptors.response.use(
 
         // 2) 401 Unauthorized 처리
         if (status === 401) {
+            // 로그인 안 한 상태의 화면이라면 토스트알람 없음
+            if (
+              config.url?.includes('/auth/refresh') &&
+              !response.data?.message &&
+              !errorCode
+            ) {
+                return Promise.reject();
+            }
+
             // 이미 재시도 했으면 로그아웃 처리
             if (config._retry) {
                 userStore.logout();
