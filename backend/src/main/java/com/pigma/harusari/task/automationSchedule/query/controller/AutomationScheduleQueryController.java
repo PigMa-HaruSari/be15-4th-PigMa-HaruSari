@@ -7,7 +7,6 @@ import com.pigma.harusari.task.automationSchedule.query.dto.response.AutomationS
 import com.pigma.harusari.task.automationSchedule.query.service.AutomationScheduleQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,19 +18,15 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
-@Tag(name = "자동화 일정 조회 API", description = "자동화 일정의 카테고리, 반복 주기, 그리고 검색일 이후 가장 가까운 일정을 조회하는 API")
+@Tag(name = "자동화 일정 조회 API", description = "자동화 일정 목록과 검색일 이후 가장 가까운 일정을 조회하는 API")
 public class AutomationScheduleQueryController {
 
     private final AutomationScheduleQueryService automationScheduleQueryService;
 
     @GetMapping("/task/automationschedules")
     @Operation(
-            summary = "자동화 일정 목록 조회", description = "검색 조건(예: 카테고리, 반복 주기)에 따라 자동화 일정 목록을 조회한다."
+            summary = "자동화 일정 목록 조회", description = "자동화 일정 목록을 조회한다."
     )
-    @Parameters({
-            @Parameter(name = "categoryId", description = "조회할 카테고리 ID", example = "1"),
-            @Parameter(name = "repeatType", description = "조회할 반복 주기", example = "MONTHLY")
-    })
     @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "자동화 일정 목록을 반환한다.")
     public ResponseEntity<List<AutomationScheduleDto>> getAutomationSchedules(
             AutomationScheduleRequest request,
