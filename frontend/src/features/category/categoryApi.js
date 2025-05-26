@@ -3,7 +3,7 @@ import api from "@/lib/axios.js";
 
 // 카테고리 생성 요청
 export const createCategory = async (categoryData) => {
-    return api.post("/categories/create", categoryData)
+    return api.post("/categories", categoryData)
 }
 
 // 수정
