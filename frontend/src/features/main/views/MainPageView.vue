@@ -69,9 +69,15 @@ import Header from '@/components/layout/Header.vue'
 import { Calendar } from '@fullcalendar/core'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
+import { useUserStore } from '@/stores/userStore';
 import { fetchCategory, fetchTasks } from '@/features/main/mainApi'
 import AddTaskModal from '@/features/main/components/AddTaskModal.vue'
+import { showErrorToast } from '@/utill/toast.js';
+import router from '@/router/index.js';
+import { storeToRefs } from 'pinia';
 
+const userStore = useUserStore();
+const { userDeletedAt } = storeToRefs(userStore)
 const reviewText = ref('')
 const categories = ref([])
 const calendarRef = ref(null)
@@ -138,6 +144,13 @@ const loadTasksByDate = async () => {
 watch(selectedDate, loadTasksByDate)
 
 onMounted(async () => {
+  if (userDeletedAt.value) {
+    showErrorToast('이미 탈퇴한 회원입니다. 로그아웃 후 메인 화면으로 이동합니다.');
+    userStore.logout();
+    await router.push('/');
+    return;
+  }
+
   const response = await fetchCategory()
   categories.value = response.data.data.map(category => ({
     categoryId: category.categoryId,

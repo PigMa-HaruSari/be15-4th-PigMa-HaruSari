@@ -13,13 +13,14 @@ export const useUserStore = defineStore('user', {
         email: '',
         nickname: '',
         accessToken: null,
-        expiration: null
+        expiration: null,
+        userDeletedAt: false
     }),
 
     // 로그인 여부 검증을 위한 로직 추가
     getters: {
         isAuthenticated(state) {
-            return !!state.accessToken && Date.now() < (state.expiration || 0);
+            return !!state.accessToken && Date.now() < (state.expiration || 0) && !state.userDeletedAt;
         }
     },
 
@@ -41,6 +42,7 @@ export const useUserStore = defineStore('user', {
             this.nickname = userData.nickname;
             this.accessToken = userData.accessToken;
             this.expiration = expiration;
+            this.userDeletedAt = userData.userDeletedAt || false;
 
             localStorage.setItem('user', JSON.stringify(userData));
             localStorage.setItem('accessToken', userData.accessToken);
@@ -54,6 +56,7 @@ export const useUserStore = defineStore('user', {
             this.nickname = '';
             this.accessToken = null;
             this.expiration = null;
+            this.userDeletedAt = false;
 
             localStorage.removeItem('user');
             localStorage.removeItem('accessToken');

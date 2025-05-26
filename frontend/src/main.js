@@ -35,7 +35,25 @@ const userStore = useUserStore()
 const savedUser = localStorage.getItem('user')
 
 if (savedUser) {
-    userStore.setUser(JSON.parse(savedUser))
+  const parsedUser = JSON.parse(savedUser);
+  userStore.setUser(parsedUser);
+
+  // accessToken 재발급 시도는 로그인 상태일 때만
+  refreshUserToken()
+    .then(res => {
+      const newToken = res.data.data.accessToken;
+      const payload = jwtDecode(newToken);
+      userStore.setUser({
+        accessToken: newToken,
+        userId: payload.sub,
+        nickname: payload.nickname,
+        role: payload.role,
+        expiration: payload.exp * 1000
+      });
+    })
+    .catch(() => {
+      userStore.logout();
+    });
 }
 
 // 새로고침 시 refreshToken으로 accessToken 재발급 시도

@@ -16,14 +16,14 @@
         <button class="login-btn" @click="handleLogin">로그인</button>
       </div>
       <div class="input-box">
-        <button class="kakao-login-btn">카카오로 로그인하기</button>
+        <button class="kakao-login-btn" @click="goToKakaoLogin">카카오로 로그인하기</button>
       </div>
       <div class="link-group">
         <div class="link-row">
           <router-link to="/signup">회원가입</router-link>
         </div>
         <div class="link-row">
-          비밀번호 재설정
+          <router-link to="/reset-password">비밀번호 재설정</router-link>
         </div>
       </div>
       <p class="error-message" v-if="error">{{ error }}</p>
@@ -50,8 +50,16 @@ const handleLogin = async () => {
     const { data } = await loginUser({
       email: email.value, password: password.value
     });
+
     const userData = data.data;
     userStore.setUser(userData);
+
+    // 탈퇴한 회원일 경우 즉시 로그아웃 + 메시지 출력
+    if (userStore.userDeletedAt) {
+      userStore.logout();
+      error.value = '이미 탈퇴한 회원입니다.';
+      return;
+    }
 
     // nextTick을 사용해 상태 반영 이후 라우터 실행
     await nextTick();
@@ -71,6 +79,14 @@ const handleLogin = async () => {
   } catch (err) {
     error.value = '이메일 또는 비밀번호가 올바르지 않습니다.';
   }
+};
+
+const goToKakaoLogin = () => {
+  const KAKAO_CLIENT_ID = import.meta.env.VITE_KAKAO_CLIENT_ID;
+  const KAKAO_LOGIN_REDIRECT_URI = import.meta.env.VITE_KAKAO_LOGIN_REDIRECT_URI;
+
+  const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${KAKAO_CLIENT_ID}&redirect_uri=${KAKAO_LOGIN_REDIRECT_URI}`;
+  window.location.href = kakaoAuthUrl;
 };
 </script>
 
