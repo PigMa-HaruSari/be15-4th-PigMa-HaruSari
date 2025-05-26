@@ -30,7 +30,7 @@
         :category="selectedCategory"
         @close="showActionModal = false"
         @edit="handleEdit"
-        @delete="handleDelete"
+        @delete="handleDeleteClick"
         @complete="handleComplete"
     />
 
@@ -40,6 +40,16 @@
         :editData="editTarget"
         @close="handleModalClose"
         @created="loadCategories"
+        @updated="loadCategories"
+    />
+
+    <ConfirmWithInputModal
+        v-if="showDeleteModal"
+        title="카테고리를 삭제할까요?"
+        message="해당 카테고리에 연결된 모든 할 일이 함께 삭제됩니다. 아래 문장을 입력해야 삭제할 수 있습니다."
+        requiredText="카테고리를 삭제하겠습니다"
+        @close="showDeleteModal = false"
+        @confirm="confirmDeleteCategory"
     />
   </div>
 </template>
@@ -50,7 +60,8 @@ import Header from "@/components/layout/Header.vue";
 import CategoryCreateModal from '@/features/category/components/CategoryCreateModal.vue';
 import CategoryActionModal from "@/features/category/components/CategoryActionModal.vue";
 import { fetchCategory } from '@/features/main/mainApi';
-import { createCategory,completeCategory, deleteCategory, updateCategory, } from '@/features/category/categoryApi.js';
+import { createCategory,completeCategory, deleteCategory } from '@/features/category/categoryApi.js';
+import ConfirmWithInputModal from "@/components/common/ConfirmWithInputModal.vue";
 
 const showModal = ref(false);
 const categories = ref([]);
@@ -58,6 +69,8 @@ const selectedCategory = ref(null);
 const showActionModal = ref(false);
 const isEdit = ref(false);
 const editTarget = ref(null);
+const showDeleteModal = ref(false)
+
 
 const loadCategories = async () => {
   try {
@@ -109,23 +122,33 @@ const handleComplete = async (category) => {
   }
 };
 
-const handleDelete = async (category) => {
-  if (!confirm('정말 삭제하시겠습니까?')) return;
-  try {
-    await deleteCategory(category.categoryId, '카테고리를 삭제하겠습니다.', false);
-    await loadCategories();
-    showActionModal.value = false;
-  } catch (e) {
-    console.error('카테고리 삭제 실패:', e);
-  }
-};
-
 const handleEdit = (category) => {
   isEdit.value = true;
   editTarget.value = category;
   showActionModal.value = false;
   showModal.value = true;
 };
+
+const handleDeleteClick = (category) => {
+  selectedCategory.value = category
+  showDeleteModal.value = true
+}
+
+const confirmDeleteCategory = async () => {
+  try {
+    const hasSchedules = selectedCategory.value.tasks?.length > 0
+    await deleteCategory(selectedCategory.value.categoryId, "카테고리를 삭제하겠습니다", hasSchedules)
+    // toast.success('카테고리가 삭제되었습니다.')
+    showDeleteModal.value = false
+    selectedCategory.value = null
+
+    window.location.reload()
+
+    await loadCategories() // 카테고리 목록 갱신 함수
+  } catch (e) {
+    // toast.error('카테고리 삭제에 실패했어요.')
+  }
+}
 
 const handleModalClose = () => {
   showModal.value = false;

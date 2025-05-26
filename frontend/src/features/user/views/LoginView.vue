@@ -54,6 +54,9 @@ const handleLogin = async () => {
     const userData = data.data;
     userStore.setUser(userData);
 
+    // ✅ SSE 연결 지점
+    connectSSE();
+
     // 탈퇴한 회원일 경우 즉시 로그아웃 + 메시지 출력
     if (userStore.userDeletedAt) {
       userStore.logout();

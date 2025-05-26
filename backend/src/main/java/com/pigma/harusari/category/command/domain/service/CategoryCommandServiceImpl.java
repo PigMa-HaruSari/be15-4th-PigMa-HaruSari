@@ -73,7 +73,7 @@ public class CategoryCommandServiceImpl implements CategoryCommandService {
     @Override
     @Transactional
     public void deleteCategory(Long categoryId, Long memberId, String confirmText, boolean hasSchedules) {
-        if (!"카테고리를 삭제하겠습니다.".equals(confirmText)) {
+        if (!"카테고리를 삭제하겠습니다".equals(confirmText.trim())) {
             // 삭제 메시지 확인 에러코드
             throw new CategoryException(CategoryErrorCode.CONFIRMATION_TEXT_MISMATCH);
         }
