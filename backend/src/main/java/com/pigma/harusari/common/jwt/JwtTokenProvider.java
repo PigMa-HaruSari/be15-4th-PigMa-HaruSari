@@ -64,6 +64,10 @@ public class JwtTokenProvider {
     }
 
     public boolean validateToken(String token) {
+        if (token == null || token.trim().isEmpty()) {
+            throw new BadCredentialsException("토큰이 비어 있습니다.");
+        }
+
         try {
             Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token);
             return true;

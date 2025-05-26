@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +21,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Cacheable(value = "userDetailsCache", key = "#userId")
     @Override
+    @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
         System.out.println("📦 DB에서 사용자 조회: userId = " + userId); // 캐시 동작 확인용
         Member member = userCommandRepository.findById(Long.parseLong(userId))

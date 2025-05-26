@@ -24,7 +24,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class KakaoAuthServiceImpl implements KakaoAuthService {
 
