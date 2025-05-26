@@ -40,7 +40,7 @@ public class KakaoAuthController {
         return ResponseEntity.ok(ApiResponse.success(userInfo));
     }
 
-    @PostMapping("/signup/")
+    @PostMapping("/signup/kakao")
     @Operation(
             summary = "카카오 회원가입 - 최종 처리",
             description = "카카오 사용자 정보를 기반으로 실제 회원가입 처리합니다.",
@@ -59,7 +59,7 @@ public class KakaoAuthController {
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
-    @GetMapping("/login/")
+    @GetMapping("/login/kakao")
     @Operation(
             summary = "카카오 로그인",
             description = "인가 코드를 이용해 카카오 계정으로 로그인합니다.",
