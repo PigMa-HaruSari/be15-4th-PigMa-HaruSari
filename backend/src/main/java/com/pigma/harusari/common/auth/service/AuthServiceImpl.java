@@ -132,7 +132,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
@@ -174,6 +173,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public TokenResponse refreshToken(String providedRefreshToken) {
         jwtTokenProvider.validateToken(providedRefreshToken);
 

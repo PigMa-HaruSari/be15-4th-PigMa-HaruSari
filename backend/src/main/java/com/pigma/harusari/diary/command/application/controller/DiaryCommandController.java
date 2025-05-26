@@ -22,7 +22,7 @@ public class DiaryCommandController {
 
     private final DiaryCommandService diaryCommandService;
 
-    @PostMapping("/create")
+    @PostMapping
     @Operation(summary = "회고 생성", description = "사용자 인증 후 회고를 생성한다.")
     @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "회고 생성 성공")
     public ResponseEntity<ApiResponse<Long>> createDiary(

@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis
+spec:
+  serviceName: "redis"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:7.2.4
+          ports:
+            - containerPort: 6379
+          args:
+            - "redis-server"
+            - "--appendonly"
+            - "yes"                      # AOF 사용해서 영속성 확보
+            - "--requirepass"
+            - "$(REDIS_PASSWORD)"
+          envFrom:
+            - secretRef:
+                name: harusari-secrets
+            - configMapRef:
+                name: harusari-config
+          volumeMounts:
+            - name: redis-data
+              mountPath: /data
+  volumeClaimTemplates:
+    - metadata:
+        name: redis-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: ""
+        resources:
+          requests:
+            storage: 2Gi

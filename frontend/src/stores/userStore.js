@@ -2,6 +2,7 @@
 import { defineStore } from 'pinia';
 import { jwtDecode } from 'jwt-decode';
 import api from '@/lib/axios.js';
+import { closeSSE } from '@/utill/connectSSE.js';
 
 // 자동 로그아웃 기능을 위한 타이머 변수
 let logoutTimer = null;
@@ -60,6 +61,7 @@ export const useUserStore = defineStore('user', {
 
             localStorage.removeItem('user');
             localStorage.removeItem('accessToken');
+            closeSSE();
         }
     }
 });

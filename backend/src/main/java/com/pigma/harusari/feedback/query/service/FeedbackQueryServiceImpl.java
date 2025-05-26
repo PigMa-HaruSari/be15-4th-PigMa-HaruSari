@@ -16,13 +16,13 @@ public class FeedbackQueryServiceImpl implements FeedbackQueryService {
     private final FeedbackQueryMapper feedbackQueryMapper;
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<FeedbackSummaryDto> getFeedbackList(Long memberId) {
         return feedbackQueryMapper.findAllByMemberId(memberId);
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public FeedbackDetailDto getFeedbackDetail(Long memberId, Long feedbackId) {
         return feedbackQueryMapper.findByIdAndMemberId(feedbackId, memberId);
     }
