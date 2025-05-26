@@ -45,7 +45,7 @@ public class CategoryCommandControllerTest {
                 .thenReturn(100L); // 예시 응답 ID
 
         // when & then
-        mockMvc.perform(post("/api/v1/categories/create")
+        mockMvc.perform(post("/api/v1/categories")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
