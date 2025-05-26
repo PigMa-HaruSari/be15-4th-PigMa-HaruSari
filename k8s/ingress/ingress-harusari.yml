@@ -17,10 +17,3 @@ spec:
                 name: harusari-frontend-ser
                 port:
                   number: 8000
-#          - path: /api(/|$)(.*)
-#            pathType: ImplementationSpecific
-#            backend:
-#              service:
-#                name: harusari-backend-ser
-#                port:
-#                  number: 8001
