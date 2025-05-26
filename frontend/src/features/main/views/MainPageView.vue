@@ -113,7 +113,6 @@ import Header from '@/components/layout/Header.vue'
 import { Calendar } from '@fullcalendar/core'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
-<<<<<<< HEAD
 import {
   deleteTask,
   fetchCategory,
@@ -124,15 +123,11 @@ import {
   createDiary,
   updateDiary, deleteDiary
 } from '@/features/main/mainApi'
-import AddTaskModal from '@/features/main/components/AddTaskModal.vue'
 import { useToast } from 'vue-toastification'
-import {useUserStore} from "@/stores/userStore.js";
 import ConfirmModal from "@/components/common/ConfirmModal.vue";
 
 const toast = useToast()
-=======
 import { useUserStore } from '@/stores/userStore';
-import { fetchCategory, fetchTasks } from '@/features/main/mainApi'
 import AddTaskModal from '@/features/main/components/AddTaskModal.vue'
 import { showErrorToast } from '@/utill/toast.js';
 import router from '@/router/index.js';
@@ -140,7 +135,6 @@ import { storeToRefs } from 'pinia';
 
 const userStore = useUserStore();
 const { userDeletedAt } = storeToRefs(userStore)
->>>>>>> 17e90b81952ac3f7b48da92db62582e3f8dbf968
 const reviewText = ref('')
 const diary = ref(null)
 const categories = ref([])
