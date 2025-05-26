@@ -294,7 +294,18 @@ const saveDiary = async () => {
     toast.error('회고 저장에 실패했어요.')
   }
 }
-
+const handleConfirmDelete = async () => {
+  try {
+    await deleteDiary(diary.value.diaryId)
+    diary.value = null
+    reviewText.value = ''
+    toast.success('회고가 삭제되었습니다!')
+  } catch (e) {
+    toast.error('회고 삭제에 실패했어요.')
+  } finally {
+    showConfirmModal.value = false
+  }
+}
 
 const isDarkColor = (hex) => {
   if (!hex) return false

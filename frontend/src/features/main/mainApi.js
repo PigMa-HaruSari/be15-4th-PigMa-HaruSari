@@ -40,7 +40,7 @@ export const fetchDiaryByDate = async (date) => {
 };
 
 export const createDiary = async (payload) => {
-    return await api.post(`/diary/create`, payload);
+    return await api.post(`/diary`, payload);
 };
 
 export const updateDiary = async (diaryId, payload) => {
