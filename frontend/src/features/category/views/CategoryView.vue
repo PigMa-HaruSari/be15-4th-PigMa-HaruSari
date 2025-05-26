@@ -32,6 +32,7 @@
         @edit="handleEdit"
         @delete="handleDeleteClick"
         @complete="handleComplete"
+        @cancel-complete="handleCancelComplete"
     />
 
     <CategoryCreateModal
@@ -122,6 +123,16 @@ const handleComplete = async (category) => {
   }
 };
 
+const handleCancelComplete = async (category) => {
+  try {
+    await completeCategory(category.categoryId); // 완료 취소도 같은 API 사용
+    await loadCategories();
+    showActionModal.value = false;
+  } catch (e) {
+    console.error('카테고리 완료 취소 실패:', e);
+  }
+}
+
 const handleEdit = (category) => {
   isEdit.value = true;
   editTarget.value = category;
@@ -138,7 +149,6 @@ const confirmDeleteCategory = async () => {
   try {
     const hasSchedules = selectedCategory.value.tasks?.length > 0
     await deleteCategory(selectedCategory.value.categoryId, "카테고리를 삭제하겠습니다", hasSchedules)
-    // toast.success('카테고리가 삭제되었습니다.')
     showDeleteModal.value = false
     selectedCategory.value = null
 
@@ -146,7 +156,6 @@ const confirmDeleteCategory = async () => {
 
     await loadCategories() // 카테고리 목록 갱신 함수
   } catch (e) {
-    // toast.error('카테고리 삭제에 실패했어요.')
   }
 }
 

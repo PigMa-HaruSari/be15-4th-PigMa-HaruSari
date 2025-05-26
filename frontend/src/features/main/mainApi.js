@@ -22,9 +22,10 @@ export const createTask = (data) => {
     return api.post('/task/schedule', data)
 }
 
-export const updateTask = (scheduleId) => {
-    return api.put(`/task/schedule/${scheduleId}`)
+export const updateTask = (scheduleId, data) => {
+    return api.put(`/task/schedule/${scheduleId}`, data)
 }
+
 
 export const deleteTask = (scheduleId) => {
     return api.delete(`/task/schedule/${scheduleId}`);

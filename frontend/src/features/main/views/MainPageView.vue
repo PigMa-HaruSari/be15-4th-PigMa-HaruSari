@@ -44,7 +44,7 @@
 
                 <div class="task-actions">
                   <button class="btn edit-btn" @click="openEditTaskModal(task)">수정</button>
-                  <button class="btn delete-btn" @click="handleDeleteTask(task.scheduleId)">삭제</button>
+                  <button class="btn delete-btn" @click="confirmDeleteTask(task)">삭제</button>
                 </div>
               </div>
             </div>
@@ -55,7 +55,7 @@
 
             <!-- 회고 존재하면서 오늘 작성 && 수정 중일 때 -->
             <div v-if="diary && isToday(diary.createdAt) && isEditing">
-              <textarea v-model="reviewText" />
+              <textarea v-model="reviewText" placeholder="오늘 하루는 어땠나요? 자유롭게 기록해보세요." />
               <div class="review-actions">
                 <button @click="isEditing = false">취소</button>
                 <button @click="updateExistingDiary">수정 완료</button>
@@ -76,13 +76,18 @@
               <div class="readonly-diary">{{ diary.diaryContent }}</div>
             </div>
 
-            <!-- 회고 없음 -->
-            <div v-else>
-              <textarea v-model="reviewText" placeholder="오늘의 회고를 작성해보세요..." />
+            <!-- 회고 없음이고 오늘일 경우에만 작성 가능 -->
+            <div v-else-if="!diary && isSameDate(selectedDate, new Date())">
+              <textarea v-model="reviewText" placeholder="오늘 하루는 어땠나요? 자유롭게 기록해보세요." />
               <div class="review-actions">
-                <button @click="reviewText = ''">회고 삭제</button>
-                <button @click="saveDiary">회고 저장</button>
+                <button @click="reviewText = ''">초기화</button>
+                <button @click="saveDiary">기록 남기기</button>
               </div>
+            </div>
+
+            <!-- 회고 없음이고 오늘이 아님 -->
+            <div v-else>
+              <div class="readonly-diary empty">이 날은 회고를 남기지 않았어요 📝</div>
             </div>
           </div>
 
@@ -93,6 +98,12 @@
               @close="showAddTaskModal = false"
               @submitted="loadTasksByDate"
           />
+          <EditTaskModal
+              v-if="showEditModal"
+              :task="selectedTask"
+              @close="closeEditModal"
+              @update="handleTaskUpdate"
+          />
           <!-- ✅ 커스텀 확인 모달 -->
           <ConfirmModal
               v-if="showConfirmModal"
@@ -100,6 +111,14 @@
               message="기존에 작성한 회고 내용은 모두 삭제됩니다."
               @close="showConfirmModal = false"
               @confirm="handleConfirmDelete"
+          />
+
+          <ConfirmModal
+              v-if="showDeleteModal"
+              title="정말 삭제할까요?"
+              message="삭제하면 되돌릴 수 없습니다."
+              @close="showDeleteModal = false"
+              @confirm="handleConfirmDeleteTask"
           />
         </div>
       </div>
@@ -132,6 +151,7 @@ import AddTaskModal from '@/features/main/components/AddTaskModal.vue'
 import { showErrorToast } from '@/utill/toast.js';
 import router from '@/router/index.js';
 import { storeToRefs } from 'pinia';
+import EditTaskModal from "@/features/main/components/EditTaskModal.vue";
 
 const userStore = useUserStore();
 const { userDeletedAt } = storeToRefs(userStore)
@@ -143,6 +163,8 @@ const selectedDate = ref(new Date())
 const selectedMonth = ref(new Date())
 const showConfirmModal = ref(false)
 
+const showDeleteModal = ref(false)
+const taskToDelete = ref(null)
 
 const filteredCategories = computed(() =>
     categories.value.filter(
@@ -152,6 +174,7 @@ const filteredCategories = computed(() =>
             category.tasks.length > 0
     )
 )
+const formatDate = (date) => date.toISOString().split('T')[0]
 
 const showAddTaskModal = ref(false)
 
@@ -182,28 +205,68 @@ const updateExistingDiary = async () => {
     toast.error('회고 수정 실패')
   }
 }
+const showEditModal = ref(false)
+const selectedTask = ref(null)
 
+const openEditTaskModal = (task) => {
+  selectedTask.value = {
+    ...task,
+    scheduleDate: formatDate(selectedDate.value) // ✅ 여기가 중요
+  }
+  showEditModal.value = true
+}
+const closeEditModal = () => {
+  showEditModal.value = false
+  selectedTask.value = null
+}
+
+const confirmDeleteTask = (task) => {
+  taskToDelete.value = task
+  showDeleteModal.value = true
+}
+
+const handleTaskUpdate = async (updatedTask) => {
+  try {
+    const payload = {
+      categoryId: updatedTask.categoryId,
+      scheduleContent: updatedTask.scheduleContent,
+      scheduleDate: updatedTask.scheduleDate
+    }
+
+    await updateTask(updatedTask.scheduleId, payload)
+
+    toast.success("할 일이 성공적으로 수정되었습니다!")
+    await loadTasksByDate()
+    closeEditModal()
+  } catch (error) {
+    console.error("❌ 수정 오류:", error)
+    // toast.error("할 일 수정 중 문제가 발생했어요.")
+  }
+}
 
 // 회고 삭제 클릭 → 모달 띄우기
 const deleteExistingDiary = () => {
   showConfirmModal.value = true
 }
 
-// 회고 삭제 확정 처리
-const handleConfirmDelete = async () => {
+const isSameDate = (d1, d2) => {
+  return new Date(d1).toDateString() === new Date(d2).toDateString()
+}
+
+const handleConfirmDeleteTask = async () => {
   try {
-    await deleteDiary(diary.value.diaryId)
-    diary.value = null
-    reviewText.value = ''
-    toast.success('회고 삭제 완료!')
+    await deleteTask(taskToDelete.value.scheduleId)
+    toast.success("할 일이 삭제되었습니다!")
+    await loadTasksByDate()
   } catch (e) {
-    toast.error('회고 삭제 실패')
+    toast.error("삭제 중 오류가 발생했어요.")
   } finally {
-    showConfirmModal.value = false
+    showDeleteModal.value = false
+    taskToDelete.value = null
   }
 }
 
-const formatDate = (date) => date.toISOString().split('T')[0]
+
 
 const loadDiary = async () => {
   try {
@@ -281,7 +344,8 @@ const loadTasksByDate = async () => {
       category.tasks = taskList.map(task => ({
         scheduleId: task.scheduleId,
         text: task.scheduleContent,
-        completed: task.completionStatus
+        completed: task.completionStatus,
+        categoryId: category.categoryId // ✅ 여기!
       }))
     } catch (error) {
       console.error(`❌ 카테고리 ${category.title}의 할 일 조회 실패`, error)

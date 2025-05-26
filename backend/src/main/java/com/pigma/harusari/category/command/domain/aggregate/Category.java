@@ -42,7 +42,7 @@ public class Category {
     }
 
     public void completeCategory() {
-        this.completed = true;
+        this.completed = !this.completed;
     }
 }
 
