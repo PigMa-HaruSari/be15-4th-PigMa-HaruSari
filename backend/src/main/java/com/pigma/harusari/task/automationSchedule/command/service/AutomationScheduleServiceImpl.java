@@ -3,7 +3,6 @@ package com.pigma.harusari.task.automationSchedule.command.service;
 import com.pigma.harusari.category.command.domain.aggregate.Category;
 import com.pigma.harusari.category.command.domain.repository.CategoryCommandRepository;
 import com.pigma.harusari.task.automationSchedule.command.dto.request.AutomationScheduleCreateRequest;
-import com.pigma.harusari.task.automationSchedule.command.dto.response.AutomationScheduleResponse;
 import com.pigma.harusari.task.automationSchedule.command.entity.AutomationSchedule;
 import com.pigma.harusari.task.automationSchedule.command.entity.RepeatType;
 import com.pigma.harusari.task.automationSchedule.command.repository.AutomationScheduleRepository;

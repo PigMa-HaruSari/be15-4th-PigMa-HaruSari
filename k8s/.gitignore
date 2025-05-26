@@ -1,0 +1,2 @@
+## env (secret, configmap)
+k8s/env/*

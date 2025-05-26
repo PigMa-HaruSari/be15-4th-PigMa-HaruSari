@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: harusari-backend-dep
+spec:
+  selector:
+    matchLabels:
+      app: harusari-backend
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: harusari-backend
+    spec:
+      containers:
+        - name: harusari-backend-container
+          image: hyeonyoungjang/harusari-backend
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - secretRef:
+                name: harusari-secrets
+            - configMapRef:
+                name: harusari-config
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
