@@ -1,7 +1,6 @@
 package com.pigma.harusari.task.automationSchedule.command.service;
 
 import com.pigma.harusari.task.automationSchedule.command.dto.request.AutomationScheduleCreateRequest;
-import com.pigma.harusari.task.automationSchedule.command.dto.response.AutomationScheduleResponse;
 import com.pigma.harusari.task.automationSchedule.command.entity.AutomationSchedule;
 
 import java.time.LocalDate;
