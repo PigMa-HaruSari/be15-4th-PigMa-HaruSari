@@ -47,7 +47,7 @@
     <ConfirmWithInputModal
         v-if="showDeleteModal"
         title="카테고리를 삭제할까요?"
-        message="해당 카테고리에 연결된 모든 할 일이 함께 삭제됩니다. 아래 문장을 입력해야 삭제할 수 있습니다."
+        :message="'해당 카테고리에 연결된 모든 할 일이 함께 삭제됩니다. \n 아래 문장을 입력해야 삭제할 수 있습니다. \n\n \'카테고리를 삭제하겠습니다\''"
         requiredText="카테고리를 삭제하겠습니다"
         @close="showDeleteModal = false"
         @confirm="confirmDeleteCategory"

@@ -7,7 +7,7 @@
       <input
           v-model="confirmationText"
           class="modal-input"
-          placeholder="카테고리를 삭제하겠습니다"
+          :placeholder="requiredText"
       />
 
       <div class="modal-actions">
@@ -107,5 +107,8 @@ const confirmationText = ref('')
 .btn.confirm:disabled {
   background-color: #ccc;
   cursor: not-allowed;
+}
+.modal-message {
+  white-space: pre-line;
 }
 </style>

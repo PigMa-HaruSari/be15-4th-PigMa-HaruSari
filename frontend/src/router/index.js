@@ -7,6 +7,7 @@ import { mainRoutes } from '@/features/main/router.js';
 import { userRoutes } from "@/features/user/router.js";
 import { categoryRoutes } from "@/features/category/router.js";
 import {feedbackRoutes} from "@/features/feedback/router.js";
+import {easterEggRoutes} from "@/features/EasterEgg/router.js";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -15,7 +16,8 @@ const router = createRouter({
     ...mainRoutes,
     ...userRoutes,
     ...categoryRoutes,
-    ...feedbackRoutes
+    ...feedbackRoutes,
+    ...easterEggRoutes
   ],
 });
 

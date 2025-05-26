@@ -22,11 +22,13 @@ public class AutomationScheduleDto {
 
     private LocalDate scheduleDate;
 
+    private LocalDate endDate;
+
 
     @Builder
     public AutomationScheduleDto(
             Long automationScheduleId, String automationScheduleContent, LocalDate scheduleDate, String repeatType,
-            Long categoryId, String categoryName
+            Long categoryId, String categoryName, LocalDate endDate
     ) {
         this.automationScheduleId = automationScheduleId;
         this.automationScheduleContent = automationScheduleContent;
@@ -34,6 +36,7 @@ public class AutomationScheduleDto {
         this.repeatType = repeatType;
         this.categoryId = categoryId;
         this.categoryName = categoryName;
+        this.endDate = endDate;
     }
 
 }

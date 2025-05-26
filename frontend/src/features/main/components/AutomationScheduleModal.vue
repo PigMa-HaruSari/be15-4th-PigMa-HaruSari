@@ -1,5 +1,5 @@
 <template>
-  <div v-if="visible" class="modal-overlay">
+  <div v-if="visible" class="modal-overlay" @click.self="$emit('close')">
     <div class="modal-container">
       <div class="modal-header">
         <h2>📅 자동화 일정 관리</h2>
@@ -12,17 +12,17 @@
           <div
               class="automation-item"
               v-for="item in automationList"
-              :key="item.id"
+              :key="item.automationScheduleId"
           >
             <div class="info">
-              <h3>{{ item.title }}</h3>
-              <p><strong>카테고리:</strong> {{ item.categoryId }}</p>
-              <p><strong>반복:</strong> {{ item.repeatCycle }}</p>
-              <p><strong>종료일:</strong> {{ item.repeatEndDate }}</p>
+              <h3>{{ item.automationScheduleContent }}</h3>
+              <p><strong>카테고리:</strong> {{ item.categoryName }}</p>
+              <p><strong>반복:</strong> {{ item.repeatType }}</p>
+              <p><strong>종료일:</strong> {{ item.endDate }}</p>
             </div>
             <div class="actions">
               <button class="edit-btn" @click="handleEdit(item)">수정</button>
-              <button class="delete-btn" @click="handleDelete(item.id)">삭제</button>
+              <button class="delete-btn" @click="handleDelete(item.automationScheduleId)">삭제</button>
             </div>
           </div>
         </div>
@@ -42,6 +42,15 @@
           :categories="categories"
       @close="formVisible = false; fetchList()"
       />
+      <ConfirmWithInputModal
+          v-if="deleteConfirmVisible"
+          :title="'자동화 일정을 삭제할까요?'"
+          :message="'해당 자동화 규칙과 이후 생성될 모든 일정이 삭제됩니다. \n정말 삭제하시겠습니까? \n\n \'자동화 일정을 삭제하겠습니다\'를 입력하세요.'"
+          :requiredText="'자동화 일정을 삭제하겠습니다'"
+          @confirm="handleConfirmedDelete"
+          @close="deleteConfirmVisible = false"
+      />
+
     </div>
   </div>
 </template>
@@ -51,6 +60,7 @@ import { ref, onMounted } from 'vue'
 import AutomationScheduleForm from './AutomationScheduleForm.vue'
 import { fetchAutomationSchedules, deleteAutomationSchedule } from '@/features/main/automationScheduleApi.js'
 import {fetchCategory} from "@/features/main/mainApi.js";
+import ConfirmWithInputModal from "@/components/common/ConfirmWithInputModal.vue";
 
 const props = defineProps({ visible: Boolean })
 const emit = defineEmits(['close'])
@@ -61,11 +71,14 @@ const automationList = ref([])
 const formVisible = ref(false)
 const formMode = ref('create')
 const selectedItem = ref(null)
+const deleteConfirmVisible = ref(false)
+const scheduleIdToDelete = ref(null)
+
 
 const fetchList = async () => {
   try {
     const res = await fetchAutomationSchedules()
-    automationList.value = Array.isArray(res.data.data) ? res.data.data : []
+    automationList.value = Array.isArray(res.data) ? res.data : []
     console.log('자동화 일정 응답:', res.data)
   } catch (e) {
     automationList.value = []
@@ -85,10 +98,21 @@ const handleEdit = (item) => {
   formVisible.value = true
 }
 
-const handleDelete = async (id) => {
-  if (confirm('이 자동화 규칙을 삭제하시겠습니까?')) {
-    await deleteAutomationSchedule(id)
+
+const handleDelete = (id) => {
+  scheduleIdToDelete.value = id
+  deleteConfirmVisible.value = true
+}
+
+const handleConfirmedDelete = async () => {
+  try {
+    await deleteAutomationSchedule(scheduleIdToDelete.value)
     await fetchList()
+  } catch (e) {
+    console.error('❌ 삭제 오류:', e)
+  } finally {
+    deleteConfirmVisible.value = false
+    scheduleIdToDelete.value = null
   }
 }
 
@@ -97,11 +121,14 @@ onMounted(async () => {
 
   try {
     const res = await fetchCategory()
-    categories.value = res.data.data
+    console.log('카테고리 응답:', res.data)
+    const list = res.data?.data
+    categories.value = Array.isArray(list) ? list : []
   } catch (e) {
     console.error('카테고리 목록 조회 실패:', e)
     categories.value = []
   }
+
 })
 </script>
 
@@ -198,4 +225,6 @@ onMounted(async () => {
   color: #777;
   padding: 30px 0;
 }
+
+
 </style>

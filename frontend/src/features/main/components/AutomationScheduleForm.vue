@@ -84,6 +84,7 @@ const weekdays = [
 ]
 
 const form = reactive({
+  id: null,
   title: '',
   categoryId: null,
   repeatEndDate: '',
@@ -104,7 +105,19 @@ watch(
     () => props.initialData,
     (newVal) => {
       if (props.mode === 'edit' && newVal) {
-        Object.assign(form, newVal)
+        form.id = newVal.automationScheduleId || null
+        form.title = newVal.automationScheduleContent || ''
+        form.categoryId = newVal.categoryId || null
+        form.repeatEndDate = newVal.endDate || ''
+        form.repeatCycle = newVal.repeatType || 'DAILY'
+        form.weekdays = newVal.repeatWeekdays ? newVal.repeatWeekdays.split(',') : []
+      } else {
+        // 생성 모드면 초기화
+        form.title = ''
+        form.categoryId = null
+        form.repeatEndDate = ''
+        form.repeatCycle = 'DAILY'
+        form.weekdays = []
       }
     },
     { immediate: true }
