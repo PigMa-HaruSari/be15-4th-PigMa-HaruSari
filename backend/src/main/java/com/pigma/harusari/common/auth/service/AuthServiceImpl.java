@@ -169,6 +169,7 @@ public class AuthServiceImpl implements AuthService {
                 .refreshToken(refreshToken)
                 .nickname(member.getNickname())
                 .userId(memberId)
+                .userDeletedAt(Boolean.TRUE.equals(member.getUserDeletedAt()))
                 .build();
     }
 

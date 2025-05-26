@@ -1,34 +1,35 @@
 <template>
-  <Header/>
+  <Header />
   <div class="main-wrapper">
     <div class="signup-box">
       <div class="logo-box">
         <img src="@/assets/images/HARURAMENSARI.png" alt="하루살이 로고" />
       </div>
-      <div class="subtitle">이메일 인증을 통해 가입을 시작해보세요</div>
+      <div class="subtitle">비밀번호를 재설정해보세요</div>
+
       <div class="form-group">
         <input type="email" v-model="email" placeholder="이메일 입력" />
         <button @click="sendCode" :disabled="codeSent">
           {{ codeSent ? '전송됨' : '인증번호 전송' }}
         </button>
       </div>
+
       <div class="input-box" v-if="codeSent">
         <input type="text" v-model="code" placeholder="인증번호 입력" />
       </div>
-
       <div class="input-box" v-if="codeSent">
         <button class="submit-btn" @click="verifyCode">인증번호 확인</button>
       </div>
 
-      <div class="input-box">
-        <input type="password" v-model="password" placeholder="비밀번호 입력" />
+      <div class="input-box" v-if="verified">
+        <input type="password" v-model="newPassword" placeholder="비밀번호 입력" />
       </div>
-      <div class="input-box">
+      <div class="input-box" v-if="verified">
         <input type="password" v-model="confirmPassword" placeholder="비밀번호 확인" />
       </div>
 
-      <div class="input-box">
-        <button class="submit-btn" @click="goNextStep">가입하기</button>
+      <div class="input-box" v-if="verified">
+        <button class="submit-btn" @click="resetPassword">비밀번호 재설정하기</button>
       </div>
     </div>
   </div>
@@ -38,61 +39,73 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import Header from '@/components/layout/Header.vue';
-import { sendEmailCode, verifyEmailCode } from '@/features/user/api';
-import { useSignupStore } from '@/stores/signupStore.js';
-import { showErrorToast, showSuccessToast } from '@/utill/toast.js';
+import {
+  sendResetEmailCode,
+  verifyResetToken,
+  resetPasswordRequest
+} from '@/features/user/api';
+import { showErrorToast, showSuccessToast } from '@/utill/toast';
 
 const router = useRouter();
-const signupStore = useSignupStore();
 
 const email = ref('');
 const code = ref('');
-const password = ref('');
+const token = ref('');
+const newPassword = ref('');
 const confirmPassword = ref('');
 const codeSent = ref(false);
-const codeVerified = ref(false);
+const verified = ref(false);
 
 const sendCode = async () => {
   try {
-    await sendEmailCode(email.value);
+    await sendResetEmailCode(email.value);
     codeSent.value = true;
-    showSuccessToast('인증번호가 전송되었습니다.');
-  } catch (e) {
-    showErrorToast('인증번호 전송에 실패했습니다.');
+    showSuccessToast('인증번호가 전송되었습니다. 메일을 확인하세요.');
+  } catch (err) {
+    showErrorToast('이메일 전송 실패');
   }
 };
 
 const verifyCode = async () => {
   try {
-    await verifyEmailCode(email.value, code.value);
-    codeVerified.value = true;
-    showSuccessToast('이메일 인증이 완료되었습니다.');
-  } catch (e) {
+    await verifyResetToken(email.value, code.value);
+    verified.value = true;
+    token.value = code.value;
+    showSuccessToast('인증 완료. 비밀번호를 재설정하세요.');
+  } catch (err) {
     showErrorToast('인증번호가 올바르지 않습니다.');
   }
 };
 
-const goNextStep = () => {
-  if (!email.value || !password.value || !confirmPassword.value) {
-    showErrorToast('모든 항목을 입력해주세요.');
-    return;
+const resetPassword = async () => {
+  if (!newPassword.value) {
+    return showErrorToast('비밀번호를 입력해주세요.');
   }
-  if (!codeVerified.value) {
-    showErrorToast('이메일 인증을 완료해주세요.');
-    return;
+  if (!confirmPassword.value) {
+    return showErrorToast('비밀번호 확인을 입력해주세요.');
   }
-  if (password.value.length < 10 || password.value.length > 20) {
-    showErrorToast('비밀번호는 10자 이상 20자 이하로 입력해주세요.');
-    return;
+  if (newPassword.value !== confirmPassword.value) {
+    return showErrorToast('비밀번호가 일치하지 않습니다.');
   }
-  if (password.value !== confirmPassword.value) {
-    showErrorToast('비밀번호가 일치하지 않습니다.');
-    return;
+  if (newPassword.value.length < 10) {
+    return showErrorToast('비밀번호는 10자 이상이어야 합니다.');
   }
-  signupStore.setBasicInfo({ emailValue: email.value, passwordValue: password.value });
-  router.push('/signup/register');
+
+  try {
+    await resetPasswordRequest({
+      token: token.value,
+      newPassword: newPassword.value,
+      confirmPassword: confirmPassword.value
+    });
+    showSuccessToast('비밀번호가 성공적으로 재설정되었습니다.');
+    await router.push('/login');
+  } catch (err) {
+    const msg = err.response?.data?.message || '비밀번호 재설정 실패';
+    showErrorToast(msg);
+  }
 };
 </script>
+
 
 <style scoped>
 .main-wrapper {
@@ -171,4 +184,5 @@ const goNextStep = () => {
 .submit-btn:hover {
   background: #e2e2e2;
 }
+
 </style>
