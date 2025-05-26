@@ -71,20 +71,23 @@
 ---
 
 ## 2. 협업🤝 전략
-<img src="frontend/src/assets/images/readme/git.png" alt="harusariERD"/>
 
-- 각자 작업 브랜치를 생성하고, 관련 이슈를 등록
-- 작업을 완료한 후 커밋과 푸시를 진행
-- PR을 올리면 최소 2명이 코드 리뷰와 승인
-- 2명 이상 승인 시에만 main 브랜치로 머지 가능
+<div align="center">
+<img src="frontend/src/assets/images/readme/git.png" width="500"/>
 
 
+✔️ 각자 작업 브랜치를 생성하고, 관련 이슈를 등록 
+<br>
+✔️ 작업을 완료한 후 커밋과 푸시를 진행
+<br>
+✔️ PR을 올리면 최소 2명이 코드 리뷰와 승인
+<br>
+✔️ 2명 이상 승인 시에만 main 브랜치로 머지 가능
 
+</div>
 ---
 
 ## 3. 프로젝트 기획서📝
-
-<br>
 
 ### 🧩 프로젝트 배경
 
@@ -121,14 +124,14 @@
 
 ---
 
-## 4. 시스템 아키텍쳐⚙️
+## 4. 아키텍쳐 구조도⚙️
 
 
 ---
 
 ## 5. 기술 스택🛠️
+
 <div align="center">
-<br>
 
 ### Frontend
 <img src="https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=HTML5&logoColor=white"/>
@@ -171,8 +174,6 @@
 <img src="https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=Docker&logoColor=white"/>
 <img src="https://img.shields.io/badge/kubernetes-326CE5?style=flat-square&logo=kubernetes&logoColor=white"/>
 
-<br>
-
 ### Collaboration Tools
 <img src="https://img.shields.io/badge/Notion-000000?style=flat-square&logo=Notion&logoColor=white"/>
 <img src="https://img.shields.io/badge/Google Docs-4285F4?style=flat-square&logo=GoogleDocs&logoColor=white"/>
@@ -201,6 +202,27 @@
 
 ## 8. REST API📡
 
+<details>
+<summary>Swagger</summary>
+<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-01.png" alt="harusariUi"/>
+<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-02.png" alt="harusariUi"/>
+<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-03.png" alt="harusariUi"/>
+<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-04.png" alt="harusariUi"/>
+<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-05.png" alt="harusariUi"/>
+<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-06.png" alt="harusariUi"/>
+<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-07.png" alt="harusariUi"/>
+<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-08.png" alt="harusariUi"/>
+<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-09.png" alt="harusariUi"/>
+<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-10.png" alt="harusariUi"/>
+<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-11.png" alt="harusariUi"/>
+<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-12.png" alt="harusariUi"/>
+<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-13.png" alt="harusariUi"/>
+<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-14.png" alt="harusariUi"/>
+<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-15.png" alt="harusariUi"/>
+<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-16.png" alt="harusariUi"/>
+<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-17.png" alt="harusariUi"/>
+<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-18.png" alt="harusariUi"/>
+</details>
 
 <br>
 
@@ -208,12 +230,245 @@
 
 ## 9. 주요 기능🚀
 
+### ⭐ 회원
+
+<details>
+<summary>회원 가입</summary>
+・ 비회원은 이메일, 비밀번호, 닉네임, 성별을 입력해 회원가입할 수 있다.
+</details>
+
+<br>
+
+<details>
+<summary>소셜 회원 가입</summary>
+・ 비회원은 Google 또는 Kakao 계정으로 회원가입을 하고 닉네임과 성별을 등록할 수 있다.
+</details>
+
+<br>
+
+<details>
+<summary>로그인</summary>
+・ 회원은 이메일과 비밀번호를 입력해 로그인할 수 있다.
+</details>
+
+<br>
+
+<details>
+<summary>로그아웃</summary>
+・ 회원은 로그아웃 버튼 클릭으로 로그인 세션을 종료할 수 있다.
+</details>
+
+
+<br>
+
+<details>
+<summary>회원탈퇴</summary>
+・ 회원은 자신의 계정을 탈퇴할 수 있다.
+</details>
+
+<br>
+
+<details>
+<summary>개인 정보 조회/수정</summary>
+・ 회원은 자신의 이메일, 닉네임, 성별, 개인정보 수집 동의 여부를 확인할 수 있다.
+・ 회원은 닉네임, 개인정보 수집 동의 여부를 수정할 수 있다.
+</details>
+
+<br>
+
+<details>
+<summary>비밀번호 변경/재설정</summary>
+・ 회원은 기존 비밀번호 입력 후 새 비밀번호로 변경할 수 있다.
+・ 회원은 비밀번호를 잊어버렸을 때 이메일 인증을 통해 비밀번호를 재설정 할 수 있다.
+</details>
+
+### ⭐ 카테고리
+
+<details>
+<summary>카테고리 조회/추가/수정</summary>
+・ 회원은 자신이 등록한 카테고리를 조회할 수 있다
+・ 회원은 일정 관리를 위한 카테고리에 대해 카테고리명, 색상을 등록 할 수 있다.
+・ 회원은 기존 카테고리의 이름이나 색상 등을 수정할 수 있다.
+</details>
+
+<br>
+
+<details>
+<summary>카테고리 완료</summary>
+・ 회원은 등록한 카테고리가 완료될 경우 해당 카테고리를 완료처리 할 수 있다.
+</details>
+
+<br>
+
+
+### ⭐ 할 일 
+
+<details>
+<summary>일정 추가</summary>
+・ 회원은 일정명, 날짜, 카테고리를 입력하여 일정을 추가할 수 있다.
+</details>
+
+
+<br>
+
+<details>
+<summary>일정 조회</summary>
+・ 회원은 달력 또는 리스트 형태로 일정을 조회할 수 있다.
+</details>
+
+<br>
+
+<details>
+<summary>일정 완료 등록/취소</summary>
+・ 회원은 일정을 완료 상태로 변경할 수 있다.
+・ 회원은 완료 처리된 일정을 미완료 상태로 되돌릴 수 있다.
+</details>
+
+### ⭐ 할 일 자동화
+
+<details>
+<summary>일정 자동화 추가</summary>
+・ 회원은 반복 일정 등 자동화 규칙을 추가할 수 있다.
+</details>
+
+<br>
+
+<details>
+<summary>일정 자동화 조회</summary>
+・ 회원은 등록된 자동화 규칙을 조회할 수 있다.
+</details>
+
+### ⭐ 알림
+
+<details>
+<summary>일별 미완료 건 알림</summary>
+・ 회원에게 미완료한 일정에 대한 알림을 제공할 수 있다.
+</details>
+
+<br>
+
+<details>
+<summary>달성률 알림</summary>
+・ 회원에게 주간, 월간 사용자의 전체적인 달성률에 대한 알림을 제공할 수 있다.
+</details>
+
+### ⭐ 피드백
+<details>
+<summary>피드백 도출</summary>
+・ 시스템은 매월 1일 전월의 회고를 기반으로 피드백을 도출할 수 있다.
+</details>
+
+<br>
+
+<details>
+<summary>피드백 조회</summary>
+・ 회원은 월별 피드백을 조회할 수 있다.
+</details>
+
+### ⭐ 통계
+<details>
+<summary>일별/월별/카테고리별 통계 조회</summary>
+・ 회원은 일별/월별/카테고리별 할 일 달성률을 기준으로 통계를 조회할 수 있다.
+</details>
+
+<br>
+
+
+### ⭐ 회고 관리
+
+
+<details>
+<summary>회고 작성</summary>
+・ 회원은 제목과 내용의 형태로 작성 회고를 작성 할 수 있다.
+</details>
+
+<br>
+
+<details>
+<summary>회고 수정</summary>
+・ 회원은 작성한 회고는 수정 할 수 있다.
+</details>
+
+<br>
+
+
+<details>
+<summary>회고 삭제</summary>
+・ ・회원은 작성된 회고를 삭제 할 수 있다.
+</details>
 
 <br>
 
 ---
 
 ## 10. 빌드 및 배포 문서📦
+<h2>Dockerfile</h2>
+<details> 
+
+ <summary> </summary>
+
+>FROM node:22-alpine AS build-stage
+> <br>
+> <br>
+> LABEL authors="hyeon-young"
+> <br>
+> WORKDIR /app
+> <br>
+> ### # 변경이 없으면 캐시를 재사용하여 npm install 생략 가능
+> COPY package.json package-lock.json ./
+> <br>
+> RUN npm install
+> <br>
+> COPY . .
+> <br>
+> RUN npm run build
+> <br>
+> ### # nginx 이미지를 사용하여 프로덕션 스테이지를 구성
+> FROM nginx:stable-alpine AS production-stage
+> <br>
+> ### # 빌드 스테이지에서 생성된 정적 파일들을 Nginx의 기본 웹 서버 디렉토리로 복사
+> ### (Nginx가 Vue.js 애플리케이션의 빌드된 파일들을 서빙)
+> COPY --from=build-stage /app/dist /usr/share/nginx/html
+> <br>
+> ### # 로컬 디렉토리의 nginx.conf 파일을 Nginx의 설정 디렉토리로 복사
+> COPY ./nginx.conf /etc/nginx/nginx.conf
+> <br>
+> EXPOSE 80
+> <br>
+> ### # Nginx를 포그라운드에서 실행하여 컨테이너가 계속 실행
+> CMD ["nginx", "-g", "daemon off;"]
+>
+
+>
+> FROM openjdk:17
+> <br>
+>LABEL authors="hyeon-young"
+> <br>
+>WORKDIR /app
+> <br>
+>COPY build/libs/*.jar app.jar
+> <br>
+>ENTRYPOINT ["java", "-jar", "app.jar"]
+
+</details>
+
+<br>
+
+<h2>Kubernetes manifest</h2>
+<details> 
+
+ <summary> </summary>
+내용
+</details>
+
+<br>
+
+<h2>Jenkins Pipeline Script</h2>
+<details> 
+
+ <summary> </summary>
+내용
+</details>
 
 <br>
 
