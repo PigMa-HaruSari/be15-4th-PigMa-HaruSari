@@ -24,7 +24,6 @@ public class AlarmCommandServiceImpl implements AlarmCommandService {
     @Override
     @Transactional(readOnly = true)
     public void markAllAsRead(Long memberId) {
-        System.out.println("💠 Service 메소드 실행");
         alarmRepository.markAllByMemberIdAsRead(memberId);
     }
 
