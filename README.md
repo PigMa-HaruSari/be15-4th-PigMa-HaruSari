@@ -34,6 +34,7 @@
 9. [주요 기능🚀](#9-주요-기능)
 10. [빌드 및 배포 문서📦](#10-빌드-및-배포-문서)
 11. [Jenkins CI/CD 테스트 결과](#11-jenkins-ci-cd-테스트-결과)
+12. [💌 팀원 회고](#12--팀원-회고)
 
 
 <br>
@@ -472,6 +473,166 @@ CMD ["nginx", "-g", "daemon off;"]
 </details>
 <br>
 
+<h2>Jenkins Pipeline Script</h2>
+<details>
+<summary> </summary>
+
+```groovy
+
+pipeline {
+    agent any
+
+    tools {
+        gradle 'gradle'
+        jdk 'openJDK17'
+        nodejs 'nodejs'
+    }
+
+    environment {
+        GITHUB_URL = 'https://github.com/memory-h/be15-4th-PigMa-HaruSari-Jenkins'
+        GIT_USERNAME = 'memory-h'
+        GIT_EMAIL = 'gusdud9124@gmail.com'
+        HTTP_PROXY = ''
+        HTTPS_PROXY = ''
+        NO_PROXY = 'localhost,127.0.0.1'
+    }
+
+    stages {
+        stage('Preparation') {
+            steps {
+                script {
+                    if (isUnix()) {
+                        sh 'docker --version'
+                    } else {
+                        bat 'docker --version'
+                    }
+                }
+            }
+        }
+
+        stage('Source Build') {
+            steps {
+                git branch: 'main', url: "${env.GITHUB_URL}"
+
+                script {
+                    dir('frontend') {
+                        if (isUnix()) {
+                            sh 'npm install'
+                            sh 'npm run build'
+                        } else {
+                            bat 'npm install'
+                            bat 'npm run build'
+                        }
+                    }
+
+                    dir('backend') {
+                        if (isUnix()) {
+                            sh 'chmod +x ./gradlew'
+                            sh './gradlew clean build -x test'
+                        } else {
+                            bat 'gradlew.bat clean build -x test'
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Container Build and Push') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'DOCKERHUB_PASSWORD', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+
+                        if (isUnix()) {
+                            sh "docker build -t ${DOCKER_USER}/harusari-frontend:${currentBuild.number} -f frontend/Dockerfile frontend"
+                            sh "docker tag ${DOCKER_USER}/harusari-frontend:${currentBuild.number} ${DOCKER_USER}/harusari-frontend:latest"
+                            sh "echo ${DOCKER_PASS} | docker login -u ${DOCKER_USER} --password-stdin"
+                            sh "docker push ${DOCKER_USER}/harusari-frontend:${currentBuild.number}"
+                            sh "docker push ${DOCKER_USER}/harusari-frontend:latest"
+
+                            sh "docker build -t ${DOCKER_USER}/harusari-backend:${currentBuild.number} -f backend/Dockerfile backend"
+                            sh "docker tag ${DOCKER_USER}/harusari-backend:${currentBuild.number} ${DOCKER_USER}/harusari-backend:latest"
+                            sh "docker push ${DOCKER_USER}/harusari-backend:${currentBuild.number}"
+                            sh "docker push ${DOCKER_USER}/harusari-backend:latest"
+                        } else {
+                            bat "docker build -t %DOCKER_USER%/harusari-frontend:${env.BUILD_NUMBER} -f frontend/Dockerfile frontend"
+                            bat "docker tag %DOCKER_USER%/harusari-frontend:${env.BUILD_NUMBER} %DOCKER_USER%/harusari-frontend:latest"
+                            bat "echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin"
+                            bat "docker push %DOCKER_USER%/harusari-frontend:${env.BUILD_NUMBER}"
+                            bat "docker push %DOCKER_USER%/harusari-frontend:latest"
+
+                            bat "docker build -t %DOCKER_USER%/harusari-backend:${env.BUILD_NUMBER} -f backend/Dockerfile backend"
+                            bat "docker tag %DOCKER_USER%/harusari-backend:${env.BUILD_NUMBER} %DOCKER_USER%/harusari-backend:latest"
+                            bat "docker push %DOCKER_USER%/harusari-backend:${env.BUILD_NUMBER}"
+                            bat "docker push %DOCKER_USER%/harusari-backend:latest"
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('K8S Manifest Update') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'github', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASS')]) {
+                        if (isUnix()) {
+                            sh "git config --global user.name '${env.GIT_USERNAME}'"
+                            sh "git config --global user.email '${env.GIT_EMAIL}'"
+                            sh "rm -rf repo && git clone https://${GIT_USER}:${GIT_PASS}@github.com/memory-h/be15-4th-PigMa-HaruSari-Jenkins.git repo"
+                            dir('repo') {
+                                sh "sed -i '' 's|harusari-frontend:.*|harusari-frontend:${currentBuild.number}|' k8s/vue/harusari-vue-dep.yml"
+                                sh "sed -i '' 's|harusari-backend:.*|harusari-backend:${currentBuild.number}|' k8s/boot/harusari-boot-dep.yml"
+                                sh "git add ."
+                                sh "git commit -m '[UPDATE] ${currentBuild.number} image versioning' || echo 'No changes to commit.'"
+                                sh "git push origin main"
+                                
+                                sh "chmod +x k8s/k8s-deploy-all.sh"
+                                sh "./k8s/k8s-deploy-all.sh"
+                            }
+                        } else {
+                            bat "git config --global user.name '${env.GIT_USERNAME}'"
+                            bat "git config --global user.email '${env.GIT_EMAIL}'"
+                            bat "rmdir /s /q repo && git clone https://${GIT_USER}:${GIT_PASS}@github.com/memory-h/be15-4th-PigMa-HaruSari-Jenkins.git repo"
+                            dir('repo') {
+                                bat "powershell -Command \"(Get-Content k8s/vue/harusari-vue-dep.yml) -replace 'harusari-frontend:.*', 'harusari-frontend:${env.BUILD_NUMBER}' | Set-Content k8s/vue/harusari-vue-dep.yml\""
+                                bat "powershell -Command \"(Get-Content k8s/boot/harusari-boot-dep.yml) -replace 'harusari-backend:.*', 'harusari-backend:${env.BUILD_NUMBER}' | Set-Content k8s/boot/harusari-boot-dep.yml\""
+                                bat "git add ."
+                                bat "git commit -m \"[UPDATE] ${env.BUILD_NUMBER} image versioning\" || echo 'No changes to commit.'"
+                                bat "git push origin main"
+                                
+                                sh "chmod +x k8s/k8s-deploy-all.sh"
+                                sh "./k8s/k8s-deploy-all.sh"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            script {
+                if (isUnix()) {
+                    sh 'docker logout'
+                } else {
+                    bat 'docker logout'
+                }
+            }
+        }
+        success {
+            echo '✅ Pipeline succeeded!'
+        }
+        failure {
+            echo '❌ Pipeline failed!'
+        }
+    }
+}
+
+```
+
+</details>
+
+<br>
 
 
 ---
@@ -480,3 +641,51 @@ CMD ["nginx", "-g", "daemon off;"]
 <br>
 <img src="/assets/images/readme/gif/jenkins_pipe2.gif"/>
 <br>
+
+---
+
+## 12. 💌 팀원 회고
+
+
+|**이기연**|
+|------|
+
+>이번 프로젝트에서는 Spring Boot와 Vue.js 기반의 To-do 서비스에 SSE와 RabbitMQ를 활용한 실시간 알림 기능을 구현했습니다. 또한 Gemini LLM을 활용하여 사용자의 일정과 피드백을 분석하고 AI가 피드백을 제공하는 기능도 개발했습니다. 알림은 CQRS 패턴과 스케줄링을 통해 매일, 매주, 매월 자동 전송되도록 구성했습니다. 개발 시간이 부족해 모든 기능을 완벽히 구현하지는 못했지만, 주어진 시간 내에 최선을 다해 개발을 진행했습니다. Jenkins 기반의 CI/CD 파이프라인을 구축하는 과정에서는 GitHub Access Token 오류, WSL 미지원 등 윈도우 환경에서 여러 문제를 겪었고, 해결하기 위해 다양한 시도를 함으로써 많은 경험을 했습니다. 다양한 기술을 직접 적용하며 백엔드 전반에 대한 이해도를 높일 수 있었습니다. 특히 팀원들의 적극적인 도움을 받아 어려운 상황을 함께 해결하며 협업의 중요성을 깊이 느꼈습니다.
+
+<br>
+
+
+|**이주미**|
+|------|
+
+>이번 프로젝트에서 저는 회원 도메인 전반을 맡아 개발을 진행했습니다. Spring Security와 JWT 기반의 인증·인가 구조를 설계하고, 일반 회원가입/로그인뿐 아니라 카카오 OAuth2 소셜 로그인까지 모두 직접 구현하였습니다. 이전 프로젝트에서는 주로 기능 단위의 구현에 집중했다면, 이번에는 보안 구조 설계와 세션 관리, 토큰 기반 인증 흐름 전반을 이해하고 구현하는 데 의미 있는 시간을 보낼 수 있었습니다. 백엔드에서는 access token과 refresh token을 각각 분리해 관리하고, refresh token은 Redis에 저장하여 서버 측 인증 유지에 필요한 인프라까지 다루었습니다. 프론트엔드에서는 Vue + Pinia 구조 하에 JWT 기반 인증 상태를 클라이언트 측에서 관리하고, 자동 로그인 및 토큰 만료 시점에서의 refresh 흐름까지 구현했습니다. 특히 쿠키 기반 refresh token 처리와 CORS 이슈를 해결하는 과정에서 보안 구조에 대해 더 고민해보고 공부해볼 수 있었던 것이 의미있었습니다. CI/CD 프로젝트인 만큼 CI/CD 영역에도 기여하고자 했으나, GitHub Organization 내부의 private repository에 대한 Deploy Key 인증 문제로 인해 Jenkins 파이프라인 이후 단계로 넘어가지 못했던 점이 가장 아쉬운 점으로 남는 것 같습니다. 다음 프로젝트에서는 CI/CD와 인프라까지 직접 연계해볼 수 있도록 이 경험을 발판 삼아 더욱 성장하고 싶습니다.
+
+<br>
+
+
+|**장건희**|
+|------|
+
+>이번 프로젝트는 개발이라는 단계를 거치기 전부터 하나하나 구상하면서 그간의 프로젝트에서 챙기지 못햇던 컨벤션이나 협업에 대한 룰들에 대해 더욱 자세하게 정리하고 시도해볼 수 있는 프로젝트였습니다. 이번 프로젝트에서는 카테고리와 회고에 대한 부분을 담당하게 됐지만 프론트를 전적으로 담당하게 되면서 더욱 백엔드의 코드에 더 깊게 접근할 수 있어 알림에서의 MQ와 SSE , 그리고 JWT 토큰을 이용한 인증 방식 등에 대해서도 자세히 알아 볼 수 있는 기회였던 것 같습니다.팀원들과 쿠버네티스와 도커를 활용하여 Jenkins를 통해 CI/CD까지 구현하고자 하였으나 Github Access Token으로 인한 인증에서 문제가 발생하여 Oranization에서의 CI/CD까지는 구현하지 못하였으나 이번 프로젝트에서 배운 내용으로 다음 프로젝트에서는 더욱 완성도 있는 프로젝트를 완성 할 수 있을 것 같습니다. 짧은 기간동안 많이 바쁘고 정신 없었지만 각자의 자리에서 최선을 다해준 팀원들과의 협업에서 얻은 점이 더욱 많은 프로젝트였던 것 같습니다.
+
+<br>
+
+
+|**장현영**|
+|------|
+
+>이번 프로젝트에서는 기능 개발보다는 Docker와 Kubernetes를 실제로 적용해보는 데 집중했습니다. Kubernetes 클러스터를 구성하고 서비스를 직접 배포해보면서, 그동안 개념으로만 알고 있던 내용을 손으로 하나하나 구현해보며 확실히 이해할 수 있는 계기가 되었습니다. Docker Desktop에서 제공하는 단일 노드 Kubernetes 클러스터를 기반으로, 프론트(Vue + Nginx), 백엔드(Spring Boot), MariaDB, Redis, RabbitMQ까지 배포했습니다. 각각의 서비스는 Deployment 또는 StatefulSet으로 관리했고, Ingress Controller를 함께 구성하여 Ingress를 통해 외부에서 접근할 수 있도록 설정했습니다. 특히 좋았던 점은, 아키텍처 구조를 직접 시각화하면서 Deployment, Service, Ingress, PVC 같은 리소스들이 서로 어떻게 연결되고 동작하는지 머릿속에 명확히 그릴 수 있었습니다. 구조도를 직접 그려보며, 단순히 리소스를 나열하고 연결하는 수준을 넘어서 Service와 Ingress의 역할, Secret의 필요성, PVC와 PV를 통한 데이터 보존 방식까지 자연스럽게 이해할 수 있었습니다. 아쉬웠던 점은, 파드의 수를 더 늘려보고 싶었지만 Kubernetes 환경이 제대로 동작하지 않는 문제가 있었고, 데이터베이스의 경우도 파드를 1개만 설정해 사용했기 때문에 여러 개의 파드를 두고 데이터베이스 간 동기화까지 해보지 못한 것이 아쉬웠습니다.
+
+<br>
+
+
+|**최지혜**|
+|------|
+
+> 이번 프로젝트에서 전보다 다양한 경험을 해볼 수 있어 많이 배울 수 있었습니다. 특히 깃 허브에 익숙하지 않았는데 이슈 생성과 코드 리뷰, 리드미 작성 등을 해보면서 익숙해지는 기회를 가질 수 있었고 테스트 코드도 작성해 보며 코드에 대한 이해나 안정성에 대해 학습할 수 있었습니다.
+이전보다 코드의 흐름을 파악하고 오류를 찾는 데 조금 수월함을 느꼈고 느리지만 조금씩 성장해나가고 있음을 느껴 더 열심히 할 수 있었습니다.
+든든한 팀원들 덕분에 즐겁게 프로젝트를 마무리할 수 있었습니다. 특히 팀원들 모두 질문에 대한 답변을 너무 알아듣기 쉽게 잘 설명해 주고 분담한 업무 믿고 맡겨줘 너무 고마웠습니다.  최종 프로젝트에서는 또 조금 더 성장한 모습을 보일 수 있도록 더 열심히 하겠습니다. 감사합니다.
+
+<br>
+
+---
