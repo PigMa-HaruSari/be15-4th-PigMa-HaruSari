@@ -601,6 +601,7 @@ onMounted(async () => {
   padding: 10px;
   resize: none;
   margin-top: 12px;
+  box-sizing: border-box;
 }
 .review-actions {
   display: flex;
