@@ -22,20 +22,24 @@ export const useUserStore = defineStore('user', {
     getters: {
         isAuthenticated(state) {
             return !!state.accessToken && Date.now() < (state.expiration || 0) && !state.userDeletedAt;
+        },
+        isLoggedIn(state) {
+            return !!state.accessToken && !state.userDeletedAt;
         }
     },
 
     actions: {
         setUser(userData) {
             // accessToken에서 exp 추출
-            let expiration = null;
-            if (userData.accessToken) {
+            let expiration = userData.expiration ?? null
+
+            if (!expiration && userData.accessToken) {
                 try {
-                    const decoded = jwtDecode(userData.accessToken);
-                    expiration = decoded.exp * 1000; // 초 → 밀리초
-                    console.log('🕒 decoded.expiration:', expiration);
+                    const decoded = jwtDecode(userData.accessToken)
+                    expiration = decoded.exp * 1000
+                    console.log('🕒 decoded.expiration:', expiration)
                 } catch (e) {
-                    console.error('❌ JWT 디코딩 실패:', e);
+                    console.error('❌ JWT 디코딩 실패:', e)
                 }
             }
             this.userId = userData.userId;
@@ -45,8 +49,15 @@ export const useUserStore = defineStore('user', {
             this.expiration = expiration;
             this.userDeletedAt = userData.userDeletedAt || false;
 
-            localStorage.setItem('user', JSON.stringify(userData));
-            localStorage.setItem('accessToken', userData.accessToken);
+            localStorage.setItem('user', JSON.stringify({
+                userId: this.userId,
+                email: this.email,
+                nickname: this.nickname,
+                accessToken: this.accessToken,
+                expiration: this.expiration,
+                userDeletedAt: this.userDeletedAt
+            }))
+            localStorage.setItem('accessToken', this.accessToken)
         },
 
         logout() {
