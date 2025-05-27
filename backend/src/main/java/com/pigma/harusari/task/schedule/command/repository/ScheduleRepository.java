@@ -21,4 +21,7 @@ public interface ScheduleRepository  extends JpaRepository<Schedule, Long> {
     );
 
     void deleteByAutomationSchedule_AutomationScheduleId(Long scheduleId);
+
+    void deleteByCategory_CategoryId(Long categoryId);
+
 }

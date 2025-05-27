@@ -87,10 +87,14 @@ onMounted(() => {
 }
 
 .right-column {
-  flex: 1;
+  width: 648px;
   display: flex;
   flex-direction: column;
   gap: 24px;
+  height: 600px;
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding: 0;
 }
 
 .donut-section {
