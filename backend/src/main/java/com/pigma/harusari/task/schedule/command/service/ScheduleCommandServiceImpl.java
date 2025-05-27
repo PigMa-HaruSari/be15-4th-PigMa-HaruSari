@@ -238,4 +238,9 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
                 .completionStatus(updated.getCompletionStatus())
                 .build();
     }
+
+    @Transactional
+    public void deleteSchedulesByCategoryId(Long categoryId) {
+        scheduleRepository.deleteByCategory_CategoryId(categoryId);
+    }
 }

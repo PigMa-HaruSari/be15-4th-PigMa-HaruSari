@@ -6,6 +6,8 @@ import com.pigma.harusari.category.command.domain.aggregate.Category;
 import com.pigma.harusari.category.command.domain.repository.CategoryCommandRepository;
 import com.pigma.harusari.category.exception.CategoryErrorCode;
 import com.pigma.harusari.category.exception.CategoryException;
+import com.pigma.harusari.task.schedule.command.repository.ScheduleRepository;
+import com.pigma.harusari.task.schedule.command.service.ScheduleCommandService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class CategoryCommandServiceImpl implements CategoryCommandService {
 
     private final CategoryCommandRepository categoryCommandRepository;
+    private final ScheduleCommandService scheduleCommandService;
+
 
     @Override
     @Transactional
@@ -86,6 +90,8 @@ public class CategoryCommandServiceImpl implements CategoryCommandService {
             // 일정이 포함 확인
             throw new CategoryException(CategoryErrorCode.CANNOT_DELETE_CATEGORY_WITH_SCHEDULES);
         }
+        scheduleCommandService.deleteSchedulesByCategoryId(categoryId);
+
 
         categoryCommandRepository.delete(category);
     }

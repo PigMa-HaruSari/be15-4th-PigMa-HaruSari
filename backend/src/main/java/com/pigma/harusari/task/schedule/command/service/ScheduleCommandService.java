@@ -19,4 +19,6 @@ public interface ScheduleCommandService {
     ScheduleCommandResponse updateCompletionStatus(Long scheduleId, Boolean completionStatus, Long memberId);
 
     void deleteSchedulesAfter(Long automationScheduleId, LocalDate baseDate);
+
+    void deleteSchedulesByCategoryId(Long categoryId);
 }
