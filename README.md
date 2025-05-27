@@ -584,9 +584,6 @@ pipeline {
                                 sh "git add ."
                                 sh "git commit -m '[UPDATE] ${currentBuild.number} image versioning' || echo 'No changes to commit.'"
                                 sh "git push origin main"
-                                
-                                sh "chmod +x k8s/k8s-deploy-all.sh"
-                                sh "./k8s/k8s-deploy-all.sh"
                             }
                         } else {
                             bat "git config --global user.name '${env.GIT_USERNAME}'"
@@ -598,9 +595,6 @@ pipeline {
                                 bat "git add ."
                                 bat "git commit -m \"[UPDATE] ${env.BUILD_NUMBER} image versioning\" || echo 'No changes to commit.'"
                                 bat "git push origin main"
-                                
-                                sh "chmod +x k8s/k8s-deploy-all.sh"
-                                sh "./k8s/k8s-deploy-all.sh"
                             }
                         }
                     }
@@ -620,10 +614,10 @@ pipeline {
             }
         }
         success {
-            echo '✅ Pipeline succeeded!'
+            echo 'Pipeline succeeded!'
         }
         failure {
-            echo '❌ Pipeline failed!'
+            echo 'Pipeline failed!'
         }
     }
 }
