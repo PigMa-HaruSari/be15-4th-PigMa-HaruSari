@@ -558,7 +558,7 @@ onMounted(async () => {
 .task-text {
   flex-grow: 1;
   margin-left: 10px;
-  color: #333;
+  color: inherit;
 }
 .task-actions {
   display: flex;

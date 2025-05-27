@@ -6,6 +6,7 @@ import com.pigma.harusari.category.command.domain.aggregate.Category;
 import com.pigma.harusari.category.command.domain.repository.CategoryCommandRepository;
 import com.pigma.harusari.category.exception.CategoryErrorCode;
 import com.pigma.harusari.category.exception.CategoryException;
+import com.pigma.harusari.task.schedule.command.service.ScheduleCommandService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,6 +28,9 @@ class CategoryCommandServiceImplTest {
 
     @Mock
     CategoryCommandRepository categoryCommandRepository;
+
+    @Mock
+    private ScheduleCommandService scheduleCommandService;
 
     private final Long memberId = 1L;
     private final Long categoryId = 100L;
@@ -107,13 +111,16 @@ class CategoryCommandServiceImplTest {
     @Test
     @DisplayName("카테고리 삭제 성공 테스트")
     void testDeleteCategorySuccess() {
-        when(categoryCommandRepository.findByCategoryIdAndMemberId(categoryId, memberId)).thenReturn(Optional.of(category));
+        when(categoryCommandRepository.findByCategoryIdAndMemberId(categoryId, memberId))
+                .thenReturn(Optional.of(category));
+
+        doNothing().when(scheduleCommandService).deleteSchedulesByCategoryId(categoryId);
 
         categoryCommandService.deleteCategory(categoryId, memberId, "카테고리를 삭제하겠습니다", false);
 
+        verify(scheduleCommandService).deleteSchedulesByCategoryId(categoryId);
         verify(categoryCommandRepository).delete(category);
     }
-
     @Test
     @DisplayName("카테고리 삭제 시 확인 문구 불일치 예외 테스트")
     void testDeleteCategoryWithWrongConfirmText() {

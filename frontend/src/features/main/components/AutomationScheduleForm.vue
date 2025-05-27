@@ -150,10 +150,10 @@ const handleSubmit = async () => {
 
     if (props.mode === 'create') {
       await createAutomationSchedule(payload)
-      toast.success('✅ 자동화 규칙이 생성되었습니다!')
+      toast.success('✅ 자동화 일정이 생성되었습니다!')
     } else {
       await updateAutomationSchedule(form.id, payload)
-      toast.success('✏️ 자동화 규칙이 수정되었습니다!')
+      toast.success('✏️ 자동화 일정이 수정되었습니다!')
     }
 
     emit('close')
