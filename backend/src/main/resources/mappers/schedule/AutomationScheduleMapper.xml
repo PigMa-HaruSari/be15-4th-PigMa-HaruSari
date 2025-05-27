@@ -9,6 +9,7 @@
         a.repeat_type AS repeatType,
         c.category_id AS categoryId,
         c.category_name AS categoryName,
+        a.end_date As endDate,
         a.automation_schedule_content AS automationScheduleContent
         FROM automation_schedule a
         JOIN category c ON a.category_id = c.category_id
