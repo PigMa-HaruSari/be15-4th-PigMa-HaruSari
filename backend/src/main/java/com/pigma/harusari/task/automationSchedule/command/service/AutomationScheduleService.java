@@ -15,4 +15,6 @@ public interface AutomationScheduleService {
 
     void generateSchedulesForAutomation(AutomationSchedule automationSchedule, LocalDate startDate);
 
+    void softDelete(Long automationScheduleId, Long memberId);
+
 }
