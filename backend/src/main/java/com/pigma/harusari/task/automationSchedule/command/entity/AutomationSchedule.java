@@ -40,6 +40,9 @@ public class AutomationSchedule {
     @Column(name = "repeat_monthday")
     private Integer repeatMonthday;
 
+    @Column(name = "deleted_flag", nullable = false)
+    private boolean deletedFlag = false;
+
     @Builder
     public AutomationSchedule(
             Long categoryId, String automationScheduleContent, LocalDate endDate,
@@ -59,5 +62,5 @@ public class AutomationSchedule {
     public void updateRepeatType(RepeatType repeatType) { this.repeatType = repeatType; }
     public void updateRepeatWeekdays(String weekdays) { this.repeatWeekdays = weekdays; }
     public void updateRepeatMonthday(Integer monthday) { this.repeatMonthday = monthday; }
-
+    public void softDelete() {this.deletedFlag = true; }
 }

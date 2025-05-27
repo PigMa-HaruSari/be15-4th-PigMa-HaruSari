@@ -192,8 +192,23 @@ public class AutomationScheduleServiceImpl implements AutomationScheduleService 
         // 3. 오늘 이후 일정 삭제
         LocalDate now = LocalDate.now();
         scheduleRepository.deleteByAutomationSchedule_AutomationScheduleIdAndScheduleDateAfter(automationScheduleId, LocalDate.now());
-
-        automationScheduleRepository.delete(automationSchedule);
     }
 
+    @Transactional
+    public void softDelete(Long automationScheduleId, Long memberId) {
+        AutomationSchedule automationSchedule = automationScheduleRepository.findById(automationScheduleId)
+                .orElseThrow(() -> new AutomationScheduleNotFoundException(TaskErrorCode.AUTOMATION_SCHEDULE_NOT_FOUND));
+
+        // 2. 카테고리 조회 및 소유자(memberId) 검증
+        Category category = categoryCommandRepository.findById(automationSchedule.getCategoryId())
+                .orElseThrow(() -> new CategoryNotFoundException(TaskErrorCode.CATEGORY_NOT_FOUND));
+
+
+        if (!category.getMemberId().equals(memberId)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "해당 일정을 삭제할 권한이 없습니다.");
+        }
+
+        automationSchedule.softDelete();
+        automationScheduleRepository.save(automationSchedule);
+    }
 }
