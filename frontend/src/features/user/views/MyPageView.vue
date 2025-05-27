@@ -89,8 +89,10 @@ import Header from '@/components/layout/Header.vue';
 import { fetchMyPageProfile, updateUserProfile, updateUserPassword, signOutUser } from '@/features/user/api';
 import { showErrorToast, showSuccessToast } from '@/utill/toast';
 import { useRouter } from 'vue-router';
+import { useUserStore } from '@/stores/userStore.js';
 
 const router = useRouter();
+const userStore = useUserStore();
 const email = ref('');
 const nickname = ref('');
 const gender = ref('NONE');
@@ -160,6 +162,7 @@ const confirmSignOut = async () => {
   try {
     await signOutUser({ password: withdrawPassword.value });
     showSuccessToast('회원 탈퇴가 완료되었습니다.');
+    userStore.logout();
     router.push('/');
   } catch (err) {
     const msg = err.response?.data?.message || '회원 탈퇴에 실패했습니다.';
