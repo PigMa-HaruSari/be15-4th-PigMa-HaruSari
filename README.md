@@ -172,14 +172,14 @@
 
 ## 6. 요구사항 명세서📄
 
-<img src="frontend/src/assets/images/readme/requirement_statement1.png" alt="requirement_statement" />
-<img src="frontend/src/assets/images/readme/requirement_statement2.png" alt="requirement_statement"/>
+<img src="assets/images/readme/requirement_statement1.png" alt="requirement_statement" />
+<img src="assets/images/readme/requirement_statement2.png" alt="requirement_statement"/>
 
 ---
 
 ## 7. ERD🗂️
 
-<img src="frontend/src/assets/images/readme/harusari ERD.png" alt="harusariERD"/>
+<img src="assets/images/readme/harusari ERD.png" alt="harusariERD"/>
 
 <br>
 
@@ -189,24 +189,24 @@
 
 <details>
 <summary>Swagger</summary>
-<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-01.png" alt="harusariUi"/>
-<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-02.png" alt="harusariUi"/>
-<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-03.png" alt="harusariUi"/>
-<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-04.png" alt="harusariUi"/>
-<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-05.png" alt="harusariUi"/>
-<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-06.png" alt="harusariUi"/>
-<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-07.png" alt="harusariUi"/>
-<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-08.png" alt="harusariUi"/>
-<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-09.png" alt="harusariUi"/>
-<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-10.png" alt="harusariUi"/>
-<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-11.png" alt="harusariUi"/>
-<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-12.png" alt="harusariUi"/>
-<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-13.png" alt="harusariUi"/>
-<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-14.png" alt="harusariUi"/>
-<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-15.png" alt="harusariUi"/>
-<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-16.png" alt="harusariUi"/>
-<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-17.png" alt="harusariUi"/>
-<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-18.png" alt="harusariUi"/>
+<img src="assets/images/readme/swagger/Swagger%20UI-01.png" alt="harusariUi"/>
+<img src="assets/images/readme/swagger/Swagger%20UI-02.png" alt="harusariUi"/>
+<img src="assets/images/readme/swagger/Swagger%20UI-03.png" alt="harusariUi"/>
+<img src="assets/images/readme/swagger/Swagger%20UI-04.png" alt="harusariUi"/>
+<img src="assets/images/readme/swagger/Swagger%20UI-05.png" alt="harusariUi"/>
+<img src="assets/images/readme/swagger/Swagger%20UI-06.png" alt="harusariUi"/>
+<img src="assets/images/readme/swagger/Swagger%20UI-07.png" alt="harusariUi"/>
+<img src="assets/images/readme/swagger/Swagger%20UI-08.png" alt="harusariUi"/>
+<img src="assets/images/readme/swagger/Swagger%20UI-09.png" alt="harusariUi"/>
+<img src="assets/images/readme/swagger/Swagger%20UI-10.png" alt="harusariUi"/>
+<img src="assets/images/readme/swagger/Swagger%20UI-11.png" alt="harusariUi"/>
+<img src="assets/images/readme/swagger/Swagger%20UI-12.png" alt="harusariUi"/>
+<img src="assets/images/readme/swagger/Swagger%20UI-13.png" alt="harusariUi"/>
+<img src="assets/images/readme/swagger/Swagger%20UI-14.png" alt="harusariUi"/>
+<img src="assets/images/readme/swagger/Swagger%20UI-15.png" alt="harusariUi"/>
+<img src="assets/images/readme/swagger/Swagger%20UI-16.png" alt="harusariUi"/>
+<img src="assets/images/readme/swagger/Swagger%20UI-17.png" alt="harusariUi"/>
+<img src="assets/images/readme/swagger/Swagger%20UI-18.png" alt="harusariUi"/>
 </details>
 
 <br>
