@@ -15,7 +15,10 @@
           <div class="today-task-box">
             <div class="today-task-header">
               <h4>오늘 할 일</h4>
-              <button class="add-task-btn" @click="showAddTaskModal = true">할 일 추가</button>
+              <div class="button-group">
+                <button class="add-task-btn" @click="showAddTaskModal = true">할 일 추가</button>
+                <button class="automation-btn" @click="showAutomationModal = true">자동화</button>
+              </div>
             </div>
 
             <!-- 카테고리별 할 일 리스트 -->
@@ -120,6 +123,12 @@
               @close="showDeleteModal = false"
               @confirm="handleConfirmDeleteTask"
           />
+          <!-- 🔽 자동화 일정 모달 -->
+          <AutomationScheduleModal
+              v-if="showAutomationModal"
+              :visible="showAutomationModal"
+              @close="showAutomationModal = false"
+          />
         </div>
       </div>
     </div>
@@ -152,6 +161,8 @@ import { showErrorToast } from '@/utill/toast.js';
 import router from '@/router/index.js';
 import { storeToRefs } from 'pinia';
 import EditTaskModal from "@/features/main/components/EditTaskModal.vue";
+import AutomationScheduleModal from "@/features/main/components/AutomationScheduleModal.vue";
+
 
 const userStore = useUserStore();
 const { userDeletedAt } = storeToRefs(userStore)
@@ -162,6 +173,8 @@ const calendarRef = ref(null)
 const selectedDate = ref(new Date())
 const selectedMonth = ref(new Date())
 const showConfirmModal = ref(false)
+const showAutomationModal = ref(false)
+
 
 const showDeleteModal = ref(false)
 const taskToDelete = ref(null)
@@ -496,6 +509,11 @@ onMounted(async () => {
   border-radius: 8px;
   cursor: pointer;
 }
+.button-group {
+  display: flex;
+  gap: 10px;
+}
+
 .category {
   margin-bottom: 16px;
   border-radius: 12px;
@@ -604,6 +622,17 @@ onMounted(async () => {
 .review-actions button:last-child {
   background-color: #FFD8BE;
   color: #333;
+}
+
+.automation-btn {
+  font-size: 14px;
+  padding: 6px 12px;
+  margin-left: 10px;
+  background-color: #ddddff;
+  color: #333;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
 }
 :deep(.selected-date) {
   background-color: #4D96FF !important;

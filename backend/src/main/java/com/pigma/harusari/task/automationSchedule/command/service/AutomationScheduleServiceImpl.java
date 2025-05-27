@@ -192,6 +192,8 @@ public class AutomationScheduleServiceImpl implements AutomationScheduleService 
         // 3. 오늘 이후 일정 삭제
         LocalDate now = LocalDate.now();
         scheduleRepository.deleteByAutomationSchedule_AutomationScheduleIdAndScheduleDateAfter(automationScheduleId, LocalDate.now());
+
+        automationScheduleRepository.delete(automationSchedule);
     }
 
 }
