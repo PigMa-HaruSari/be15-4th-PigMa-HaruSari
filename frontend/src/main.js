@@ -35,7 +35,7 @@ app.use(Toast, {
     rtl: false,
 })
 
-// localStorage 초기화
+// 사용자 정보 복원 및 토큰 재발급
 const userStore = useUserStore()
 const savedUser = localStorage.getItem('user')
 
@@ -49,11 +49,8 @@ if (savedUser) {
       const payload = jwtDecode(newToken)
 
       userStore.setUser({
-        accessToken: newToken,
-        userId: payload.sub,
-        nickname: payload.nickname,
-        role: payload.role,
-        expiration: payload.exp * 1000
+        ...parsedUser,
+        accessToken: newToken
       })
 
       if (userStore.isAuthenticated) {
