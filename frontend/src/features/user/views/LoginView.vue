@@ -1,5 +1,4 @@
 <template>
-  <Header />
   <div class="main-wrapper">
     <div class="signup-box">
       <div class="logo-box">

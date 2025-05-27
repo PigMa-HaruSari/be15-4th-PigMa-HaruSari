@@ -30,7 +30,7 @@
 
         <!-- 추가 버튼 -->
         <div class="footer">
-          <button class="create-btn" @click="handleCreate">➕ 새 자동화 규칙 추가</button>
+          <button class="create-btn" @click="handleCreate">➕ 새 자동화 일정 추가</button>
         </div>
       </div>
 
@@ -45,7 +45,7 @@
       <ConfirmWithInputModal
           v-if="deleteConfirmVisible"
           :title="'자동화 일정을 삭제할까요?'"
-          :message="'해당 자동화 규칙과 이후 생성될 모든 일정이 삭제됩니다. \n정말 삭제하시겠습니까? \n\n \'자동화 일정을 삭제하겠습니다\'를 입력하세요.'"
+          :message="'해당 자동화 일정과 이후 생성될 모든 일정이 삭제됩니다. \n정말 삭제하시겠습니까? \n\n \'자동화 일정을 삭제하겠습니다\'를 입력하세요.'"
           :requiredText="'자동화 일정을 삭제하겠습니다'"
           @confirm="handleConfirmedDelete"
           @close="deleteConfirmVisible = false"

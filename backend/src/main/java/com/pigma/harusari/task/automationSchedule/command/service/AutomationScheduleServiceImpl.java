@@ -56,7 +56,7 @@ public class AutomationScheduleServiceImpl implements AutomationScheduleService 
         automationScheduleRepository.save(automationSchedule);
 
         // 자동화 일정 등록 시, 즉시 실제 일정 생성
-        generateSchedulesForAutomation(automationSchedule, LocalDate.now());
+        generateSchedulesForAutomation(automationSchedule, LocalDate.now().minusDays(1));
 
         return automationSchedule.getAutomationScheduleId();
     }
