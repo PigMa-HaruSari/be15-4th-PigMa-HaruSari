@@ -104,10 +104,9 @@
 ---
 
 ## 4. 아키텍쳐 구조도⚙️
-
-<br>
-
-
+<div align="center">
+<img src="assets/images/readme/architectural.png" alt="requirement_statement"/>
+</div>
 <br>
 
 ---
