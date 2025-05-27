@@ -9,9 +9,11 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -57,12 +59,12 @@ public class AutomationScheduleController {
     @Parameter(name = "id", description = "삭제할 자동화 일정의 ID", example = "123")
     @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "자동화 일정이 성공적으로 삭제된다.")
     public ResponseEntity<ApiResponse<Void>> deleteSchedulesAfter(
-            @PathVariable("id") Long scheduleId,
+            @PathVariable("id") Long automationScheduleId,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         Long memberId = userDetails.getMemberId();
-        automationScheduleService.deleteSchedulesAfter(scheduleId, memberId);
+        automationScheduleService.deleteSchedulesAfter(automationScheduleId, memberId);
+        automationScheduleService.softDelete(automationScheduleId, memberId);
         return ResponseEntity.ok(ApiResponse.success(null));
     }
-
 }

@@ -55,7 +55,7 @@
 
 ## 2. 협업🤝 전략
 
-<img src="frontend/src/assets/images/readme/git.png" width="400"/>
+<img src="assets/images/readme/git.png" width="400"/>
 
 ✔️ 각자 작업 브랜치를 생성하고, 관련 이슈를 등록
 <br>
@@ -104,10 +104,9 @@
 ---
 
 ## 4. 아키텍쳐 구조도⚙️
-
-<br>
-
-
+<div align="center">
+<img src="assets/images/readme/architectural.png" alt="requirement_statement"/>
+</div>
 <br>
 
 ---
@@ -172,14 +171,14 @@
 
 ## 6. 요구사항 명세서📄
 
-<img src="frontend/src/assets/images/readme/requirement_statement1.png" alt="requirement_statement" />
-<img src="frontend/src/assets/images/readme/requirement_statement2.png" alt="requirement_statement"/>
+<img src="assets/images/readme/requirement_statement1.png" alt="requirement_statement" />
+<img src="assets/images/readme/requirement_statement2.png" alt="requirement_statement"/>
 
 ---
 
 ## 7. ERD🗂️
 
-<img src="frontend/src/assets/images/readme/harusari ERD.png" alt="harusariERD"/>
+<img src="assets/images/readme/harusari ERD.png" alt="harusariERD"/>
 
 <br>
 
@@ -189,24 +188,24 @@
 
 <details>
 <summary>Swagger</summary>
-<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-01.png" alt="harusariUi"/>
-<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-02.png" alt="harusariUi"/>
-<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-03.png" alt="harusariUi"/>
-<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-04.png" alt="harusariUi"/>
-<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-05.png" alt="harusariUi"/>
-<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-06.png" alt="harusariUi"/>
-<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-07.png" alt="harusariUi"/>
-<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-08.png" alt="harusariUi"/>
-<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-09.png" alt="harusariUi"/>
-<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-10.png" alt="harusariUi"/>
-<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-11.png" alt="harusariUi"/>
-<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-12.png" alt="harusariUi"/>
-<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-13.png" alt="harusariUi"/>
-<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-14.png" alt="harusariUi"/>
-<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-15.png" alt="harusariUi"/>
-<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-16.png" alt="harusariUi"/>
-<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-17.png" alt="harusariUi"/>
-<img src="frontend/src/assets/images/readme/swagger/Swagger%20UI-18.png" alt="harusariUi"/>
+<img src="assets/images/readme/swagger/Swagger%20UI-01.png" alt="harusariUi"/>
+<img src="assets/images/readme/swagger/Swagger%20UI-02.png" alt="harusariUi"/>
+<img src="assets/images/readme/swagger/Swagger%20UI-03.png" alt="harusariUi"/>
+<img src="assets/images/readme/swagger/Swagger%20UI-04.png" alt="harusariUi"/>
+<img src="assets/images/readme/swagger/Swagger%20UI-05.png" alt="harusariUi"/>
+<img src="assets/images/readme/swagger/Swagger%20UI-06.png" alt="harusariUi"/>
+<img src="assets/images/readme/swagger/Swagger%20UI-07.png" alt="harusariUi"/>
+<img src="assets/images/readme/swagger/Swagger%20UI-08.png" alt="harusariUi"/>
+<img src="assets/images/readme/swagger/Swagger%20UI-09.png" alt="harusariUi"/>
+<img src="assets/images/readme/swagger/Swagger%20UI-10.png" alt="harusariUi"/>
+<img src="assets/images/readme/swagger/Swagger%20UI-11.png" alt="harusariUi"/>
+<img src="assets/images/readme/swagger/Swagger%20UI-12.png" alt="harusariUi"/>
+<img src="assets/images/readme/swagger/Swagger%20UI-13.png" alt="harusariUi"/>
+<img src="assets/images/readme/swagger/Swagger%20UI-14.png" alt="harusariUi"/>
+<img src="assets/images/readme/swagger/Swagger%20UI-15.png" alt="harusariUi"/>
+<img src="assets/images/readme/swagger/Swagger%20UI-16.png" alt="harusariUi"/>
+<img src="assets/images/readme/swagger/Swagger%20UI-17.png" alt="harusariUi"/>
+<img src="assets/images/readme/swagger/Swagger%20UI-18.png" alt="harusariUi"/>
 </details>
 
 <br>
@@ -218,15 +217,10 @@
 ### ⭐ 회원
 
 <details>
-<summary>회원 가입</summary>
-・ 비회원은 이메일, 비밀번호, 닉네임, 성별을 입력해 회원가입할 수 있다.
-</details>
-
-<br>
-
-<details>
-<summary>소셜 회원 가입</summary>
+<summary>이메일/소셜 회원 가입</summary>
+・ 비회원은 이메일, 비밀번호, 닉네임, 성별을 입력해 회원가입할 수 있다. <br>
 ・ 비회원은 Google 또는 Kakao 계정으로 회원가입을 하고 닉네임과 성별을 등록할 수 있다.
+<img src="/assets/images/readme/gif/registration.gif"/>
 </details>
 
 <br>
@@ -234,7 +228,7 @@
 <details>
 <summary>로그인</summary>
 ・ 회원은 이메일과 비밀번호를 입력해 로그인할 수 있다.
-<img src="frontend/src/assets/images/readme/gif/login.gif"/>
+<img src="/assets/images/readme/gif/login.gif"/>
 </details>
 
 <br>
@@ -242,7 +236,7 @@
 <details>
 <summary>로그아웃</summary>
 ・ 회원은 로그아웃 버튼 클릭으로 로그인 세션을 종료할 수 있다.
-<img src="frontend/src/assets/images/readme/gif/logout.gif"/>
+<img src="/assets/images/readme/gif/logout.gif"/>
 </details>
 
 
@@ -251,15 +245,16 @@
 <details>
 <summary>회원탈퇴</summary>
 ・ 회원은 자신의 계정을 탈퇴할 수 있다.
+<img src="/assets/images/readme/gif/withdrawal.gif"/>
 </details>
 
 <br>
 
 <details>
 <summary>개인 정보 조회/수정</summary>
-・ 회원은 자신의 이메일, 닉네임, 성별, 개인정보 수집 동의 여부를 확인할 수 있다.
+・ 회원은 자신의 이메일, 닉네임, 성별, 개인정보 수집 동의 여부를 확인할 수 있다. <br>
 ・ 회원은 닉네임, 개인정보 수집 동의 여부를 수정할 수 있다.
-<img src="frontend/src/assets/images/readme/gif/mypage.gif"/>
+<img src="/assets/images/readme/gif/mypage.gif"/>
 </details>
 
 <br>
@@ -267,28 +262,34 @@
 <details>
 <summary>비밀번호 변경</summary>
 ・ 회원은 기존 비밀번호 입력 후 새 비밀번호로 변경할 수 있다.
-<img src="frontend/src/assets/images/readme/gif/password.gif"/>
+<img src="/assets/images/readme/gif/password.gif"/>
 </details>
+
+<br>
 
 ### ⭐ 카테고리
 
 <details>
 <summary>카테고리 조회/추가</summary>
-・ 회원은 자신이 등록한 카테고리를 조회할 수 있다
+・ 회원은 자신이 등록한 카테고리를 조회할 수 있다. <br>
 ・ 회원은 일정 관리를 위한 카테고리에 대해 카테고리명, 색상을 등록 할 수 있다.
-<img src="frontend/src/assets/images/readme/gif/createcategory.gif"/>
+<img src="/assets/images/readme/gif/createcategory.gif"/>
 </details>
+
+<br>
 
 <details>
 <summary>카테고리 수정</summary>
 ・ 회원은 기존 카테고리의 이름이나 색상 등을 수정할 수 있다.
-<img src="frontend/src/assets/images/readme/gif/updatecategory.gif"/>
+<img src="/assets/images/readme/gif/updatecategory.gif"/>
 </details>
+
+<br>
 
 <details>
 <summary>카테고리 삭제</summary>
 ・ 회원은 사용하지 않는 카테고리를 삭제할 수 있다.
-<img src="frontend/src/assets/images/readme/gif/deletecategory.gif"/>
+<img src="/assets/images/readme/gif/deletecategory.gif"/>
 </details>
 
 <br>
@@ -296,58 +297,62 @@
 <details>
 <summary>카테고리 완료</summary>
 ・ 회원은 등록한 카테고리가 완료될 경우 해당 카테고리를 완료처리 할 수 있다.
-<img src="frontend/src/assets/images/readme/gif/categorycompletionStatus.gif"/>
+<img src="/assets/images/readme/gif/categorycompletionStatus.gif"/>
 </details>
 
 <br>
-
 
 ### ⭐ 할 일
 
 <details>
 <summary>일정 추가</summary>
 ・ 회원은 일정명, 날짜, 카테고리를 입력하여 일정을 추가할 수 있다.
-<img src="frontend/src/assets/images/readme/gif/createschedule.gif"/>
+<img src="/assets/images/readme/gif/createschedule.gif"/>
 </details>
-
 
 <br>
 
 <details>
 <summary>일정 조회</summary>
 ・ 회원은 달력 또는 리스트 형태로 일정을 조회할 수 있다.
+<img src="/assets/images/readme/gif/schedulelist.gif"/>
 </details>
 
 <br>
 
 <details>
 <summary>일정 완료 등록/취소</summary>
-・ 회원은 일정을 완료 상태로 변경할 수 있다.
+・ 회원은 일정을 완료 상태로 변경할 수 있다. <br>
 ・ 회원은 완료 처리된 일정을 미완료 상태로 되돌릴 수 있다.
-<img src="frontend/src/assets/images/readme/gif/completionStatus.gif"/>
+<img src="/assets/images/readme/gif/completionStatus.gif"/>
 </details>
+
+<br>
 
 ### ⭐ 할 일 자동화
 
 <details>
-<summary>일정 자동화 추가</summary>
-・ 회원은 반복 일정 등 자동화 규칙을 추가할 수 있다.
-
+<summary>일정 자동화 추가/조회</summary>
+・ 회원은 반복 일정 등 자동화 규칙을 추가/조회할 수 있다.
+<img src="/assets/images/readme/gif/createauto.gif"/>
 </details>
 
 <br>
 
 <details>
-<summary>일정 자동화 조회</summary>
-・ 회원은 등록된 자동화 규칙을 조회할 수 있다.
+<summary>일정 자동화 수정</summary>
+・ 회원은 등록된 자동화 규칙을 수정할 수 있다.
+<img src="/assets/images/readme/gif/updateauto.gif"/>
 </details>
+
+<br>
 
 ### ⭐ 알림
 
 <details>
 <summary>일별 미완료 건 알림</summary>
 ・ 회원에게 미완료한 일정에 대한 알림을 제공할 수 있다.
-<img src="frontend/src/assets/images/readme/gif/alarm.gif"/>
+<img src="/assets/images/readme/gif/alarm.gif"/>
 </details>
 
 <br>
@@ -355,26 +360,26 @@
 <details>
 <summary>달성률 알림</summary>
 ・ 회원에게 주간, 월간 사용자의 전체적인 달성률에 대한 알림을 제공할 수 있다.
-</details>
-
-### ⭐ 피드백
-<details>
-<summary>피드백 도출</summary>
-・ 시스템은 매월 1일 전월의 회고를 기반으로 피드백을 도출할 수 있다.
+<img src="/assets/images/readme/gif/achievement.gif"/>
 </details>
 
 <br>
 
+### ⭐ 피드백
 <details>
-<summary>피드백 조회</summary>
+<summary>피드백 도출/조회</summary>
+・ 시스템은 매월 1일 전월의 회고를 기반으로 피드백을 도출할 수 있다.
 ・ 회원은 월별 피드백을 조회할 수 있다.
+<img src="/assets/images/readme/gif/feedback.gif"/>
 </details>
+
+<br>
 
 ### ⭐ 통계
 <details>
 <summary>일별/월별/카테고리별 통계 조회</summary>
 ・ 회원은 일별/월별/카테고리별 할 일 달성률을 기준으로 통계를 조회할 수 있다.
-<img src="frontend/src/assets/images/readme/gif/statistics.gif"/>
+<img src="/assets/images/readme/gif/statistics.gif"/>
 </details>
 
 <br>
@@ -386,7 +391,7 @@
 <details>
 <summary>회고 작성</summary>
 ・ 회원은 제목과 내용의 형태로 작성 회고를 작성 할 수 있다.
-<img src="frontend/src/assets/images/readme/gif/createdaily.gif"/>
+<img src="/assets/images/readme/gif/createdaily.gif"/>
 </details>
 
 <br>
@@ -394,16 +399,15 @@
 <details>
 <summary>회고 수정</summary>
 ・ 회원은 작성한 회고는 수정 할 수 있다.
-<img src="frontend/src/assets/images/readme/gif/updatedaily.gif"/>
+<img src="/assets/images/readme/gif/updatedaily.gif"/>
 </details>
 
 <br>
 
-
 <details>
 <summary>회고 삭제</summary>
 ・ ・회원은 작성된 회고를 삭제 할 수 있다.
-<img src="frontend/src/assets/images/readme/gif/deletedaily.gif"/>
+<img src="/assets/images/readme/gif/deletedaily.gif"/>
 </details>
 
 <br>
@@ -491,6 +495,7 @@ CMD ["nginx", "-g", "daemon off;"]
 
 ## 11. Jenkins CI/CD 테스트 결과
 <br>
+<img src="/assets/images/readme/gif/jenkins_pipe2.gif"/>
 <br>
 ---
 
