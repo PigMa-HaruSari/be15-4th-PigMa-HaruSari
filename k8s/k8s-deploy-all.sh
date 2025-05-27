@@ -37,6 +37,6 @@ run_kubectl "Apply harusari-boot-dep.yml" "kubectl apply -f ./boot/harusari-boot
 run_kubectl "Apply harusari-boot-ser.yml" "kubectl apply -f ./boot/harusari-boot-ser.yml"
 run_kubectl "Apply harusari-vue-dep.yml" "kubectl apply -f ./vue/harusari-vue-dep.yml"
 run_kubectl "Apply harusari-vue-ser.yml" "kubectl apply -f ./vue/harusari-vue-ser.yml"
-run_kubectl "Apply ingress.yml" "kubectl apply -f ./ingress/ingress.yml"
+run_kubectl "Apply ingress-harusari.yml" "kubectl apply -f ./ingress/ingress-harusari.yml"
 
 echo -e "${GREEN} All resources have been applied!${RESET}"
