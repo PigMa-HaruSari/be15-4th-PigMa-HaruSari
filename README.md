@@ -55,7 +55,7 @@
 
 ## 2. 협업🤝 전략
 
-<img src="frontend/src/assets/images/readme/git.png" width="400"/>
+<img src="assets/images/readme/git.png" width="400"/>
 
 ✔️ 각자 작업 브랜치를 생성하고, 관련 이슈를 등록
 <br>
